@@ -4,6 +4,10 @@ const windmill = require('@windmill/react-ui/config')
 module.exports = windmill({
   purge: ['src/**/*.js'],
   theme: {
+    inset: {
+      '0': 0,
+      '1/10': '10%',
+    },
     extend: {
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],

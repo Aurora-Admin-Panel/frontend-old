@@ -89,7 +89,9 @@ function Server() {
                 <TableCell>
                   <span className="text-sm">
                     {ports[port_id].forward_rule
-                      ? `[${ports[port_id].forward_rule.type}] ${ports[port_id].forward_rule.remote_address}:${ports[port_id].forward_rule.remote_port}`
+                      ? ports[port_id].forward_rule.method === 'iptables'
+                        ? `[${ports[port_id].forward_rule.config.type}] ${ports[port_id].forward_rule.config.remote_address}:${ports[port_id].forward_rule.config.remote_port}`
+                        : ports[port_id].forward_rule.method
                       : "无"}
                   </span>
                 </TableCell>

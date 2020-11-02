@@ -1,4 +1,4 @@
-import { ADD_SERVERS, ADD_SERVER } from "../actionTypes";
+import { ADD_SERVERS, ADD_SERVER, REMOVE_SERVER } from "../actionTypes";
 
 const initialState = {
   servers: {},
@@ -24,6 +24,15 @@ export default function (state = initialState, action) {
                 [action.payload.id]: action.payload
             }
         }
+    }
+    case REMOVE_SERVER: {
+      delete state.servers[action.payload.id]
+      return {
+        ...state,
+        servers: {
+          ...state.servers
+        }
+      }
     }
     default:
       return state;

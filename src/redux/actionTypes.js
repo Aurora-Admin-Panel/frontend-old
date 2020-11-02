@@ -7,6 +7,7 @@ export const AUTH_ERROR_CLEAR = "AUTH_ERROR_CLEAR";
 // Server actions
 export const ADD_SERVERS = "ADD_SERVERS";
 export const ADD_SERVER = "ADD_SERVER";
+export const REMOVE_SERVER = "REMOVE_SERVER";
 
 // Port actions
 export const ADD_SERVER_PORTS = "ADD_SERVER_PORTS";

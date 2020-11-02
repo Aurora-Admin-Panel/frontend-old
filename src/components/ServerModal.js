@@ -13,10 +13,10 @@ import {
 } from "@windmill/react-ui";
 
 import {
-  createForwardRule,
-  editForwardRule,
-  deleteForwardRule,
-} from "../redux/actions/ports";
+  createServer,
+  editServer,
+  deleteServer,
+} from "../redux/actions/servers";
 
 const TypeOptions = [
   { label: "TCP", value: "TCP" },
@@ -25,18 +25,13 @@ const TypeOptions = [
 ];
 const MethodOptions = [{ label: "iptables", value: "iptables" }];
 
-const ForwardRuleEditor = ({
-  forwardRule,
-  serverId,
-  portId,
-  isModalOpen,
-  setIsModalOpen,
-}) => {
+const ServerModal = ({ server, serverId, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
-  const [type, setType] = useState("TCP");
-  const [method, setMethod] = useState("iptables");
-  const [remoteAddress, setRemoteAddress] = useState("www.example.com");
-  const [remotePort, setRemotePort] = useState(0);
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [ansibleName, setAnsibleName] = useState(null);
+  const [ansibleHost, setAnsibleHost] = useState(null);
+  const [ansiblePort, setAnsiblePort] = useState(null);
   const [isDelete, setIsDelete] = useState(false);
 
   const submitForm = () => {
@@ -49,7 +44,7 @@ const ForwardRuleEditor = ({
         type,
         remote_address: remoteAddress,
         remote_port: remotePort,
-      }
+      },
     };
     console.log(data);
     if (forwardRule) {
@@ -62,10 +57,10 @@ const ForwardRuleEditor = ({
 
   useEffect(() => {
     if (forwardRule) {
-      setType(forwardRule.type);
       setMethod(forwardRule.method);
-      setRemoteAddress(forwardRule.remote_address);
-      setRemotePort(forwardRule.remote_port);
+      setType(forwardRule.config.type);
+      setRemoteAddress(forwardRule.config.remote_address);
+      setRemotePort(forwardRule.config.remote_port);
     }
   }, [forwardRule]);
   console.log(type);
