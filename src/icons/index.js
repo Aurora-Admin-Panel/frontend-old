@@ -29,6 +29,8 @@ import { ReactComponent as OutlineLogoutIcon } from './outlineLogout.svg'
 import { ReactComponent as LoadingIcon } from './loading.svg'
 import { ReactComponent as TickIcon } from './tick.svg'
 import { ReactComponent as ReportIcon } from './report.svg'
+import { ReactComponent as PlusIcon } from './plus.svg'
+import { ReactComponent as MinusIcon } from './minus.svg'
 
 export {
   ButtonsIcon,
@@ -62,4 +64,6 @@ export {
   LoadingIcon,
   TickIcon,
   ReportIcon,
+  PlusIcon,
+  MinusIcon
 }
