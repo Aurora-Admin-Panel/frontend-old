@@ -6,7 +6,7 @@ import {
   serverPortForwardRuleEdit,
   serverPortForwardRuleDelete,
 } from "../apis/ports";
-import { ADD_SERVER_PORTS, ADD_SERVER_PORT_FORWARD_RULE } from "../actionTypes";
+import { ADD_SERVER_PORTS, ADD_SERVER_PORT_FORWARD_RULE, DELETE_SERVER_PORT_FORWARD_RULE } from "../actionTypes";
 
 export const getServerPortForwardRule = (server_id, port_id) => {
   return (dispatch) => {
@@ -153,7 +153,7 @@ export const deleteForwardRule = (server_id, port_id) => {
       }
       if (data) {
         dispatch({
-          type: ADD_SERVER_PORT_FORWARD_RULE,
+          type: DELETE_SERVER_PORT_FORWARD_RULE,
           payload: {
             server_id: server_id,
             port_id: port_id,
