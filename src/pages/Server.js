@@ -122,6 +122,7 @@ function Server() {
                       <Button
                         size="small"
                         onClick={() => {
+                          setCurrentRule(null);
                           setCurrentPort(port_id);
                           setRuleEditorOpen(true);
                         }}

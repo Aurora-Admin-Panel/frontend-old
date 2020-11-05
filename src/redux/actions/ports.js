@@ -71,11 +71,8 @@ export const createForwardRule = (server_id, port_id, data) => {
       if (response.status === 500) {
         throw new Error("Internal server error");
       }
-      if (response.status === 404) {
-          return 
-      }
       const data = response.data;
-      if (response.status > 400 && response.status < 500) {
+      if (response.status >= 400 && response.status < 500) {
         if (data.detail) {
           throw data.detail;
         }
@@ -106,11 +103,8 @@ export const editForwardRule = (server_id, port_id, data) => {
       if (response.status === 500) {
         throw new Error("Internal server error");
       }
-      if (response.status === 404) {
-          return 
-      }
       const data = response.data;
-      if (response.status > 400 && response.status < 500) {
+      if (response.status >= 400 && response.status < 500) {
         if (data.detail) {
           throw data.detail;
         }
@@ -141,11 +135,8 @@ export const deleteForwardRule = (server_id, port_id) => {
       if (response.status === 500) {
         throw new Error("Internal server error");
       }
-      if (response.status === 404) {
-          return 
-      }
       const data = response.data;
-      if (response.status > 400 && response.status < 500) {
+      if (response.status >= 400 && response.status < 500) {
         if (data.detail) {
           throw data.detail;
         }
