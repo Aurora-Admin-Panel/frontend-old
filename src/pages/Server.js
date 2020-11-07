@@ -72,8 +72,8 @@ function Server() {
         <Table>
           <TableHeader>
             <tr>
+              {permission === 'admin' ? <TableCell>外部端口号</TableCell> : null}
               <TableCell>端口号</TableCell>
-              {permission === 'admin' ? <TableCell>内部端口号</TableCell> : null}
               <TableCell>转发规则</TableCell>
               <TableCell>转发状态</TableCell>
               <TableCell>动作</TableCell>
@@ -82,10 +82,10 @@ function Server() {
           <TableBody>
             {Object.keys(ports).map((port_id) => (
               <TableRow key={`servers_server_${server_id}_${port_id}`}>
-                <TableCell>
-                  <span className="text-sm">{ports[port_id].num}</span>
-                </TableCell>
-                {permission === 'admin' ? <TableCell>{ports[port_id].internal_num}</TableCell> : null}
+                {permission === 'admin' ? <TableCell>
+                  {ports[port_id].external_num ? ports[port_id].external_num : ports[port_id].internal_num}
+                </TableCell> : null}
+                <TableCell>{ports[port_id].internal_num}</TableCell>
                 <TableCell>
                   <span className="text-sm">
                     {ports[port_id].forward_rule
