@@ -83,9 +83,9 @@ function Server() {
             {Object.keys(ports).map((port_id) => (
               <TableRow key={`servers_server_${server_id}_${port_id}`}>
                 {permission === 'admin' ? <TableCell>
-                  {ports[port_id].external_num ? ports[port_id].external_num : ports[port_id].internal_num}
+                  {ports[port_id].external_num ? ports[port_id].external_num : ports[port_id].num}
                 </TableCell> : null}
-                <TableCell>{ports[port_id].internal_num}</TableCell>
+                <TableCell>{ports[port_id].num}</TableCell>
                 <TableCell>
                   <span className="text-sm">
                     {ports[port_id].forward_rule
