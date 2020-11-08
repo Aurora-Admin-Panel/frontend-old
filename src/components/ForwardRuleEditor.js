@@ -184,7 +184,7 @@ const ForwardRuleEditor = ({
 
             {method === "gost" ? (
               <>
-                <Label className="mt-4 flex flex-row justify-between items-center items-center">
+                <Label className="mt-4 flex flex-row justify-between items-center">
                   <div className="flex flex-auto">
                     <span>重试次数</span>
                   </div>
@@ -210,7 +210,7 @@ const ForwardRuleEditor = ({
                     </button>
                   </div>
                 </Label>
-                <Label className="mt-4 flex flex-row justify-between items-center items-center">
+                <Label className="mt-4 flex flex-row justify-between items-center">
                   <span>本地服务配置</span>
                   <button
                     className="w-5 h-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded active:bg-green-600 hover:bg-green-600 focus:outline-none focus:shadow-outline-green"
@@ -241,7 +241,7 @@ const ForwardRuleEditor = ({
                       <button
                         className="absolute inset-y-0 right-0 w-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-500 border border-transparent rounded-r active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
                         onClick={() =>
-                          setServeNodes(serveNodes.filter((_, i) => i != idx))
+                          setServeNodes(serveNodes.filter((_, i) => i !== idx))
                         }
                       >
                         <MinusIcon />
@@ -249,7 +249,7 @@ const ForwardRuleEditor = ({
                     </div>
                   </Label>
                 ))}
-                <Label className="mt-4 flex flex-row justify-between items-center items-center">
+                <Label className="mt-4 flex flex-row justify-between items-center">
                   <span>转发服务配置</span>
                   <button
                     className="w-5 h-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded active:bg-green-600 hover:bg-green-600 focus:outline-none focus:shadow-outline-green"
@@ -280,7 +280,7 @@ const ForwardRuleEditor = ({
                       <button
                         className="absolute inset-y-0 right-0 w-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-500 border border-transparent rounded-r active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
                         onClick={() =>
-                          setChainNodes(chainNodes.filter((_, i) => i != idx))
+                          setChainNodes(chainNodes.filter((_, i) => i !== idx))
                         }
                       >
                         <MinusIcon />

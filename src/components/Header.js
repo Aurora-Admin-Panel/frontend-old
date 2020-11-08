@@ -1,17 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { Avatar, Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
+import { Avatar, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
 
 import { logout } from "../redux/actions/auth"
 import { SidebarContext } from '../context/SidebarContext'
 import {
-  SearchIcon,
   MoonIcon,
   SunIcon,
-  BellIcon,
   MenuIcon,
-  OutlinePersonIcon,
-  OutlineCogIcon,
   OutlineLogoutIcon,
 } from '../icons'
 import AvatarImg from "../assets/img/avataaars.png"

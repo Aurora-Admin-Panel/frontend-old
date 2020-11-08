@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux' 
 
 import { getServers } from '../redux/actions/servers'
-import CTA from '../components/CTA'
 import InfoCard from '../components/Cards/InfoCard'
 import ChartCard from '../components/Chart/ChartCard'
 import { Doughnut, Line } from 'react-chartjs-2'
@@ -32,7 +31,6 @@ import {
 } from '../utils/demo/chartsData'
 
 function Dashboard() {
-  const servers = useSelector(state => state.servers)
   const dispatch = useDispatch()
   const [page, setPage] = useState(1)
   const [data, setData] = useState([])
