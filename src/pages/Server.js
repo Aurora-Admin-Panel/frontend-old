@@ -41,7 +41,7 @@ function Server() {
   const server_id = parseInt(useParams().server_id);
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);
-  const permission = useSelector(state => state.auth.permission)
+  const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState("");
@@ -72,7 +72,9 @@ function Server() {
         <Table>
           <TableHeader>
             <tr>
-              {permission === 'admin' ? <TableCell>外部端口号</TableCell> : null}
+              {permission === "admin" ? (
+                <TableCell>外部端口号</TableCell>
+              ) : null}
               <TableCell>端口号</TableCell>
               <TableCell>转发规则</TableCell>
               <TableCell>转发状态</TableCell>
@@ -82,14 +84,24 @@ function Server() {
           <TableBody>
             {Object.keys(ports).map((port_id) => (
               <TableRow key={`servers_server_${server_id}_${port_id}`}>
-                {permission === 'admin' ? <TableCell>
-                  {ports[port_id].external_num ? ports[port_id].external_num : ports[port_id].num}
-                </TableCell> : null}
-                <TableCell>{ports[port_id].num}</TableCell>
+                {permission === "admin" ? (
+                  <TableCell>
+                    {ports[port_id].external_num
+                      ? ports[port_id].external_num
+                      : ports[port_id].num}
+                  </TableCell>
+                ) : null}
+                <TableCell>
+                  {permission === "admin"
+                    ? ports[port_id].num
+                    : ports[port_id].external_num
+                      ? ports[port_id].external_num
+                      : ports[port_id].num}
+                </TableCell>
                 <TableCell>
                   <span className="text-sm">
                     {ports[port_id].forward_rule
-                      ? ports[port_id].forward_rule.method === 'iptables'
+                      ? ports[port_id].forward_rule.method === "iptables"
                         ? `[${ports[port_id].forward_rule.config.type}] ${ports[port_id].forward_rule.config.remote_address}:${ports[port_id].forward_rule.config.remote_port}`
                         : ports[port_id].forward_rule.method
                       : "无"}
@@ -112,7 +124,11 @@ function Server() {
                               setCurrentPort(port_id);
                               setRuleEditorOpen(true);
                             }}
-                            disabled={ports[port_id].forward_rule.status === 'starting' || ports[port_id].forward_rule.status === 'running'}
+                            disabled={
+                              ports[port_id].forward_rule.status ===
+                                "starting" ||
+                              ports[port_id].forward_rule.status === "running"
+                            }
                           >
                             修改转发
                           </Button>
