@@ -13,6 +13,12 @@ const routes = [
     permissions: ['admin'],
   },
   {
+    path: '/app/users',
+    icon: 'HomeIcon',
+    name: 'Users',
+    permissions: ['admin'],
+  },
+  {
     path: '/app/servers',
     icon: 'CardsIcon',
     name: 'Servers',

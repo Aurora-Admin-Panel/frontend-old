@@ -4,6 +4,11 @@ export const LOG_OUT = "LOG_OUT";
 export const AUTH_ERROR = "AUTH_ERROR";
 export const AUTH_ERROR_CLEAR = "AUTH_ERROR_CLEAR";
 
+// User actions
+export const ADD_USERS = "ADD_USERS";
+export const ADD_USER = "ADD_USER";
+export const DELETE_USER = "DELETE_USER";
+
 // Server actions
 export const ADD_SERVERS = "ADD_SERVERS";
 export const ADD_SERVER = "ADD_SERVER";

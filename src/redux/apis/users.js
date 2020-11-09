@@ -5,15 +5,20 @@ export const meGet = () => v1AuthRequest({
     url: '/users/me'
 })
 
-export const userGet = (user_id) => v1AuthRequest({
+export const usersGet = (user_id) => v1AuthRequest({
     method: "get",
-    url: `/users/${user_id}`,
+    url: `/users`,
 })
 
 export const userCreate = (data) => v1AuthRequest({
     method: "post",
     url: `/users`,
     data: data
+})
+
+export const userGet = (user_id) => v1AuthRequest({
+    method: "get",
+    url: `/users/${user_id}`,
 })
 
 export const userEdit = (user_id, data) => v1AuthRequest({

@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
-import todos from "./todos";
 import auth from "./auth";
+import ports from "./ports";
+import users from "./users";
 import servers from "./servers";
-import ports from "./ports"
 
-export default combineReducers({ todos, auth, servers, ports });
+export default combineReducers({ auth, servers, ports, users });
