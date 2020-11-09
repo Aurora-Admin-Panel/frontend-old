@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 import {
   Button,
   TableBody,
@@ -11,11 +11,16 @@ import {
   TableRow,
 } from "@windmill/react-ui";
 
+import { PlusIcon } from "../icons";
+import ServerEditor from "../components/ServerEditor";
 import { getServers } from "../redux/actions/servers";
 import PageTitle from "../components/Typography/PageTitle";
 
 function Servers() {
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [currentServer, setCurrentServer] = useState(null);
   const servers = useSelector((state) => state.servers.servers);
+  const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,7 +29,28 @@ function Servers() {
 
   return (
     <>
+      <div className="flex justify-between items-center">
       <PageTitle>Servers</PageTitle>
+                    {permission === "admin" ? (
+                      <Button
+                        size="regular"
+                        iconLeft={PlusIcon}
+                        onClick={() => {
+                          setCurrentServer(null);
+                          setEditorOpen(true);
+                        }}
+                      >
+                        添加
+                      </Button>
+                    ) : null}
+
+      </div>
+
+      <ServerEditor
+        server={currentServer}
+        isModalOpen={editorOpen}
+        setIsModalOpen={setEditorOpen}
+      />
 
       <TableContainer>
         <Table>
@@ -45,8 +71,25 @@ function Servers() {
                   <span className="text-sm">{servers[server_id].address}</span>
                 </TableCell>
                 <TableCell>
-                  <div>
-                    <Button size="small" tag={Link} to={`/app/servers/${server_id}`}>查看</Button>
+                  <div className="flex justify-start space-x-1">
+                    <Button
+                      size="small"
+                      tag={Link}
+                      to={`/app/servers/${server_id}`}
+                    >
+                      查看
+                    </Button>
+                    {permission === "admin" ? (
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          setCurrentServer(servers[server_id]);
+                          setEditorOpen(true);
+                        }}
+                      >
+                        编辑
+                      </Button>
+                    ) : null}
                   </div>
                 </TableCell>
               </TableRow>
