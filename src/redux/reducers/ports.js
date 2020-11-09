@@ -1,5 +1,6 @@
 import {
   ADD_SERVER_PORTS,
+  DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
   ADD_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORT_FORWARD_RULE,
@@ -20,6 +21,12 @@ export default function (state = initialState, action) {
         ...state,
         ports: ports,
       };
+    }
+    case DELETE_SERVER_PORTS: {
+      return {
+        ...state,
+        ports: {}
+      }
     }
     case ADD_SERVER_PORT: {
       return {

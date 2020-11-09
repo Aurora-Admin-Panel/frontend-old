@@ -14,7 +14,7 @@ import ReactLoading from "react-loading";
 
 import { getServer } from "../redux/actions/servers";
 import { LoadingIcon, TickIcon, ReportIcon } from "../icons";
-import { getServerPorts } from "../redux/actions/ports";
+import { clearServerPorts, getServerPorts } from "../redux/actions/ports";
 import ForwardRuleEditor from "../components/ForwardRuleEditor";
 import PageTitle from "../components/Typography/PageTitle";
 
@@ -48,6 +48,7 @@ function Server() {
   const [currentPort, setCurrentPort] = useState(0);
 
   useEffect(() => {
+    dispatch(clearServerPorts());
     dispatch(getServerPorts(server_id));
     if (!(server_id in servers)) {
       dispatch(getServer(server_id));
@@ -116,7 +117,6 @@ function Server() {
                   <div className="flex flex-col flex-wrap md:flex-row md:items-end md:space-x-2">
                     {ports[port_id].forward_rule ? (
                       <>
-                        <div>
                           <Button
                             size="small"
                             onClick={() => {
@@ -132,7 +132,6 @@ function Server() {
                           >
                             修改转发
                           </Button>
-                        </div>
                       </>
                     ) : (
                       <Button

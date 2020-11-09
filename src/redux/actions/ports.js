@@ -6,7 +6,7 @@ import {
   serverPortForwardRuleEdit,
   serverPortForwardRuleDelete,
 } from "../apis/ports";
-import { ADD_SERVER_PORTS, ADD_SERVER_PORT_FORWARD_RULE, DELETE_SERVER_PORT_FORWARD_RULE } from "../actionTypes";
+import { ADD_SERVER_PORTS, ADD_SERVER_PORT_FORWARD_RULE, DELETE_SERVER_PORT_FORWARD_RULE, DELETE_SERVER_PORTS } from "../actionTypes";
 
 export const getServerPortForwardRule = (server_id, port_id) => {
   return (dispatch) => {
@@ -41,6 +41,14 @@ export const getServerPortForwardRule = (server_id, port_id) => {
   };
 };
 
+export const clearServerPorts = () => {
+  return dispatch => {
+    dispatch({
+      type: DELETE_SERVER_PORTS
+    })
+  }
+}
+
 export const getServerPorts = (server_id) => {
   return (dispatch) => {
     serverPortsGet(server_id).then((response) => {
@@ -58,9 +66,6 @@ export const getServerPorts = (server_id) => {
         type: ADD_SERVER_PORTS,
         payload: data,
       });
-      for (const port of data) {
-        dispatch(getServerPortForwardRule(server_id, port.id));
-      }
     });
   };
 };

@@ -21,7 +21,6 @@ function Servers() {
   useEffect(() => {
     dispatch(getServers());
   }, []);
-  console.log(servers);
 
   return (
     <>
