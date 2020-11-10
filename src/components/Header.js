@@ -52,7 +52,8 @@ function Header() {
             />
           </div>
         </div> */}
-        <ul className="flex items-center flex-shrink-0 space-x-6">
+        <div></div>
+        <ul className="flex justify-self-end items-center flex-shrink-0 space-x-6">
           {/* <!-- Theme toggler --> */}
           <li className="flex">
             <button

@@ -4,6 +4,9 @@ import {
   serverPortGet,
   serverPortEdit,
   serverPortDelete,
+  serverPortUsersGet,
+  serverPortUserCreate,
+  serverPortUserDelete,
   serverPortForwardRuleGet,
   serverPortForwardRuleCreate,
   serverPortForwardRuleEdit,
@@ -11,11 +14,14 @@ import {
 } from "../apis/ports";
 import {
   ADD_SERVER_PORTS,
-  ADD_SERVER_PORT_FORWARD_RULE,
-  DELETE_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
   DELETE_SERVER_PORT,
+  ADD_SERVER_PORT_USERS,
+  ADD_SERVER_PORT_USER,
+  DELETE_SERVER_PORT_USER,
+  ADD_SERVER_PORT_FORWARD_RULE,
+  DELETE_SERVER_PORT_FORWARD_RULE,
 } from "../actionTypes";
 
 
@@ -91,6 +97,60 @@ export const editServerPort = (server_id, port_id, data) => {
   }
 }
 
+export const getServerPortUsers = (server_id, port_id) => {
+  return dispatch => {
+    serverPortUsersGet(server_id, port_id).then(response => {
+      if (response.status >= 300) {
+        console.log(response);
+        return
+      }
+      console.log(response)
+      const data = response.data
+      if (data && data.length > 0) {
+        dispatch({
+          type: ADD_SERVER_PORT_USERS,
+          payload: data
+        })
+      }
+    })
+  }
+}
+
+export const createServerPortUser = (server_id, port_id, data) => {
+  return dispatch => {
+    serverPortUserCreate(server_id, port_id, data).then(response => {
+      if (response.status >= 300) {
+        console.log(response)
+        return
+      }
+      const data = response.data
+      if (data) {
+        dispatch({
+          type: ADD_SERVER_PORT_USER,
+          payload: data
+        })
+      }
+    })
+  }
+}
+
+export const deleteServerPortUser = (server_id, port_id, user_id) => {
+  return dispatch => {
+    serverPortUserDelete(server_id, port_id, user_id).then(response => {
+      if (response.status >= 300) {
+        console.log(response)
+        return
+      }
+      const data = response.data
+      if (data) {
+        dispatch({
+          type: DELETE_SERVER_PORT_USER,
+          payload: data
+        })
+      }
+    })
+  }
+}
 
 export const getServerPortForwardRule = (server_id, port_id) => {
   return (dispatch) => {

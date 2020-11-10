@@ -17,6 +17,7 @@ import { PlusIcon, TickIcon, ReportIcon } from "../icons";
 import { clearServerPorts, getServerPorts } from "../redux/actions/ports";
 import AuthSelector from "../components/AuthSelector";
 import PortEditor from "../components/PortEditor";
+import PortUserEditor from "../components/PortUserEditor";
 import PageTitle from "../components/Typography/PageTitle";
 import ForwardRuleEditor from "../components/ForwardRuleEditor";
 
@@ -49,6 +50,7 @@ function Server() {
   const [currentRule, setCurrentRule] = useState("");
   const [currentPort, setCurrentPort] = useState("");
   const [portEditorOpen, setPortEditorOpen] = useState(false);
+  const [portUserEditorOpen, setPortUserEditorOpen] = useState(false);
 
   useEffect(() => {
     dispatch(clearServerPorts());
@@ -77,6 +79,12 @@ function Server() {
         serverId={server_id}
         isModalOpen={portEditorOpen}
         setIsModalOpen={setPortEditorOpen}
+      />
+      <PortUserEditor
+        portId={currentPort.id}
+        serverId={server_id}
+        isModalOpen={portUserEditorOpen}
+        setIsModalOpen={setPortUserEditorOpen}
       />
       </AuthSelector>
       <div className="flex justify-between items-center">
@@ -153,6 +161,15 @@ function Server() {
                         }}
                       >
                         修改端口
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          setCurrentPort(ports[port_id]);
+                          setPortUserEditorOpen(true);
+                        }}
+                      >
+                        查看用户
                       </Button>
                     </AuthSelector>
                     {ports[port_id].forward_rule ? (

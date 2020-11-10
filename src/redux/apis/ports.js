@@ -27,6 +27,22 @@ export const serverPortDelete = (server_id, port_id) => v1AuthRequest({
     url: `/servers/${server_id}/ports/${port_id}`,
 })
 
+export const serverPortUsersGet = (server_id, port_id) => v1AuthRequest({
+    method: "get",
+    url: `/servers/${server_id}/ports/${port_id}/users`
+})
+
+export const serverPortUserCreate = (server_id, port_id, data) => v1AuthRequest({
+    method: "post",
+    url: `/servers/${server_id}/ports/${port_id}/users`,
+    data: data
+})
+
+export const serverPortUserDelete = (server_id, port_id, user_id) => v1AuthRequest({
+    method: "delete",
+    url: `/servers/${server_id}/ports/${port_id}/users/${user_id}`,
+})
+
 export const serverPortForwardRuleGet = (server_id, port_id) => v1AuthRequest({
     method: "get",
     url: `/servers/${server_id}/ports/${port_id}/forward_rule`

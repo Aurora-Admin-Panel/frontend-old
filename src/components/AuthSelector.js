@@ -7,11 +7,10 @@ const AuthSeletor = ({permissions, children}) => {
     const history = useHistory()
     if (!permission) {
         history.push('/login')
-    } else if (!permissions.includes(permission)) {
-        return null
-    } else {
-        return children
+    } else if (permissions.includes(permission)) {
+        if (children) return children
     }
+    return null
 }
 
 export default AuthSeletor
