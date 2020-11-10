@@ -30,20 +30,19 @@ function Servers() {
   return (
     <>
       <div className="flex justify-between items-center">
-      <PageTitle>Servers</PageTitle>
-                    {permission === "admin" ? (
-                      <Button
-                        size="regular"
-                        iconLeft={PlusIcon}
-                        onClick={() => {
-                          setCurrentServer(null);
-                          setEditorOpen(true);
-                        }}
-                      >
-                        添加
-                      </Button>
-                    ) : null}
-
+        <PageTitle>Servers</PageTitle>
+        {permission === "admin" ? (
+          <Button
+            size="regular"
+            iconLeft={PlusIcon}
+            onClick={() => {
+              setCurrentServer(null);
+              setEditorOpen(true);
+            }}
+          >
+            添加
+          </Button>
+        ) : null}
       </div>
 
       <ServerEditor
@@ -71,14 +70,7 @@ function Servers() {
                   <span className="text-sm">{servers[server_id].address}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex justify-start space-x-1">
-                    <Button
-                      size="small"
-                      tag={Link}
-                      to={`/app/servers/${server_id}`}
-                    >
-                      查看
-                    </Button>
+                  <div className="flex justify-start space-x-1 space-y-1">
                     {permission === "admin" ? (
                       <Button
                         size="small"
@@ -90,6 +82,13 @@ function Servers() {
                         编辑
                       </Button>
                     ) : null}
+                    <Button
+                      size="small"
+                      tag={Link}
+                      to={`/app/servers/${server_id}`}
+                    >
+                      查看
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

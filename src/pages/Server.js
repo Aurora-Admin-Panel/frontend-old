@@ -13,10 +13,12 @@ import {
 import ReactLoading from "react-loading";
 
 import { getServer } from "../redux/actions/servers";
-import { LoadingIcon, TickIcon, ReportIcon } from "../icons";
+import { PlusIcon, TickIcon, ReportIcon } from "../icons";
 import { clearServerPorts, getServerPorts } from "../redux/actions/ports";
-import ForwardRuleEditor from "../components/ForwardRuleEditor";
+import AuthSelector from "../components/AuthSelector";
+import PortEditor from "../components/PortEditor";
 import PageTitle from "../components/Typography/PageTitle";
+import ForwardRuleEditor from "../components/ForwardRuleEditor";
 
 const statusToIcon = (rule) => {
   if (rule) {
@@ -45,7 +47,8 @@ function Server() {
   const dispatch = useDispatch();
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState("");
-  const [currentPort, setCurrentPort] = useState(0);
+  const [currentPort, setCurrentPort] = useState("");
+  const [portEditorOpen, setPortEditorOpen] = useState(false);
 
   useEffect(() => {
     dispatch(clearServerPorts());
@@ -64,18 +67,40 @@ function Server() {
       <ForwardRuleEditor
         forwardRule={currentRule}
         serverId={server_id}
-        portId={currentPort}
+        port={currentPort}
         isModalOpen={ruleEditorOpen}
         setIsModalOpen={setRuleEditorOpen}
       />
-      <PageTitle>端口</PageTitle>
+      <AuthSelector permissions={["admin"]} >
+      <PortEditor
+        port={currentPort}
+        serverId={server_id}
+        isModalOpen={portEditorOpen}
+        setIsModalOpen={setPortEditorOpen}
+      />
+      </AuthSelector>
+      <div className="flex justify-between items-center">
+        <PageTitle>端口</PageTitle>
+        <AuthSelector permissions={["admin"]}>
+          <Button
+            size="regular"
+            iconLeft={PlusIcon}
+            onClick={() => {
+              setCurrentPort("");
+              setPortEditorOpen(true);
+            }}
+          >
+            添加端口
+          </Button>
+        </AuthSelector>
+      </div>
       <TableContainer>
         <Table>
           <TableHeader>
             <tr>
-              {permission === "admin" ? (
+              <AuthSelector permissions={["admin"]}>
                 <TableCell>外部端口号</TableCell>
-              ) : null}
+              </AuthSelector>
               <TableCell>端口号</TableCell>
               <TableCell>转发规则</TableCell>
               <TableCell>转发状态</TableCell>
@@ -85,19 +110,23 @@ function Server() {
           <TableBody>
             {Object.keys(ports).map((port_id) => (
               <TableRow key={`servers_server_${server_id}_${port_id}`}>
-                {permission === "admin" ? (
+                <AuthSelector permissions={["admin"]}>
                   <TableCell>
                     {ports[port_id].external_num
                       ? ports[port_id].external_num
                       : ports[port_id].num}
                   </TableCell>
-                ) : null}
+                </AuthSelector>
+
                 <TableCell>
-                  {permission === "admin"
-                    ? ports[port_id].num
-                    : ports[port_id].external_num
+                  <AuthSelector permissions={["admin"]}>
+                    {ports[port_id].num}
+                  </AuthSelector>
+                  <AuthSelector permissions={["user"]}>
+                    {ports[port_id].external_num
                       ? ports[port_id].external_num
                       : ports[port_id].num}
+                  </AuthSelector>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">
@@ -114,31 +143,41 @@ function Server() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col flex-wrap md:flex-row md:items-end md:space-x-2">
+                  <div className="flex flex-col flex-wrap md:flex-row md:items-end md:space-x-1 space-y-1">
+                    <AuthSelector permissions={["admin"]}>
+                    <Button
+                        size="small"
+                        onClick={() => {
+                          setCurrentPort(ports[port_id]);
+                          setPortEditorOpen(true);
+                        }}
+                      >
+                        修改端口
+                      </Button>
+                    </AuthSelector>
                     {ports[port_id].forward_rule ? (
                       <>
-                          <Button
-                            size="small"
-                            onClick={() => {
-                              setCurrentRule(ports[port_id].forward_rule);
-                              setCurrentPort(port_id);
-                              setRuleEditorOpen(true);
-                            }}
-                            disabled={
-                              ports[port_id].forward_rule.status ===
-                                "starting" ||
-                              ports[port_id].forward_rule.status === "running"
-                            }
-                          >
-                            修改转发
-                          </Button>
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setCurrentRule(ports[port_id].forward_rule);
+                            setCurrentPort(ports[port_id]);
+                            setRuleEditorOpen(true);
+                          }}
+                          disabled={
+                            ports[port_id].forward_rule.status === "starting" ||
+                            ports[port_id].forward_rule.status === "running"
+                          }
+                        >
+                          修改转发
+                        </Button>
                       </>
                     ) : (
                       <Button
                         size="small"
                         onClick={() => {
                           setCurrentRule(null);
-                          setCurrentPort(port_id);
+                          setCurrentPort(ports[port_id]);
                           setRuleEditorOpen(true);
                         }}
                       >

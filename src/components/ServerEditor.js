@@ -53,6 +53,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       };
       if (ansibleHost) data.ansible_host = ansibleHost;
       if (ansiblePort) data.ansible_port = ansiblePort;
+
       if (server) {
         dispatch(editServer(server.id, data));
       } else {
@@ -69,13 +70,15 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       setAddress(server.address);
       setAnsibleName(server.ansible_name);
       if (server.ansible_host) setAnsibleHost(server.ansible_host);
+      else setAnsibleHost("");
       if (server.ansible_port) setAnsiblePort(server.ansible_port);
+      else setAnsiblePort("");
     } else {
       setName("");
       setAddress("");
       setAnsibleName("");
-      setAnsibleHost(null);
-      setAnsiblePort(null);
+      setAnsibleHost("");
+      setAnsiblePort("");
     }
   }, [server]);
 

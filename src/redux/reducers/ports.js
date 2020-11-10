@@ -2,6 +2,7 @@ import {
   ADD_SERVER_PORTS,
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
+  DELETE_SERVER_PORT,
   ADD_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORT_FORWARD_RULE,
 } from "../actionTypes";
@@ -34,6 +35,15 @@ export default function (state = initialState, action) {
         ports: {
           ...state.ports,
           [action.payload.id]: action.payload,
+        },
+      };
+    }
+    case DELETE_SERVER_PORT: {
+      return {
+        ...state,
+        ports: {
+          ...state.ports,
+          [action.payload.id]: null,
         },
       };
     }

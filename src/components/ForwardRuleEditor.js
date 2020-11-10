@@ -32,7 +32,7 @@ const MethodOptions = [
 const ForwardRuleEditor = ({
   forwardRule,
   serverId,
-  portId,
+  port,
   isModalOpen,
   setIsModalOpen,
 }) => {
@@ -61,7 +61,7 @@ const ForwardRuleEditor = ({
 
   const submitForm = () => {
     if (isDelete) {
-      dispatch(deleteForwardRule(serverId, portId));
+      dispatch(deleteForwardRule(serverId, port.id));
     } else {
       let data;
       if (method === "iptables") {
@@ -84,9 +84,9 @@ const ForwardRuleEditor = ({
         };
       }
       if (forwardRule) {
-        dispatch(editForwardRule(serverId, portId, data));
+        dispatch(editForwardRule(serverId, port.id, data));
       } else {
-        dispatch(createForwardRule(serverId, portId, data));
+        dispatch(createForwardRule(serverId, port.id, data));
       }
     }
     setIsModalOpen(false);
@@ -97,15 +97,21 @@ const ForwardRuleEditor = ({
     if (forwardRule) {
       setMethod(forwardRule.method);
       if (forwardRule.config.type) setType(forwardRule.config.type);
+      else setType("TCP");
       if (forwardRule.config.remote_address)
         setRemoteAddress(forwardRule.config.remote_address);
+      else setRemoteAddress("");
       if (forwardRule.config.remote_port)
         setRemotePort(forwardRule.config.remote_port);
+      else setRemotePort(0);
       if (forwardRule.config.Retries) setRetries(forwardRule.config.Retries);
+      else setRetries(0);
       if (forwardRule.config.ServeNodes)
         setServeNodes(forwardRule.config.ServeNodes);
+      else setServeNodes([]);
       if (forwardRule.config.ChainNodes)
         setChainNodes(forwardRule.config.ChainNodes);
+      else setChainNodes([]);
     } else {
       setMethod("iptables");
       setType("TCP");

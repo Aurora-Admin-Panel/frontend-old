@@ -1,1 +1,1 @@
-export const BACKEND_URL = process.env.BACKEND_URL || 'http://192.168.1.183:8000'
+export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000'
