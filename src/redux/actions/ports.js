@@ -1,3 +1,4 @@
+import { handleResponse } from "./utils"
 import {
   serverPortsGet,
   serverPortCreate,
@@ -28,11 +29,7 @@ import {
 export const createServerPort = (server_id, data) => {
   return dispatch => {
     serverPortCreate(server_id, data).then(response => {
-      if (response.status >= 300) {
-        console.log(response)
-        return
-      }
-      const data = response.data;
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT,
@@ -46,11 +43,7 @@ export const createServerPort = (server_id, data) => {
 export const deleteServerPort = (server_id, port_id) => {
   return dispatch => {
     serverPortDelete(server_id, port_id).then(response => {
-      if (response.status >= 300) {
-        console.log(response)
-        return
-      }
-      const data = response.data;
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: DELETE_SERVER_PORT,
@@ -64,11 +57,7 @@ export const deleteServerPort = (server_id, port_id) => {
 export const getServerPort = (server_id, port_id) => {
   return dispatch => {
     serverPortGet(server_id, port_id).then(response => {
-      if (response.status >= 300) {
-        console.log(response)
-        return
-      }
-      const data = response.data;
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT,
@@ -82,11 +71,7 @@ export const getServerPort = (server_id, port_id) => {
 export const editServerPort = (server_id, port_id, data) => {
   return dispatch => {
     serverPortEdit(server_id, port_id, data).then(response => {
-      if (response.status >= 300) {
-        console.log(response)
-        return
-      }
-      const data = response.data;
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT,
@@ -100,13 +85,8 @@ export const editServerPort = (server_id, port_id, data) => {
 export const getServerPortUsers = (server_id, port_id) => {
   return dispatch => {
     serverPortUsersGet(server_id, port_id).then(response => {
-      if (response.status >= 300) {
-        console.log(response);
-        return
-      }
-      console.log(response)
-      const data = response.data
-      if (data && data.length > 0) {
+      const data = handleResponse(dispatch, response)
+      if (data) {
         dispatch({
           type: ADD_SERVER_PORT_USERS,
           payload: data
@@ -119,11 +99,7 @@ export const getServerPortUsers = (server_id, port_id) => {
 export const createServerPortUser = (server_id, port_id, data) => {
   return dispatch => {
     serverPortUserCreate(server_id, port_id, data).then(response => {
-      if (response.status >= 300) {
-        console.log(response)
-        return
-      }
-      const data = response.data
+      const data = handleResponse(dispatch, response)
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT_USER,
@@ -137,11 +113,7 @@ export const createServerPortUser = (server_id, port_id, data) => {
 export const deleteServerPortUser = (server_id, port_id, user_id) => {
   return dispatch => {
     serverPortUserDelete(server_id, port_id, user_id).then(response => {
-      if (response.status >= 300) {
-        console.log(response)
-        return
-      }
-      const data = response.data
+      const data = handleResponse(dispatch, response)
       if (data) {
         dispatch({
           type: DELETE_SERVER_PORT_USER,
@@ -155,16 +127,7 @@ export const deleteServerPortUser = (server_id, port_id, user_id) => {
 export const getServerPortForwardRule = (server_id, port_id) => {
   return (dispatch) => {
     serverPortForwardRuleGet(server_id, port_id).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
-      const data = response.data;
-      if (response.status > 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT_FORWARD_RULE,
@@ -177,7 +140,7 @@ export const getServerPortForwardRule = (server_id, port_id) => {
         if (data.status === "running" || data.status === "starting") {
           setTimeout(
             () => dispatch(getServerPortForwardRule(server_id, port_id)),
-            1000
+            2000
           );
         }
       }
@@ -196,20 +159,14 @@ export const clearServerPorts = () => {
 export const getServerPorts = (server_id) => {
   return (dispatch) => {
     serverPortsGet(server_id).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
-      const data = response.data;
-      if (response.status > 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
+      const data = handleResponse(dispatch, response);
+      if (data) {
       dispatch({
         type: ADD_SERVER_PORTS,
         payload: data,
       });
+
+      }
     });
   };
 };
@@ -217,16 +174,7 @@ export const getServerPorts = (server_id) => {
 export const createForwardRule = (server_id, port_id, data) => {
   return (dispatch) => {
     serverPortForwardRuleCreate(server_id, port_id, data).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
-      const data = response.data;
-      if (response.status >= 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT_FORWARD_RULE,
@@ -249,16 +197,7 @@ export const createForwardRule = (server_id, port_id, data) => {
 export const editForwardRule = (server_id, port_id, data) => {
   return (dispatch) => {
     serverPortForwardRuleEdit(server_id, port_id, data).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
-      const data = response.data;
-      if (response.status >= 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: ADD_SERVER_PORT_FORWARD_RULE,
@@ -281,16 +220,7 @@ export const editForwardRule = (server_id, port_id, data) => {
 export const deleteForwardRule = (server_id, port_id) => {
   return (dispatch) => {
     serverPortForwardRuleDelete(server_id, port_id).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
-      const data = response.data;
-      if (response.status >= 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
+      const data = handleResponse(dispatch, response);
       if (data) {
         dispatch({
           type: DELETE_SERVER_PORT_FORWARD_RULE,

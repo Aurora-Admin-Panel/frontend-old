@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Transition,
 } from "@windmill/react-ui";
 
 import {
@@ -22,7 +23,7 @@ import { PlusIcon, MinusIcon } from "../icons";
 const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.users.users);
-  const port = useSelector(state => state.ports.ports[portId])
+  const port = useSelector((state) => state.ports.ports[portId]);
   const [searchText, setSearchText] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
@@ -32,10 +33,10 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
 
   useEffect(() => {
     setIsAdding(false);
-    if (portId) dispatch(getServerPortUsers(portId, port.id))
+    if (isModalOpen && portId) dispatch(getServerPortUsers(portId, port.id));
   }, [portId]);
 
-  return (
+  return isModalOpen && (
     <Modal
       className="w-full px-6 py-4 overflow-y-visible bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl appear-done enter-done"
       isOpen={isModalOpen}
@@ -48,12 +49,23 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
             <div className="relative">
               <button
                 className="align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-1 py-1 rounded-md text-sm text-white bg-green-400 border border-transparent active:bg-green-600 hover:bg-green-700 focus:shadow-outline-green"
-                onClick={() => {setIsAdding(!isAdding);setSearchText("")}}
+                onClick={() => {
+                  setIsAdding(!isAdding);
+                  setSearchText("");
+                }}
               >
                 <PlusIcon className="w-5 h-5" />
                 添加用户
               </button>
-              {isAdding ? (
+              <Transition
+                show={isAdding}
+                enter="transition ease-in-out duration-150"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="transition ease-in-out duration-150"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
                 <div className="rounded shadow-xl my-2 absolute top-auto right-0">
                   <ul className="list-reset bg-white rounded">
                     <li className="p-2">
@@ -65,13 +77,22 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
                     </li>
                     {Object.keys(users).map((user_id) => {
                       if (
-                        !port.allowed_users.find(u => parseInt(u.user_id) === parseInt(user_id)) &&
-                        (searchText === "" || users[user_id].email.includes(searchText))
+                        !port.allowed_users.find(
+                          (u) => parseInt(u.user_id) === parseInt(user_id)
+                        ) &&
+                        (searchText === "" ||
+                          users[user_id].email.includes(searchText))
                       )
                         return (
                           <li
                             key={`port_user_editor_add_${user_id}`}
-                            onClick={() => dispatch(createServerPortUser(serverId, portId, {user_id}))}
+                            onClick={() =>
+                              dispatch(
+                                createServerPortUser(serverId, portId, {
+                                  user_id,
+                                })
+                              )
+                            }
                           >
                             <p className="p-2 block text-black hover:bg-green-100 cursor-pointer">
                               {users[user_id].email}
@@ -82,10 +103,10 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
                     })}
                   </ul>
                 </div>
-              ) : null}
+              </Transition>
             </div>
           </Label>
-          {port
+          {port && port.allowed_users
             ? port.allowed_users.map((user, idx) => (
                 <Label className="mt-4" key={`port_user_editor_users_${idx}`}>
                   <div className="flex flew-row justify-between items-center text-gray-500 focus-within:text-purple-600 dark:focus-within:text-purple-400">
@@ -94,9 +115,13 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
                     </span>
                     <button
                       className="flex w-auto h-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-500 border border-transparent rounded active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
-                      onClick={() => dispatch(deleteServerPortUser(serverId, portId, user.user_id))}
+                      onClick={() =>
+                        dispatch(
+                          deleteServerPortUser(serverId, portId, user.user_id)
+                        )
+                      }
                     >
-                      <MinusIcon className="w-5 h-5"/>
+                      <MinusIcon className="w-5 h-5" />
                     </button>
                   </div>
                 </Label>

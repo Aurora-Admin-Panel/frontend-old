@@ -11,9 +11,10 @@ import {
   TableRow,
 } from "@windmill/react-ui";
 import ReactLoading from "react-loading";
+import { ArrowUp, ArrowDown, Circle, CheckCircle, WarningCircle } from "phosphor-react";
 
 import { getServer } from "../redux/actions/servers";
-import { PlusIcon, TickIcon, ReportIcon } from "../icons";
+import { PlusIcon, InfinityIcon } from "../icons";
 import { clearServerPorts, getServerPorts } from "../redux/actions/ports";
 import AuthSelector from "../components/AuthSelector";
 import PortEditor from "../components/PortEditor";
@@ -34,10 +35,21 @@ const statusToIcon = (rule) => {
         />
       );
     } else {
-      if (status === "successful") return <TickIcon />;
-      else if (status === "failed") return <ReportIcon />;
+      if (status === "successful") return <CheckCircle weight="bold" />;
+      else if (status === "failed") return <WarningCircle weight="bold" />;
     }
-  } else return "🈚️ ";
+  } else return <Circle weight="bold" />
+};
+
+const formatSpeed = (speed) => {
+  speed = parseInt(speed, 10);
+  if (speed % 1000000 === 0) {
+    return speed / 1000000 + "Gb/s";
+  } else if (speed % 1000 === 0) {
+    return speed / 1000 + "Mb/s";
+  } else {
+    return speed + "kb/s";
+  }
 };
 
 function Server() {
@@ -51,6 +63,7 @@ function Server() {
   const [currentPort, setCurrentPort] = useState("");
   const [portEditorOpen, setPortEditorOpen] = useState(false);
   const [portUserEditorOpen, setPortUserEditorOpen] = useState(false);
+  const [showRule, setShowRule] = useState({});
 
   useEffect(() => {
     dispatch(clearServerPorts());
@@ -73,19 +86,19 @@ function Server() {
         isModalOpen={ruleEditorOpen}
         setIsModalOpen={setRuleEditorOpen}
       />
-      <AuthSelector permissions={["admin"]} >
-      <PortEditor
-        port={currentPort}
-        serverId={server_id}
-        isModalOpen={portEditorOpen}
-        setIsModalOpen={setPortEditorOpen}
-      />
-      <PortUserEditor
-        portId={currentPort.id}
-        serverId={server_id}
-        isModalOpen={portUserEditorOpen}
-        setIsModalOpen={setPortUserEditorOpen}
-      />
+      <AuthSelector permissions={["admin"]}>
+        <PortEditor
+          port={currentPort}
+          serverId={server_id}
+          isModalOpen={portEditorOpen}
+          setIsModalOpen={setPortEditorOpen}
+        />
+        <PortUserEditor
+          portId={currentPort.id}
+          serverId={server_id}
+          isModalOpen={portUserEditorOpen}
+          setIsModalOpen={setPortUserEditorOpen}
+        />
       </AuthSelector>
       <div className="flex justify-between items-center">
         <PageTitle>端口</PageTitle>
@@ -106,108 +119,146 @@ function Server() {
         <Table>
           <TableHeader>
             <tr>
+              <TableCell>
+                端口号
               <AuthSelector permissions={["admin"]}>
-                <TableCell>外部端口号</TableCell>
+                &nbsp;(外部)
               </AuthSelector>
-              <TableCell>端口号</TableCell>
-              <TableCell>转发规则</TableCell>
-              <TableCell>转发状态</TableCell>
+              </TableCell>
+              <TableCell>转发</TableCell>
+              <TableCell>限速</TableCell>
               <TableCell>动作</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {Object.keys(ports).map((port_id) => (
-              <TableRow key={`servers_server_${server_id}_${port_id}`}>
-                <AuthSelector permissions={["admin"]}>
-                  <TableCell>
-                    {ports[port_id].external_num
-                      ? ports[port_id].external_num
-                      : ports[port_id].num}
-                  </TableCell>
-                </AuthSelector>
-
-                <TableCell>
-                  <AuthSelector permissions={["admin"]}>
-                    {ports[port_id].num}
-                  </AuthSelector>
-                  <AuthSelector permissions={["user"]}>
-                    {ports[port_id].external_num
-                      ? ports[port_id].external_num
-                      : ports[port_id].num}
-                  </AuthSelector>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">
-                    {ports[port_id].forward_rule
-                      ? ports[port_id].forward_rule.method === "iptables"
-                        ? `[${ports[port_id].forward_rule.config.type}] ${ports[port_id].forward_rule.config.remote_address}:${ports[port_id].forward_rule.config.remote_port}`
-                        : ports[port_id].forward_rule.method
-                      : "无"}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">
-                    {statusToIcon(ports[port_id].forward_rule)}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col flex-wrap md:flex-row md:items-end md:space-x-1 space-y-1">
-                    <AuthSelector permissions={["admin"]}>
-                    <Button
-                        size="small"
-                        onClick={() => {
-                          setCurrentPort(ports[port_id]);
-                          setPortEditorOpen(true);
-                        }}
-                      >
-                        修改端口
-                      </Button>
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          setCurrentPort(ports[port_id]);
-                          setPortUserEditorOpen(true);
-                        }}
-                      >
-                        查看用户
-                      </Button>
-                    </AuthSelector>
-                    {ports[port_id].forward_rule ? (
-                      <>
-                        <Button
-                          size="small"
-                          onClick={() => {
-                            setCurrentRule(ports[port_id].forward_rule);
-                            setCurrentPort(ports[port_id]);
-                            setRuleEditorOpen(true);
-                          }}
-                          disabled={
-                            ports[port_id].forward_rule.status === "starting" ||
-                            ports[port_id].forward_rule.status === "running"
-                          }
+            {Object.keys(ports).map(
+              (port_id) =>
+                ports[port_id] && (
+                  <TableRow key={`servers_server_${server_id}_${port_id}`}>
+                    <TableCell>
+                      <AuthSelector permissions={["admin"]}>
+                        {ports[port_id].num}
+                        &nbsp;({ports[port_id].external_num
+                          ? ports[port_id].external_num
+                          : ports[port_id].num})
+                      </AuthSelector>
+                      <AuthSelector permissions={["user"]}>
+                        {ports[port_id].external_num
+                          ? ports[port_id].external_num
+                          : ports[port_id].num}
+                      </AuthSelector>
+                    </TableCell>
+                    <TableCell>
+                      <div className="relative z-20 inline-flex">
+                        <div
+                          onMouseEnter={() => setShowRule({ [port_id]: true })}
+                          onMouseLeave={() => setShowRule({ [port_id]: false })}
                         >
-                          修改转发
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          setCurrentRule(null);
-                          setCurrentPort(ports[port_id]);
-                          setRuleEditorOpen(true);
-                        }}
-                      >
-                        添加转发
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+                          {statusToIcon(ports[port_id].forward_rule)}
+                        </div>
+                        {showRule[port_id] ? (
+                          <div className="relative">
+                            <div className="absolute top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
+                              {ports[port_id] && ports[port_id].forward_rule
+                                ? ports[port_id].forward_rule.method ===
+                                  "iptables"
+                                  ? `[${ports[port_id].forward_rule.config.type}] ${ports[port_id].forward_rule.config.remote_address}:${ports[port_id].forward_rule.config.remote_port}`
+                                  : ports[port_id].forward_rule.method
+                                : "无转发设置"}
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col justify-center">
+                        {ports[port_id].config &&
+                        (ports[port_id].config.egress_limit ||
+                          ports[port_id].ingress_limit) ? (
+                          <>
+                            {ports[port_id].config.egress_limit ? (
+                              <span className="flex flex-auto items-center">
+                                <ArrowDown size={16} />
+                                {formatSpeed(
+                                  ports[port_id].config.egress_limit
+                                )}
+                              </span>
+                            ) : null}
+                            {ports[port_id].config.ingress_limit ? (
+                              <span className="flex flex-auto items-center">
+                                <ArrowUp size={16} />
+                                {formatSpeed(
+                                  ports[port_id].config.ingress_limit
+                                )}
+                              </span>
+                            ) : null}
+                          </>
+                        ) : (
+                          <InfinityIcon />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col flex-wrap md:flex-row md:items-end md:space-x-1 space-y-1">
+                        <AuthSelector permissions={["admin"]}>
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setCurrentPort(ports[port_id]);
+                              setPortEditorOpen(true);
+                            }}
+                          >
+                            修改端口
+                          </Button>
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setCurrentPort(ports[port_id]);
+                              setPortUserEditorOpen(true);
+                            }}
+                          >
+                            查看用户
+                          </Button>
+                        </AuthSelector>
+                        {ports[port_id].forward_rule ? (
+                          <>
+                            <Button
+                              size="small"
+                              onClick={() => {
+                                setCurrentRule(ports[port_id].forward_rule);
+                                setCurrentPort(ports[port_id]);
+                                setRuleEditorOpen(true);
+                              }}
+                              disabled={
+                                ports[port_id].forward_rule.status ===
+                                  "starting" ||
+                                ports[port_id].forward_rule.status === "running"
+                              }
+                            >
+                              修改转发
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setCurrentRule(null);
+                              setCurrentPort(ports[port_id]);
+                              setRuleEditorOpen(true);
+                            }}
+                          >
+                            添加转发
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+      <div className="h-3" />
     </>
   );
 }

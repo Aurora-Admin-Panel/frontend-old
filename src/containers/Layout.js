@@ -1,53 +1,59 @@
-import React, { useContext, Suspense, useEffect, lazy } from 'react'
-import { Switch, Route, Redirect, useLocation, useHistory } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import React, { useContext, Suspense, useEffect, lazy } from "react";
+import {
+  Switch,
+  Route,
+  Redirect,
+  useLocation,
+  useHistory,
+} from "react-router-dom";
+import { useSelector } from "react-redux";
 
-import routes from '../routes'
-import Sidebar from '../components/Sidebar'
-import Header from '../components/Header'
-import Main from '../containers/Main'
-import ThemedSuspense from '../components/ThemedSuspense'
-import { SidebarContext } from '../context/SidebarContext'
+import routes from "../routes";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import ErrorBanner from "../components/ErrorBanner";
+import Main from "../containers/Main";
+import ThemedSuspense from "../components/ThemedSuspense";
+import { SidebarContext } from "../context/SidebarContext";
 
-const Page404 = lazy(() => import('../pages/404'))
+const Page404 = lazy(() => import("../pages/404"));
 
 function Layout() {
-  const { isSidebarOpen, closeSidebar } = useContext(SidebarContext)
-  let location = useLocation()
-  const permission = useSelector(state => state.auth.permission)
+  const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
+  let location = useLocation();
+  const permission = useSelector((state) => state.auth.permission);
 
   useEffect(() => {
-    closeSidebar()
-  }, [location])
+    closeSidebar();
+  }, [location]);
 
   if (!permission) {
-    return <Redirect from={location.pathname} to="/login" />
+    return <Redirect from={location.pathname} to="/login" />;
   }
   return (
     <div
-      className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${isSidebarOpen && 'overflow-hidden'}`}
+      className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${
+        isSidebarOpen && "overflow-hidden"
+      }`}
     >
       <Sidebar />
-
+      <ErrorBanner />
 
       <div className="flex flex-col flex-1 w-full">
         <Header />
         <Main>
-        {/* <div className="relative top-0 right-0 bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
-  <p className="font-bold">Be Warned</p>
-  <p>Something not ideal might be happening.</p>
-</div> */}
           <Suspense fallback={<ThemedSuspense />}>
             <Switch>
               {routes.map((route, i) => {
-                return route.component && route.permissions.includes(permission) ? (
+                return route.component &&
+                  route.permissions.includes(permission) ? (
                   <Route
                     key={i}
                     exact={true}
                     path={`/app${route.path}`}
                     render={(props) => <route.component {...props} />}
                   />
-                ) : null
+                ) : null;
               })}
               <Redirect exact from="/app" to="/app/servers" />
               <Route component={Page404} />
@@ -56,7 +62,7 @@ function Layout() {
         </Main>
       </div>
     </div>
-  )
+  );
 }
 
-export default Layout
+export default Layout;

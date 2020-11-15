@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
   Button,
+  Dropdown,
+  DropdownItem,
   TableBody,
   TableContainer,
   Table,
@@ -19,9 +22,11 @@ import PageTitle from "../components/Typography/PageTitle";
 function Servers() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [currentServer, setCurrentServer] = useState(null);
+  const [adminEditOpen, setAdminEditOpen] = useState(false);
   const servers = useSelector((state) => state.servers.servers);
   const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(getServers());
@@ -70,7 +75,13 @@ function Servers() {
                   <span className="text-sm">{servers[server_id].address}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex justify-start space-x-1 space-y-1">
+                  <div className="flex justify-start space-x-1">
+                    <Button
+                      size="small"
+                      onClick={() => history.push(`/app/servers/${server_id}`)}
+                    >
+                      查看
+                    </Button>
                     {permission === "admin" ? (
                       <Button
                         size="small"
@@ -82,13 +93,6 @@ function Servers() {
                         编辑
                       </Button>
                     ) : null}
-                    <Button
-                      size="small"
-                      tag={Link}
-                      to={`/app/servers/${server_id}`}
-                    >
-                      查看
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

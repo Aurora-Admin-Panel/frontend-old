@@ -2,14 +2,14 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Button } from '@windmill/react-ui'
 
-import * as Icons from '../../icons'
+import * as Icons from "phosphor-react"
 import routes from '../../routes/sidebar'
 import { NavLink, Route } from 'react-router-dom'
 import SidebarSubmenu from './SidebarSubmenu'
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon]
-  return <Icon {...props} />
+  return <Icon {...props} weight="bold" />
 }
 
 function SidebarContent() {

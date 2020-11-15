@@ -1,37 +1,25 @@
-import {ADD_TODO, TOGGLE_TODO} from "../actionTypes";
+import { SHOW_ERROR, CLEAR_ERROR } from "../actionTypes";
 
 const initialState = {
-  allIds: [],
-  byIds: {}
+  show: false,
+  title: '',
+  body: ''
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case ADD_TODO: {
-      const {id, content} = action.payload;
+    case SHOW_ERROR: {
       return {
-        ...state,
-        allIds: [...state.allIds, id],
-        byIds: {
-          ...state.byIds,
-          [id]: {
-            content,
-            completed: false
-          }
-        }
+        show: true,
+        title: action.payload.title,
+        body: action.payload.body
       };
     }
-    case TOGGLE_TODO: {
-      const {id} = action.payload;
+    case CLEAR_ERROR: {
       return {
-        ...state,
-        byIds: {
-          ...state.byIds,
-          [id]: {
-            ...state.byIds[id],
-            completed: !state.byIds[id].completed
-          }
-        }
+        show: false,
+        title: '',
+        body: ''
       };
     }
     default:

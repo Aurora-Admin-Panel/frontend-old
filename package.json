@@ -24,6 +24,7 @@
     "classnames": "2.2.6",
     "faker": "4.1.0",
     "jwt-decode": "^3.0.0",
+    "phosphor-react": "^1.0.0",
     "react": "^16.13.1",
     "react-chartjs-2": "2.9.0",
     "react-dom": "^16.13.1",
