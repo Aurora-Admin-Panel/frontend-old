@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Redirect } from 'react-router-dom'
 
 import ImageLight from '../assets/img/login-office.jpeg'
 import ImageDark from '../assets/img/login-office-dark.jpeg'
@@ -24,7 +24,7 @@ function Login() {
   }
 
   if (auth.token.length > 0) {
-    history.push('/app')
+    return <Redirect to="/app" />
   }
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">

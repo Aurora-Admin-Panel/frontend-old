@@ -1,5 +1,6 @@
 import decodeJwt from "jwt-decode";
 
+import { handleError } from "./utils"
 import { logIn, register } from "../apis/auth";
 import { LOG_IN, LOG_OUT } from "../actionTypes";
 
@@ -18,16 +19,7 @@ export const login = (email, password) => {
       throw new Error("Email or password was not provided");
     }
     logIn({ username: email, password: password }).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
       const data = response.data;
-      if (response.status > 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
       if ("access_token" in data) {
         const decodedToken = decodeJwt(data["access_token"]);
         localStorage.setItem("token", data["access_token"]);
@@ -40,30 +32,14 @@ export const login = (email, password) => {
           },
         });
       }
-    });
+    }).catch(error => handleError(dispatch, error))
   };
 };
 
 export const signUp = (email, password) => {
   return (dispatch) => {
-    if (!(email.length > 0)) {
-      throw new Error("Email was not provided");
-    }
-    if (!(password.length > 0)) {
-      throw new Error("Password was not provided");
-    }
-
     register({ username: email, password: password }).then((response) => {
-      if (response.status === 500) {
-        throw new Error("Internal server error");
-      }
       const data = response.data;
-      if (response.status > 400 && response.status < 500) {
-        if (data.detail) {
-          throw data.detail;
-        }
-        throw data;
-      }
       if ("access_token" in data) {
         const decodedToken = decodeJwt(data["access_token"]);
         localStorage.setItem("token", data["access_token"]);
@@ -76,7 +52,7 @@ export const signUp = (email, password) => {
           },
         });
       }
-    });
+    }).catch(error => handleError(dispatch, error))
   };
 };
 
