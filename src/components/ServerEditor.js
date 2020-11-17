@@ -10,7 +10,9 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
+import { At } from 'phosphor-react'
 
+import { TwoDotIcon } from "../icons" 
 import {
   createServer,
   editServer,
@@ -22,8 +24,11 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [ansibleName, setAnsibleName] = useState("");
-  const [ansibleHost, setAnsibleHost] = useState(null);
-  const [ansiblePort, setAnsiblePort] = useState(null);
+  const [ansibleHost, setAnsibleHost] = useState("");
+  const [ansiblePort, setAnsiblePort] = useState(22);
+  const [sshUser, setSshUser] = useState("root");
+  const [sshPassword, setSshPassword] = useState("");
+  const [sudoPassword, setSudoPassword] = useState("");
   const [isDelete, setIsDelete] = useState(false);
 
   const validName = () => name.length > 0;
@@ -50,9 +55,12 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
         name,
         address,
         ansible_name: ansibleName,
+        ansible_user: sshUser,
       };
       if (ansibleHost) data.ansible_host = ansibleHost;
       if (ansiblePort) data.ansible_port = ansiblePort;
+      if (sshPassword) data.ssh_password = sshPassword;
+      if (sudoPassword) data.sudo_password = sudoPassword;
 
       if (server) {
         dispatch(editServer(server.id, data));
@@ -65,10 +73,13 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
 
   useEffect(() => {
     setIsDelete(false);
+    setSshPassword("");
+    setSudoPassword("");
     if (server) {
       setName(server.name);
       setAddress(server.address);
       setAnsibleName(server.ansible_name);
+      setSshUser(server.ansible_user);
       if (server.ansible_host) setAnsibleHost(server.ansible_host);
       else setAnsibleHost("");
       if (server.ansible_port) setAnsiblePort(server.ansible_port);
@@ -78,7 +89,8 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       setAddress("");
       setAnsibleName("");
       setAnsibleHost("");
-      setAnsiblePort("");
+      setAnsiblePort(22);
+      setSshUser("root");
     }
   }, [server]);
 
@@ -87,7 +99,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       <ModalHeader>{server ? "修改" : "添加"}服务器</ModalHeader>
       <ModalBody>
         <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-          <Label className="mt-4">
+          <Label className="mt-1">
             <span>名字</span>
             <Input
               className="mt-1"
@@ -97,7 +109,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
               onChange={(e) => setName(e.target.value)}
             />
           </Label>
-          <Label className="mt-4">
+          <Label className="mt-1">
             <span>地址</span>
             <Input
               className="mt-1"
@@ -107,7 +119,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
               onChange={(e) => setAddress(e.target.value)}
             />
           </Label>
-          <Label className="mt-4">
+          <Label className="mt-1">
             <span>Ansible别名</span>
             <Input
               className="mt-1"
@@ -117,24 +129,55 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
               onChange={(e) => setAnsibleName(e.target.value)}
             />
           </Label>
-          <Label className="mt-4">
-            <span>SSH地址</span>
+          <Label className="mt-1 flex flex-col">
+            <span>SSH连接信息</span>
+            <div className="mt-1 flex flex-row items-center">
+              <div className="flex flex-auto">
+                <Input
+                  placeholder={"默认root"}
+                  value={sshUser}
+                  valid={() => sshUser.length > 0}
+                  onChange={(e) => setSshUser(e.target.value)}
+                />
+              </div>
+              <At size={24} />
+              <div className="flex flex-auto">
+                <Input
+                  placeholder={"默认为服务器地址"}
+                  value={ansibleHost}
+                  valid={validAnsibleHost()}
+                  onChange={(e) => setAnsibleHost(e.target.value)}
+                />
+              </div>
+              <TwoDotIcon />
+              <div className="flex flex-auto">
+                <Input
+                  placeholder={"默认22"}
+                  value={ansiblePort}
+                  valid={validAnsiblePort()}
+                  onChange={(e) => setAnsiblePort(e.target.value)}
+                />
+              </div>
+            </div>
+          </Label>
+          <Label className="mt-1">
+            <span>SSH密码</span>
             <Input
               className="mt-1"
-              placeholder={"可为空，默认为服务器地址"}
-              value={ansibleHost}
-              valid={validAnsibleHost()}
-              onChange={(e) => setAnsibleHost(e.target.value)}
+              placeholder={"可为空，默认使用ssh key"}
+              value={sshPassword}
+              valid={() => !sshPassword || sshPassword.length >= 6}
+              onChange={(e) => setSshPassword(e.target.value)}
             />
           </Label>
-          <Label className="mt-4">
-            <span>SSH端口</span>
+          <Label className="mt-1">
+            <span>SUDO密码</span>
             <Input
               className="mt-1"
-              placeholder={"可为空，默认22"}
-              value={ansiblePort}
-              valid={validAnsiblePort()}
-              onChange={(e) => setAnsiblePort(e.target.value)}
+              placeholder={"可为空，用户非root且需输sudo密码则需填写"}
+              value={sudoPassword}
+              valid={() => !sudoPassword || sudoPassword.length >= 6}
+              onChange={(e) => setSudoPassword(e.target.value)}
             />
           </Label>
 
@@ -151,33 +194,11 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
         </div>
       </ModalBody>
       <ModalFooter>
-        <div className="hidden sm:block">
+        <div className="w-full flex flex-row justify-end space-x-2">
           <Button layout="outline" onClick={() => setIsModalOpen(false)}>
             取消
           </Button>
-        </div>
-        <div className="hidden sm:block">
           <Button onClick={submitForm} disabled={!validForm()}>
-            {server ? "修改" : "添加"}
-          </Button>
-        </div>
-        <div className="block w-full sm:hidden">
-          <Button
-            block
-            size="large"
-            layout="outline"
-            onClick={() => setIsModalOpen(false)}
-          >
-            取消
-          </Button>
-        </div>
-        <div className="block w-full sm:hidden">
-          <Button
-            block
-            size="large"
-            onClick={submitForm}
-            disabled={!validForm()}
-          >
             {server ? "修改" : "添加"}
           </Button>
         </div>

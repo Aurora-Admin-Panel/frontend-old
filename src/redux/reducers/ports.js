@@ -42,6 +42,9 @@ export default function (state = initialState, action) {
       };
     }
     case DELETE_SERVER_PORT: {
+      if (!state.ports[action.payload.id]) {
+        return { ...state }
+      }
       return {
         ...state,
         ports: {
@@ -51,6 +54,9 @@ export default function (state = initialState, action) {
       };
     }
     case ADD_SERVER_PORT_USERS: {
+      if (!state.ports[action.payload.port_id]) {
+        return { ...state }
+      }
       return {
         ...state,
         ports: {
@@ -63,6 +69,9 @@ export default function (state = initialState, action) {
       }
     }
     case ADD_SERVER_PORT_USER: {
+      if (!state.ports[action.payload.port_id]) {
+        return { ...state }
+      }
       return {
         ...state,
         ports: {
@@ -75,6 +84,9 @@ export default function (state = initialState, action) {
       }
     }
     case DELETE_SERVER_PORT_USER: {
+      if (!state.ports[action.payload.port_id]) {
+        return { ...state }
+      }
       return {
         ...state,
         ports: {
@@ -87,18 +99,33 @@ export default function (state = initialState, action) {
       }
     }
     case ADD_SERVER_PORT_FORWARD_RULE: {
+      if (!state.ports[action.payload.port_id]) {
+        return { ...state }
+      }
+      let count = -1
+      if (action.payload.status === 'running' || action.payload.status === 'starting') {
+        if (state.ports[action.payload.port_id].forward_rule && state.ports[action.payload.port_id].forward_rule.count >= 0) {
+          count = state.ports[action.payload.port_id].forward_rule.count
+        }
+      }
       return {
         ...state,
         ports: {
           ...state.ports,
           [action.payload.port_id]: {
             ...state.ports[action.payload.port_id],
-            forward_rule: action.payload,
+            forward_rule: {
+              ...action.payload,
+              count: count + 1
+            }
           },
         },
       };
     }
     case DELETE_SERVER_PORT_FORWARD_RULE: {
+      if (!state.ports[action.payload.port_id]) {
+        return { ...state }
+      }
         return {
           ...state,
           ports: {

@@ -10,10 +10,10 @@ import {
   TableCell,
   TableRow,
 } from "@windmill/react-ui";
+import { CheckCircle, WarningCircle } from "phosphor-react"
 
 import { getUsers } from "../redux/actions/users";
 import PageTitle from "../components/Typography/PageTitle";
-import { TickIcon, ReportIcon } from "../icons";
 
 function Users() {
   const users = useSelector((state) => state.users.users);
@@ -44,7 +44,7 @@ function Users() {
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">
-                    {users[user_id].is_active ? <TickIcon /> : <ReportIcon />}
+                    {users[user_id].is_active ? <CheckCircle weight="bold" size={20} /> : <WarningCircle weight="bold" size={20} />}
                   </span>
                 </TableCell>
                 <TableCell>

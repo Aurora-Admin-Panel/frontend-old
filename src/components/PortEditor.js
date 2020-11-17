@@ -79,6 +79,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   };
 
   useEffect(() => {
+    console.log(port)
     setIsDelete(false);
     if (port) {
       setNum(port.num);
@@ -197,33 +198,11 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
         </div>
       </ModalBody>
       <ModalFooter>
-        <div className="hidden sm:block">
+      <div className="w-full flex flex-row justify-end space-x-2">
           <Button layout="outline" onClick={() => setIsModalOpen(false)}>
             取消
           </Button>
-        </div>
-        <div className="hidden sm:block">
           <Button onClick={submitForm} disabled={!validForm()}>
-            {port ? "修改" : "添加"}
-          </Button>
-        </div>
-        <div className="block w-full sm:hidden">
-          <Button
-            block
-            size="large"
-            layout="outline"
-            onClick={() => setIsModalOpen(false)}
-          >
-            取消
-          </Button>
-        </div>
-        <div className="block w-full sm:hidden">
-          <Button
-            block
-            size="large"
-            onClick={submitForm}
-            disabled={!validForm()}
-          >
             {port ? "修改" : "添加"}
           </Button>
         </div>

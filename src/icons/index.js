@@ -32,6 +32,8 @@ import { ReactComponent as ReportIcon } from './report.svg'
 import { ReactComponent as PlusIcon } from './plus.svg'
 import { ReactComponent as MinusIcon } from './minus.svg'
 import { ReactComponent as InfinityIcon } from './infinity.svg'
+import { ReactComponent as TwoDotIcon } from './twoDot.svg'
+
 
 export {
   ButtonsIcon,
@@ -67,5 +69,6 @@ export {
   ReportIcon,
   PlusIcon,
   MinusIcon,
-  InfinityIcon
+  InfinityIcon,
+  TwoDotIcon,
 }

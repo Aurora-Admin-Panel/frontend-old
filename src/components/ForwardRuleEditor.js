@@ -310,41 +310,14 @@ const ForwardRuleEditor = ({
           </div>
         </ModalBody>
         <ModalFooter>
-          {/* I don't like this approach. Consider passing a prop to ModalFooter
-           * that if present, would duplicate the buttons in a way similar to this.
-           * Or, maybe find some way to pass something like size="large md:regular"
-           * to Button
-           */}
-          <div className="hidden sm:block">
-            <Button layout="outline" onClick={() => setIsModalOpen(false)}>
-              取消
-            </Button>
-          </div>
-          <div className="hidden sm:block">
-            <Button onClick={submitForm} disabled={!validForm()}>
-              {forwardRule ? "修改" : "添加"}
-            </Button>
-          </div>
-          <div className="block w-full sm:hidden">
-            <Button
-              block
-              size="large"
-              layout="outline"
-              onClick={() => setIsModalOpen(false)}
-            >
-              取消
-            </Button>
-          </div>
-          <div className="block w-full sm:hidden">
-            <Button
-              block
-              size="large"
-              onClick={submitForm}
-              disabled={!validForm()}
-            >
-              {forwardRule ? "修改" : "添加"}
-            </Button>
-          </div>
+        <div className="w-full flex flex-row justify-end space-x-2">
+          <Button layout="outline" onClick={() => setIsModalOpen(false)}>
+            取消
+          </Button>
+          <Button onClick={submitForm} disabled={!validForm()}>
+            {forwardRule ? "修改" : "添加"}
+          </Button>
+        </div>
         </ModalFooter>
       </Modal>
     </>

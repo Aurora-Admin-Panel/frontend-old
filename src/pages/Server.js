@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  Badge,
   Button,
   TableBody,
   TableContainer,
@@ -35,10 +36,23 @@ const statusToIcon = (rule) => {
         />
       );
     } else {
-      if (status === "successful") return <CheckCircle weight="bold" />;
-      else if (status === "failed") return <WarningCircle weight="bold" />;
+      if (status === "successful") return <CheckCircle weight="bold" size={20} />;
+      else if (status === "failed") return <WarningCircle weight="bold" size={20} />;
     }
-  } else return <Circle weight="bold" />
+  } else return <Circle weight="bold" size={20} />
+};
+const statusToBadge = (rule) => {
+  if (rule) {
+    const status = rule.status;
+    if (status === "running" || status === "starting") {
+      return (
+        <Badge type="warning">转发中</Badge>
+      );
+    } else {
+      if (status === "successful") return <Badge type="success">转发成功</Badge>;
+      else if (status === "failed") return <Badge type="danger">转发失败</Badge>;
+    }
+  } else return null;
 };
 
 const formatSpeed = (speed) => {
@@ -159,7 +173,8 @@ function Server() {
                         {showRule[port_id] ? (
                           <div className="relative">
                             <div className="absolute top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
-                              {ports[port_id] && ports[port_id].forward_rule
+                              {statusToBadge(ports[port_id].forward_rule)}
+                              {ports[port_id].forward_rule
                                 ? ports[port_id].forward_rule.method ===
                                   "iptables"
                                   ? `[${ports[port_id].forward_rule.config.type}] ${ports[port_id].forward_rule.config.remote_address}:${ports[port_id].forward_rule.config.remote_port}`
@@ -230,9 +245,11 @@ function Server() {
                                 setRuleEditorOpen(true);
                               }}
                               disabled={
-                                ports[port_id].forward_rule.status ===
+                                (!ports[port_id].forward_rule.count ||
+                                  ports[port_id].forward_rule.count <= 10) &&
+                                (ports[port_id].forward_rule.status ===
                                   "starting" ||
-                                ports[port_id].forward_rule.status === "running"
+                                ports[port_id].forward_rule.status === "running")
                               }
                             >
                               修改转发
