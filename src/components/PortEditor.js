@@ -99,7 +99,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       setEgressLimitScalar(1);
       setIngressLimitScalar(1);
     }
-  }, [port]);
+  }, [isModalOpen]);
 
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

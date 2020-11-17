@@ -7,4 +7,3 @@ ENV PATH=$PATH:/node_modules/.bin
 RUN npm install
 
 WORKDIR /app
-ADD . /app

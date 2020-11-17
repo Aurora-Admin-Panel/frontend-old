@@ -62,8 +62,7 @@ const ServerModal = ({ server, serverId, isModalOpen, setIsModalOpen }) => {
       setRemoteAddress(forwardRule.config.remote_address);
       setRemotePort(forwardRule.config.remote_port);
     }
-  }, [forwardRule]);
-  console.log(type);
+  }, [isModalOpen]);
 
   return (
     <>

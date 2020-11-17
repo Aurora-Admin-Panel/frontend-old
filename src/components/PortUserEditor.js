@@ -34,7 +34,7 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
   useEffect(() => {
     setIsAdding(false);
     if (isModalOpen && portId) dispatch(getServerPortUsers(portId, port.id));
-  }, [portId]);
+  }, [isModalOpen]);
 
   return isModalOpen && (
     <Modal

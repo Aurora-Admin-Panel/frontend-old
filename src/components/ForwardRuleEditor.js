@@ -120,7 +120,7 @@ const ForwardRuleEditor = ({
       setServeNodes([]);
       setChainNodes([]);
     }
-  }, [forwardRule]);
+  }, [isModalOpen]);
 
   return (
     <>
