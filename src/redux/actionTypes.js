@@ -8,6 +8,8 @@ export const AUTH_ERROR_CLEAR = "AUTH_ERROR_CLEAR";
 export const ADD_USERS = "ADD_USERS";
 export const ADD_USER = "ADD_USER";
 export const DELETE_USER = "DELETE_USER";
+export const ADD_ME = "ADD_ME";
+export const DELETE_ME = "DELETE_ME";
 
 // Server actions
 export const ADD_SERVERS = "ADD_SERVERS";

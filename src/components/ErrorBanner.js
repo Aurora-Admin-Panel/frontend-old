@@ -13,11 +13,11 @@ const ErrorBanner = () => {
     <Transition
       show={error.show}
       enter="transition ease-in-out duration-150"
-      enterFrom="opacity-0 transform translate-x-20"
+      enterFrom="opacity-0 transform"
       enterTo="opacity-100"
       leave="transition ease-in-out duration-150"
       leaveFrom="opacity-100"
-      leaveTo="opacity-0 transform translate-x-20"
+      leaveTo="opacity-0 transform"
     >
       <div
         className="absolute top-1/10 right-0 bg-red-100 border-l-4 border-red-400 text-red-700 p-4 z-9999 hidden lg:block"

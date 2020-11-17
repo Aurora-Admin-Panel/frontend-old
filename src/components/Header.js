@@ -1,31 +1,34 @@
-import React, { useContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { Avatar, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
-
-import { logout } from "../redux/actions/auth"
-import { SidebarContext } from '../context/SidebarContext'
+import React, { useContext, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
-  MoonIcon,
-  SunIcon,
-  MenuIcon,
-  OutlineLogoutIcon,
-} from '../icons'
-import AvatarImg from "../assets/img/avataaars.png"
+  Avatar,
+  Dropdown,
+  DropdownItem,
+  WindmillContext,
+} from "@windmill/react-ui";
+import { UserGear, SignOut } from "phosphor-react";
+
+import { logout } from "../redux/actions/auth";
+import { SidebarContext } from "../context/SidebarContext";
+import { MoonIcon, SunIcon, MenuIcon, OutlineLogoutIcon } from "../icons";
+import AvatarImg from "../assets/img/avataaars.png";
 
 function Header() {
   const dispatch = useDispatch();
-  const { mode, toggleMode } = useContext(WindmillContext)
-  const { toggleSidebar } = useContext(SidebarContext)
+  const history = useHistory();
+  const { mode, toggleMode } = useContext(WindmillContext);
+  const { toggleSidebar } = useContext(SidebarContext);
 
-  const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false)
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   function handleNotificationsClick() {
-    setIsNotificationsMenuOpen(!isNotificationsMenuOpen)
+    setIsNotificationsMenuOpen(!isNotificationsMenuOpen);
   }
 
   function handleProfileClick() {
-    setIsProfileMenuOpen(!isProfileMenuOpen)
+    setIsProfileMenuOpen(!isProfileMenuOpen);
   }
 
   return (
@@ -61,7 +64,7 @@ function Header() {
               onClick={toggleMode}
               aria-label="Toggle color mode"
             >
-              {mode === 'dark' ? (
+              {mode === "dark" ? (
                 <SunIcon className="w-5 h-5" aria-hidden="true" />
               ) : (
                 <MoonIcon className="w-5 h-5" aria-hidden="true" />
@@ -130,16 +133,20 @@ function Header() {
                 <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Settings</span>
               </DropdownItem> */}
+              <DropdownItem onClick={() => {setIsProfileMenuOpen(false);history.push("/app/me");}}>
+                <UserGear size={20} />
+                <span className="ml-3">Profile</span>
+              </DropdownItem>
               <DropdownItem onClick={() => dispatch(logout())}>
-                <OutlineLogoutIcon className="w-4 h-4 mr-3" aria-hidden="true" />
-                <span>Log out</span>
+                <SignOut size={20} />
+                <span className="ml-3">Log out</span>
               </DropdownItem>
             </Dropdown>
           </li>
         </ul>
       </div>
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;

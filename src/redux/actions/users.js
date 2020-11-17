@@ -1,6 +1,6 @@
 import { handleError } from "./utils";
-import { usersGet, userGet, userEdit, userDelete } from "../apis/users";
-import { ADD_USERS, ADD_USER, DELETE_USER } from "../actionTypes";
+import { usersGet, userGet, userEdit, userDelete, meGet, meEdit } from "../apis/users";
+import { ADD_USERS, ADD_USER, DELETE_USER, ADD_ME, DELETE_ME } from "../actionTypes";
 
 export const getUsers = () => {
   return (dispatch) => {
@@ -56,4 +56,40 @@ export const deleteUser = (user_id) => {
       }
     }).catch(error => handleError(dispatch, error))
   };
+};
+
+export const getMe = () => {
+  return (dispatch) => {
+    meGet().then((response) => {
+      const data = response.data
+      if (data) {
+        dispatch({
+          type: ADD_ME,
+          payload: data,
+        });
+      }
+    }).catch(error => handleError(dispatch, error))
+  };
+};
+
+export const editMe = (data) => {
+  return (dispatch) => {
+    meEdit(data).then((response) => {
+      const data = response.data
+      if (data) {
+        dispatch({
+          type: ADD_ME,
+          payload: data,
+        });
+      }
+    }).catch(error => handleError(dispatch, error))
+  };
+};
+
+export const deleteMe = () => {
+  return (dispatch) => {
+        dispatch({
+          type: DELETE_ME,
+        });
+      }
 };

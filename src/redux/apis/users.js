@@ -4,6 +4,11 @@ export const meGet = () => v1AuthRequest({
     method: "get",
     url: '/users/me'
 })
+export const meEdit = (data) => v1AuthRequest({
+    method: "put",
+    url: '/users/me',
+    data: data
+})
 
 export const usersGet = (user_id) => v1AuthRequest({
     method: "get",

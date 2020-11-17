@@ -14,6 +14,7 @@ const Tables = lazy(() => import('../pages/Tables'))
 const Page404 = lazy(() => import('../pages/404'))
 const Blank = lazy(() => import('../pages/Blank'))
 const About = lazy(() => import('../pages/About'))
+const Me = lazy(() => import('../pages/Me'))
 
 /**
  * ⚠ These are internal routes!
@@ -49,6 +50,11 @@ const routes = [
   {
     path: '/about',
     component: About,
+    permissions: ['admin', 'user']
+  },
+  {
+    path: '/me',
+    component: Me,
     permissions: ['admin', 'user']
   },
   {
