@@ -31,5 +31,5 @@ export const ADD_TODO = "ADD_TODO";
 export const TOGGLE_TODO = "TOGGLE_TODO";
 export const SET_FILTER = "SET_FILTER";
 
-export const SHOW_ERROR = "SHOW_ERROR";
-export const CLEAR_ERROR = "CLEAR_ERROR";
+export const SHOW_BANNER = "SHOW_BANNER";
+export const CLEAR_BANNER = "CLEAR_BANNER";

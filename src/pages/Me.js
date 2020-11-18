@@ -27,7 +27,7 @@ function Me() {
   const [newPassword, setNewPassword] = useState("");
   const [repeatedNewPassword, setRepeatedNewPassword] = useState("");
   const validPrevPassword = () => !prevPassword || prevPassword.length > 0;
-  const validNewPassword = () => !newPassword || newPassword > 5;
+  const validNewPassword = () => !newPassword || newPassword.length > 5;
   const validRepeatedNewPassword = () =>
     !newPassword || repeatedNewPassword === newPassword;
   const validForm = () => prevPassword && newPassword && repeatedNewPassword && validPrevPassword() && validNewPassword() && validRepeatedNewPassword();

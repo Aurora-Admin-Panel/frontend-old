@@ -1,7 +1,7 @@
 import React, { lazy } from 'react'
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import AccessibleNavigationAnnouncer from './components/AccessibleNavigationAnnouncer'
-import ErrorBanner from './components/ErrorBanner'
+import Banner from './components/Banner'
 
 const Layout = lazy(() => import('./containers/Layout'))
 const Login = lazy(() => import('./pages/Login'))
@@ -13,7 +13,7 @@ function App() {
     <>
       <Router>
         <AccessibleNavigationAnnouncer />
-        <ErrorBanner />
+        <Banner />
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/create-account" component={CreateAccount} />

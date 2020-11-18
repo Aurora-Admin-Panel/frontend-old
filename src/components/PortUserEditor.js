@@ -28,12 +28,9 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    dispatch(getUsers());
-  }, []);
-
-  useEffect(() => {
     setIsAdding(false);
     if (isModalOpen && portId) dispatch(getServerPortUsers(portId, port.id));
+    if (isModalOpen) dispatch(getUsers());
   }, [isModalOpen]);
 
   return isModalOpen && (
@@ -77,6 +74,7 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
                     </li>
                     {Object.keys(users).map((user_id) => {
                       if (
+                        port.allowed_users && 
                         !port.allowed_users.find(
                           (u) => parseInt(u.user_id) === parseInt(user_id)
                         ) &&

@@ -1,4 +1,5 @@
 import { handleError } from "./utils";
+import { showBanner } from "./banner";
 import { usersGet, userGet, userEdit, userDelete, meGet, meEdit } from "../apis/users";
 import { ADD_USERS, ADD_USER, DELETE_USER, ADD_ME, DELETE_ME } from "../actionTypes";
 
@@ -77,6 +78,7 @@ export const editMe = (data) => {
     meEdit(data).then((response) => {
       const data = response.data
       if (data) {
+        dispatch(showBanner("用户修改", "修改成功", "success"))
         dispatch({
           type: ADD_ME,
           payload: data,

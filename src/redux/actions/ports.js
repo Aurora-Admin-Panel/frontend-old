@@ -1,4 +1,5 @@
 import { handleError } from "./utils";
+import { showBanner } from "./banner"
 import {
   serverPortsGet,
   serverPortCreate,
@@ -203,6 +204,7 @@ export const createForwardRule = (server_id, port_id, data) => {
       .then((response) => {
         const data = response.data;
         if (data) {
+          dispatch(showBanner("转发添加成功", "正在生效中", "success"))
           dispatch({
             type: ADD_SERVER_PORT_FORWARD_RULE,
             payload: {
@@ -228,6 +230,7 @@ export const editForwardRule = (server_id, port_id, data) => {
       .then((response) => {
         const data = response.data;
         if (data) {
+          dispatch(showBanner("转发修改成功", "正在生效中", "success"))
           dispatch({
             type: ADD_SERVER_PORT_FORWARD_RULE,
             payload: {

@@ -1,25 +1,27 @@
-import { SHOW_ERROR, CLEAR_ERROR } from "../actionTypes";
+import { SHOW_BANNER, CLEAR_BANNER } from "../actionTypes";
 
 const initialState = {
   show: false,
   title: '',
-  body: ''
+  body: '',
+  type: 'error'
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case SHOW_ERROR: {
+    case SHOW_BANNER: {
       return {
+        ...state,
+        ...action.payload,
         show: true,
-        title: action.payload.title,
-        body: action.payload.body
       };
     }
-    case CLEAR_ERROR: {
+    case CLEAR_BANNER: {
       return {
         show: false,
         title: '',
-        body: ''
+        body: '',
+        type: 'error'
       };
     }
     default:
