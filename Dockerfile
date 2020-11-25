@@ -1,7 +1,4 @@
-FROM node:latest
+from nginx:1.17
 
-RUN mkdir /app
-WORKDIR /app
-ADD . .
-
-RUN npm install
+ADD build /var/www/html
+ADD nginx-prod.conf /etc/nginx/conf.d/default.conf

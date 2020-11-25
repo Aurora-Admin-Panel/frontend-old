@@ -1,8 +1,8 @@
+import { logout } from "./auth";
 import { SHOW_BANNER, CLEAR_BANNER } from "../actionTypes";
 
 
 export const handleError = (dispatch, error) => {
-  console.log(error);
   if (error.response) {
     const response = error.response;
     if (response.status === 500) {
@@ -10,6 +10,8 @@ export const handleError = (dispatch, error) => {
         type: SHOW_BANNER,
         payload: { title: "Error", body: "Internal Server Error!" },
       });
+    } else if (response.status === 401) {
+      dispatch(logout())
     } else if (response.status >= 400 && response.status < 500) {
       const data = response.data;
       if (typeof data.detail === "string" || data.detail instanceof String) {

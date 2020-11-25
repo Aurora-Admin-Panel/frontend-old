@@ -1,4 +1,3 @@
-import { ReactComponent as ButtonsIcon } from './buttons.svg'
 import { ReactComponent as CardsIcon } from './cards.svg'
 import { ReactComponent as ChartsIcon } from './charts.svg'
 import { ReactComponent as FormsIcon } from './forms.svg'
@@ -36,7 +35,6 @@ import { ReactComponent as TwoDotIcon } from './twoDot.svg'
 
 
 export {
-  ButtonsIcon,
   CardsIcon,
   ChartsIcon,
   FormsIcon,
