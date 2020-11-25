@@ -92,7 +92,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       setAnsiblePort(22);
       setSshUser("root");
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, server]);
 
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

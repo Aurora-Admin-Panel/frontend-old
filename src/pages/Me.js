@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactLoading from "react-loading";
 import {
   Input,
-  HelperText,
   Label,
-  Select,
-  Textarea,
   Modal,
   ModalHeader,
   ModalBody,
@@ -14,11 +10,11 @@ import {
   Button,
 } from "@windmill/react-ui";
 
+import FullScreenLoading from "../components/FullScreenLoading"
 import PageTitle from "../components/Typography/PageTitle";
 import SectionTitle from "../components/Typography/SectionTitle";
 import { getMe, editMe } from "../redux/actions/users";
 
-import { MailIcon } from "../icons";
 
 function Me() {
   const me = useSelector((state) => state.users.me);
@@ -52,10 +48,10 @@ function Me() {
     setPrevPassword("");
     setNewPassword("");
     setRepeatedNewPassword("");
-  }, []);
+  }, [dispatch]);
 
   if (!me)
-    return <ReactLoading height={50} width={50} type="bubbles" color="#000" />;
+    return <FullScreenLoading />;
   return (
     <>
       <Modal

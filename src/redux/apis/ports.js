@@ -38,6 +38,12 @@ export const serverPortUserCreate = (server_id, port_id, data) => v1AuthRequest(
     data: data
 })
 
+export const serverPortUserEdit = (server_id, port_id, user_id, data) => v1AuthRequest({
+    method: "put",
+    url: `/servers/${server_id}/ports/${port_id}/users/${user_id}`,
+    data: data
+})
+
 export const serverPortUserDelete = (server_id, port_id, user_id) => v1AuthRequest({
     method: "delete",
     url: `/servers/${server_id}/ports/${port_id}/users/${user_id}`,
@@ -63,4 +69,10 @@ export const serverPortForwardRuleEdit = (server_id, port_id, data) => v1AuthReq
 export const serverPortForwardRuleDelete = (server_id, port_id) => v1AuthRequest({
     method: "delete",
     url: `/servers/${server_id}/ports/${port_id}/forward_rule`,
+})
+
+export const serverPortUsageEdit = (server_id, port_id, data) => v1AuthRequest({
+    method: "post",
+    url: `/servers/${server_id}/ports/${port_id}/usage`,
+    data: data
 })

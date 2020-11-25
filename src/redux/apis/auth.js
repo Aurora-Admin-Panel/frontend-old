@@ -1,5 +1,5 @@
 import qs from 'querystring'
-import { apiRequest, v1Request } from "../../utils/api";
+import { apiRequest  } from "../../utils/api";
 
 export const logIn = data => apiRequest({
   method: "post",

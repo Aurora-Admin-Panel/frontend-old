@@ -11,7 +11,7 @@ import { UserGear, SignOut } from "phosphor-react";
 
 import { logout } from "../redux/actions/auth";
 import { SidebarContext } from "../context/SidebarContext";
-import { MoonIcon, SunIcon, MenuIcon, OutlineLogoutIcon } from "../icons";
+import { MoonIcon, SunIcon, MenuIcon } from "../icons";
 import AvatarImg from "../assets/img/avataaars.png";
 
 function Header() {
@@ -20,12 +20,7 @@ function Header() {
   const { mode, toggleMode } = useContext(WindmillContext);
   const { toggleSidebar } = useContext(SidebarContext);
 
-  const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-
-  function handleNotificationsClick() {
-    setIsNotificationsMenuOpen(!isNotificationsMenuOpen);
-  }
 
   function handleProfileClick() {
     setIsProfileMenuOpen(!isProfileMenuOpen);

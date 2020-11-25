@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux' 
+import { useDispatch } from 'react-redux' 
 
 import { getServers } from '../redux/actions/servers'
 import InfoCard from '../components/Cards/InfoCard'
@@ -51,7 +51,7 @@ function Dashboard() {
   }, [page])
   useEffect(() => {
     dispatch(getServers())
-  }, [])
+  }, [dispatch])
 
   return (
     <>

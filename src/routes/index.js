@@ -15,6 +15,8 @@ const Page404 = lazy(() => import('../pages/404'))
 const Blank = lazy(() => import('../pages/Blank'))
 const About = lazy(() => import('../pages/About'))
 const Me = lazy(() => import('../pages/Me'))
+const User = lazy(() => import('../pages/User'))
+const ServerUsers = lazy(() => import('../pages/ServerUsers'))
 
 /**
  * ⚠ These are internal routes!
@@ -46,6 +48,16 @@ const routes = [
     path: '/servers/:server_id',
     component: Server,
     permissions: ['admin', 'user']
+  },
+  {
+    path: '/servers/:server_id/users',
+    component: ServerUsers,
+    permissions: ['admin']
+  },
+  {
+    path: '/users/:user_id',
+    component: User,
+    permissions: ['admin']
   },
   {
     path: '/about',

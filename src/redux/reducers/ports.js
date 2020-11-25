@@ -3,6 +3,7 @@ import {
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
   DELETE_SERVER_PORT,
+  ADD_SERVER_PORT_USAGE,
   ADD_SERVER_PORT_USERS,
   ADD_SERVER_PORT_USER,
   DELETE_SERVER_PORT_USER,
@@ -29,8 +30,8 @@ export default function (state = initialState, action) {
     case DELETE_SERVER_PORTS: {
       return {
         ...state,
-        ports: {}
-      }
+        ports: {},
+      };
     }
     case ADD_SERVER_PORT: {
       return {
@@ -43,7 +44,7 @@ export default function (state = initialState, action) {
     }
     case DELETE_SERVER_PORT: {
       if (!state.ports[action.payload.id]) {
-        return { ...state }
+        return { ...state };
       }
       return {
         ...state,
@@ -55,7 +56,7 @@ export default function (state = initialState, action) {
     }
     case ADD_SERVER_PORT_USERS: {
       if (!state.ports[action.payload.port_id]) {
-        return { ...state }
+        return { ...state };
       }
       return {
         ...state,
@@ -63,14 +64,29 @@ export default function (state = initialState, action) {
           ...state.ports,
           [action.payload.port_id]: {
             ...state.ports[action.payload.port_id],
-            allowed_users: action.payload
-          }
-        }
+            allowed_users: action.payload,
+          },
+        },
+      };
+    }
+    case ADD_SERVER_PORT_USAGE: {
+      if (!state.ports[action.payload.port_id]) {
+        return { ...state };
       }
+      return {
+        ...state,
+        ports: {
+          ...state.ports,
+          [action.payload.port_id]: {
+            ...state.ports[action.payload.port_id],
+            usage: action.payload,
+          },
+        },
+      };
     }
     case ADD_SERVER_PORT_USER: {
       if (!state.ports[action.payload.port_id]) {
-        return { ...state }
+        return { ...state };
       }
       return {
         ...state,
@@ -78,14 +94,16 @@ export default function (state = initialState, action) {
           ...state.ports,
           [action.payload.port_id]: {
             ...state.ports[action.payload.port_id],
-            allowed_users: state.ports[action.payload.port_id].allowed_users.concat(action.payload)
-          }
-        }
-      }
+            allowed_users: state.ports[action.payload.port_id].allowed_users
+              .filter((pu) => pu.user_id !== action.payload.user_id)
+              .concat(action.payload),
+          },
+        },
+      };
     }
     case DELETE_SERVER_PORT_USER: {
       if (!state.ports[action.payload.port_id]) {
-        return { ...state }
+        return { ...state };
       }
       return {
         ...state,
@@ -93,19 +111,29 @@ export default function (state = initialState, action) {
           ...state.ports,
           [action.payload.port_id]: {
             ...state.ports[action.payload.port_id],
-            allowed_users: state.ports[action.payload.port_id].allowed_users.filter(u => parseInt(u.user_id) !== parseInt(action.payload.user_id))
-          }
-        }
-      }
+            allowed_users: state.ports[
+              action.payload.port_id
+            ].allowed_users.filter(
+              (u) => parseInt(u.user_id) !== parseInt(action.payload.user_id)
+            ),
+          },
+        },
+      };
     }
     case ADD_SERVER_PORT_FORWARD_RULE: {
       if (!state.ports[action.payload.port_id]) {
-        return { ...state }
+        return { ...state };
       }
-      let count = -1
-      if (action.payload.status === 'running' || action.payload.status === 'starting') {
-        if (state.ports[action.payload.port_id].forward_rule && state.ports[action.payload.port_id].forward_rule.count >= 0) {
-          count = state.ports[action.payload.port_id].forward_rule.count
+      let count = -1;
+      if (
+        action.payload.status === "running" ||
+        action.payload.status === "starting"
+      ) {
+        if (
+          state.ports[action.payload.port_id].forward_rule &&
+          state.ports[action.payload.port_id].forward_rule.count >= 0
+        ) {
+          count = state.ports[action.payload.port_id].forward_rule.count;
         }
       }
       return {
@@ -116,27 +144,27 @@ export default function (state = initialState, action) {
             ...state.ports[action.payload.port_id],
             forward_rule: {
               ...action.payload,
-              count: count + 1
-            }
+              count: count + 1,
+            },
           },
         },
       };
     }
     case DELETE_SERVER_PORT_FORWARD_RULE: {
       if (!state.ports[action.payload.port_id]) {
-        return { ...state }
+        return { ...state };
       }
-        return {
-          ...state,
-          ports: {
-            ...state.ports,
-            [action.payload.port_id]: {
-              ...state.ports[action.payload.port_id],
-              forward_rule: null
-            },
+      return {
+        ...state,
+        ports: {
+          ...state.ports,
+          [action.payload.port_id]: {
+            ...state.ports[action.payload.port_id],
+            forward_rule: null,
           },
-        };
-      }
+        },
+      };
+    }
     default:
       return state;
   }

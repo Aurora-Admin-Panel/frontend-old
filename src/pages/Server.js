@@ -12,11 +12,21 @@ import {
   TableRow,
 } from "@windmill/react-ui";
 import ReactLoading from "react-loading";
-import { ArrowUp, ArrowDown, Circle, CheckCircle, WarningCircle } from "phosphor-react";
+import {
+  ArrowUp,
+  ArrowDown,
+  Circle,
+  CheckCircle,
+  WarningCircle,
+  SmileyXEyes,
+  User,
+  Users,
+} from "phosphor-react";
 
 import { getServer } from "../redux/actions/servers";
 import { PlusIcon, InfinityIcon } from "../icons";
 import { clearServerPorts, getServerPorts } from "../redux/actions/ports";
+import FullScreenLoading from "../components/FullScreenLoading";
 import AuthSelector from "../components/AuthSelector";
 import PortEditor from "../components/PortEditor";
 import PortUserEditor from "../components/PortUserEditor";
@@ -36,23 +46,39 @@ const statusToIcon = (rule) => {
         />
       );
     } else {
-      if (status === "successful") return <CheckCircle weight="bold" size={20} />;
-      else if (status === "failed") return <WarningCircle weight="bold" size={20} />;
+      if (status === "successful")
+        return <CheckCircle weight="bold" size={20} />;
+      else if (status === "failed")
+        return <WarningCircle weight="bold" size={20} />;
     }
-  } else return <Circle weight="bold" size={20} />
+  } else return <Circle weight="bold" size={20} />;
 };
 const statusToBadge = (rule) => {
   if (rule) {
     const status = rule.status;
     if (status === "running" || status === "starting") {
-      return (
-        <Badge type="warning">转发中</Badge>
-      );
+      return <Badge type="warning">转发中</Badge>;
     } else {
-      if (status === "successful") return <Badge type="success">转发成功</Badge>;
-      else if (status === "failed") return <Badge type="danger">转发失败</Badge>;
+      if (status === "successful")
+        return <Badge type="success">转发成功</Badge>;
+      else if (status === "failed")
+        return <Badge type="danger">转发失败</Badge>;
     }
   } else return null;
+};
+
+const usersToBadge = (users) => {
+  if (users.length > 0) {
+    return (
+      <>
+        <Badge type="success">有{`${users.length}`}人正在使用此端口</Badge>
+        {users.map((u) => (
+          <span key={`server_users_badge_${u.user_id}`}>{u.user.email}</span>
+        ))}
+      </>
+    );
+  }
+  return <Badge type="warning">此端口无人使用</Badge>;
 };
 
 const formatSpeed = (speed) => {
@@ -70,7 +96,6 @@ function Server() {
   const server_id = parseInt(useParams().server_id);
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);
-  const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState("");
@@ -78,6 +103,7 @@ function Server() {
   const [portEditorOpen, setPortEditorOpen] = useState(false);
   const [portUserEditorOpen, setPortUserEditorOpen] = useState(false);
   const [showRule, setShowRule] = useState({});
+  const [showUsers, setShowUsers] = useState({});
 
   useEffect(() => {
     dispatch(clearServerPorts());
@@ -85,8 +111,9 @@ function Server() {
     if (!(server_id in servers)) {
       dispatch(getServer(server_id));
     }
-  }, []);
+  }, [dispatch, server_id, servers]);
 
+  if (!servers[server_id]) return <FullScreenLoading />;
   return (
     <>
       <PageTitle>
@@ -135,12 +162,14 @@ function Server() {
             <tr>
               <TableCell>
                 端口号
-              <AuthSelector permissions={["admin"]}>
-                &nbsp;(外部)
-              </AuthSelector>
+                <AuthSelector permissions={["admin"]}>
+                  &nbsp;(外部)
+                </AuthSelector>
               </TableCell>
               <TableCell>转发</TableCell>
               <TableCell>限速</TableCell>
+              <TableCell>流量</TableCell>
+              <TableCell>用户</TableCell>
               <TableCell>动作</TableCell>
             </tr>
           </TableHeader>
@@ -152,9 +181,11 @@ function Server() {
                     <TableCell>
                       <AuthSelector permissions={["admin"]}>
                         {ports[port_id].num}
-                        &nbsp;({ports[port_id].external_num
+                        &nbsp;(
+                        {ports[port_id].external_num
                           ? ports[port_id].external_num
-                          : ports[port_id].num})
+                          : ports[port_id].num}
+                        )
                       </AuthSelector>
                       <AuthSelector permissions={["user"]}>
                         {ports[port_id].external_num
@@ -191,14 +222,6 @@ function Server() {
                         (ports[port_id].config.egress_limit ||
                           ports[port_id].ingress_limit) ? (
                           <>
-                            {ports[port_id].config.egress_limit ? (
-                              <span className="flex flex-auto items-center">
-                                <ArrowDown size={16} />
-                                {formatSpeed(
-                                  ports[port_id].config.egress_limit
-                                )}
-                              </span>
-                            ) : null}
                             {ports[port_id].config.ingress_limit ? (
                               <span className="flex flex-auto items-center">
                                 <ArrowUp size={16} />
@@ -207,10 +230,64 @@ function Server() {
                                 )}
                               </span>
                             ) : null}
+                            {ports[port_id].config.egress_limit ? (
+                              <span className="flex flex-auto items-center">
+                                <ArrowDown size={16} />
+                                {formatSpeed(
+                                  ports[port_id].config.egress_limit
+                                )}
+                              </span>
+                            ) : null}
                           </>
                         ) : (
-                          <InfinityIcon />
+                          <InfinityIcon weight="bold" size={24} />
                         )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col justify-center">
+                        {ports[port_id].usage ? (
+                          <>
+                            <span className="flex flex-auto items-center">
+                              <ArrowUp size={16} />
+                              {ports[port_id].usage.readable_upload}
+                            </span>
+                            <span className="flex flex-auto items-center">
+                              <ArrowDown size={16} />
+                              {ports[port_id].usage.readable_download}
+                            </span>
+                          </>
+                        ) : (
+                          <SmileyXEyes weight="bold" size={20} />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="relative z-20 inline-flex">
+                        <div
+                          onMouseEnter={() => setShowUsers({ [port_id]: true })}
+                          onMouseLeave={() =>
+                            setShowUsers({ [port_id]: false })
+                          }
+                        >
+                          {ports[port_id].allowed_users &&
+                          ports[port_id].allowed_users.length > 0 ? (
+                            ports[port_id].allowed_users.length > 1 ? (
+                              <Users weight="bold" size={20} />
+                            ) : (
+                              <User weight="bold" size={20} />
+                            )
+                          ) : (
+                            <Circle weight="bold" size={20} />
+                          )}
+                        </div>
+                        {showUsers[port_id] ? (
+                          <div className="relative">
+                            <div className="absolute flex flex-col top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
+                              {usersToBadge(ports[port_id].allowed_users)}
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -249,7 +326,8 @@ function Server() {
                                   ports[port_id].forward_rule.count <= 10) &&
                                 (ports[port_id].forward_rule.status ===
                                   "starting" ||
-                                ports[port_id].forward_rule.status === "running")
+                                  ports[port_id].forward_rule.status ===
+                                    "running")
                               }
                             >
                               修改转发

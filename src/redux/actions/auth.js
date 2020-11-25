@@ -1,8 +1,9 @@
 import decodeJwt from "jwt-decode";
 
 import { handleError } from "./utils"
+import { getMe } from "./users"; 
 import { logIn, register } from "../apis/auth";
-import { LOG_IN, LOG_OUT } from "../actionTypes";
+import { LOG_IN, LOG_OUT, DELETE_ME } from "../actionTypes";
 
 export const isAuthenticated = () => {
   const permissions = localStorage.getItem("permissions");
@@ -31,6 +32,7 @@ export const login = (email, password) => {
             permission: decodedToken.permissions,
           },
         });
+        dispatch(getMe());
       }
     }).catch(error => handleError(dispatch, error))
   };
@@ -51,6 +53,7 @@ export const signUp = (email, password) => {
             permission: decodedToken.permissions,
           },
         });
+        dispatch(getMe());
       }
     }).catch(error => handleError(dispatch, error))
   };
@@ -63,5 +66,8 @@ export const logout = () => {
     dispatch({
       type: LOG_OUT
     });
+    dispatch({
+      type: DELETE_ME
+    })
   };
 };

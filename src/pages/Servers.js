@@ -19,7 +19,6 @@ import PageTitle from "../components/Typography/PageTitle";
 function Servers() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [currentServer, setCurrentServer] = useState(null);
-  const [adminEditOpen, setAdminEditOpen] = useState(false);
   const servers = useSelector((state) => state.servers.servers);
   const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
@@ -27,7 +26,7 @@ function Servers() {
 
   useEffect(() => {
     dispatch(getServers());
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -80,15 +79,25 @@ function Servers() {
                       查看
                     </Button>
                     {permission === "admin" ? (
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          setCurrentServer(servers[server_id]);
-                          setEditorOpen(true);
-                        }}
-                      >
-                        编辑
-                      </Button>
+                      <>
+                        {/* <Button
+                          size="small"
+                          onClick={() =>
+                            history.push(`/app/servers/${server_id}/users`)
+                          }
+                        >
+                          查看用户
+                        </Button> */}
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setCurrentServer(servers[server_id]);
+                            setEditorOpen(true);
+                          }}
+                        >
+                          编辑服务器
+                        </Button>
+                      </>
                     ) : null}
                   </div>
                 </TableCell>

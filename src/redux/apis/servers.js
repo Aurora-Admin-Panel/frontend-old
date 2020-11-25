@@ -26,3 +26,19 @@ export const serverDelete = (server_id) => v1AuthRequest({
     method: "delete",
     url: `/servers/${server_id}`,
 })
+
+export const serverUsersGet = (server_id) => v1AuthRequest({
+    method: "get",
+    url: `/servers/${server_id}/users`
+})
+
+export const serverUserCreate = (server_id, data) => v1AuthRequest({
+    method: "post",
+    url: `/servers/${server_id}/users`,
+    data: data
+})
+
+export const serverUserDelete = (server_id, user_id) => v1AuthRequest({
+    method: "delete",
+    url: `/servers/${server_id}/users/${user_id}`
+})

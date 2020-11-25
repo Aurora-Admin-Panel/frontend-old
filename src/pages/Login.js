@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { useHistory, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import { Label, Input, Button } from '@windmill/react-ui'
 
 import ImageLight from '../assets/img/login-office.jpeg'
 import ImageDark from '../assets/img/login-office-dark.jpeg'
-import { Label, Input, Button } from '@windmill/react-ui'
 import { login } from "../redux/actions/auth";
+import { getMe } from "../redux/actions/users"
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch();
-  const history = useHistory();
   const auth = useSelector(state => state.auth)
+  const me = useSelector(state => state.users.me);
 
   const submitForm = () => {
     if (!(email.length > 0) || !(password.length > 0)) {
@@ -23,7 +24,11 @@ function Login() {
     return dispatch(login(email, password))
   }
 
-  if (auth.token.length > 0) {
+  useEffect(() => {
+    if (auth.token) dispatch(getMe())
+  }, [dispatch, auth]);
+
+  if (me) {
     return <Redirect to="/app" />
   }
   return (

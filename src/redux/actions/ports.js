@@ -6,7 +6,9 @@ import {
   serverPortGet,
   serverPortEdit,
   serverPortDelete,
+  serverPortUsageEdit,
   serverPortUsersGet,
+  serverPortUserEdit,
   serverPortUserCreate,
   serverPortUserDelete,
   serverPortForwardRuleGet,
@@ -19,11 +21,13 @@ import {
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
   DELETE_SERVER_PORT,
+  ADD_SERVER_PORT_USAGE,
   ADD_SERVER_PORT_USERS,
   ADD_SERVER_PORT_USER,
   DELETE_SERVER_PORT_USER,
   ADD_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORT_FORWARD_RULE,
+  SHOW_BANNER,
 } from "../actionTypes";
 
 export const createServerPort = (server_id, data) => {
@@ -111,6 +115,22 @@ export const getServerPortUsers = (server_id, port_id) => {
 export const createServerPortUser = (server_id, port_id, data) => {
   return (dispatch) => {
     serverPortUserCreate(server_id, port_id, data)
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          dispatch({
+            type: ADD_SERVER_PORT_USER,
+            payload: data,
+          });
+        }
+      })
+      .catch((error) => handleError(dispatch, error));
+  };
+};
+
+export const editServerPortUser = (server_id, port_id, user_id, data) => {
+  return (dispatch) => {
+    serverPortUserEdit(server_id, port_id, user_id, data)
       .then((response) => {
         const data = response.data;
         if (data) {
@@ -268,3 +288,17 @@ export const deleteForwardRule = (server_id, port_id) => {
       .catch((error) => handleError(dispatch, error));
   };
 };
+export const editServerPortUsage = (server_id, port_id, data) => {
+  return dispatch => {
+    serverPortUsageEdit(server_id, port_id, data).then(response => {
+      const data = response.data;
+      if (data) {
+        dispatch(showBanner("重置流量成功", "流量已清零", "success"))
+        dispatch({
+          type: ADD_SERVER_PORT_USAGE,
+          payload: data
+        })
+      }
+    }).catch(error => handleError(dispatch, error))
+  }
+}

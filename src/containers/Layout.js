@@ -4,29 +4,34 @@ import {
   Route,
   Redirect,
   useLocation,
-  useHistory,
 } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import routes from "../routes";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Main from "../containers/Main";
+import { getMe } from "../redux/actions/users"
 import ThemedSuspense from "../components/ThemedSuspense";
 import { SidebarContext } from "../context/SidebarContext";
 
 const Page404 = lazy(() => import("../pages/404"));
 
 function Layout() {
-  const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
-  let location = useLocation();
   const permission = useSelector((state) => state.auth.permission);
+  const me = useSelector(state => state.users.me);
+  const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
+  const location = useLocation();
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(getMe())
+  }, [dispatch]);
   useEffect(() => {
     closeSidebar();
   }, [location]);
 
-  if (!permission) {
+  if (!me) {
     return <Redirect from={location.pathname} to="/login" />;
   }
   return (

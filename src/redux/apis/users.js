@@ -36,3 +36,8 @@ export const userDelete = (user_id) => v1AuthRequest({
     method: "delete",
     url: `/users/${user_id}`,
 })
+
+export const userServersGet = (user_id) => v1AuthRequest({
+    method: "get",
+    url: `/users/${user_id}/servers`
+})

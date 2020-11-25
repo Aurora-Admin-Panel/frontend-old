@@ -1,6 +1,5 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Button } from '@windmill/react-ui'
 
 import * as Icons from "phosphor-react"
 import routes from '../../routes/sidebar'
@@ -17,9 +16,9 @@ function SidebarContent() {
 
   return (
     <div className="py-4 text-gray-500 dark:text-gray-400">
-      <a className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
+      <span className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200">
         极光面板
-      </a>
+      </span>
       <ul className="mt-6">
         {routes.map((route) =>
           route.routes && route.permissions.includes(permission) ? (

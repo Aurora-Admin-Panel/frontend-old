@@ -120,7 +120,7 @@ const ForwardRuleEditor = ({
       setServeNodes([]);
       setChainNodes([]);
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, forwardRule]);
 
   return (
     <>
@@ -217,7 +217,7 @@ const ForwardRuleEditor = ({
                   </div>
                 </Label>
                 <Label className="mt-4 flex flex-row justify-between items-center">
-                  <span>本地服务配置</span>
+                  <span>本地服务配置(-L)</span>
                   <button
                     className="w-5 h-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded active:bg-green-600 hover:bg-green-600 focus:outline-none focus:shadow-outline-green"
                     onClick={() => setServeNodes(serveNodes.concat([""]))}
@@ -256,7 +256,7 @@ const ForwardRuleEditor = ({
                   </Label>
                 ))}
                 <Label className="mt-4 flex flex-row justify-between items-center">
-                  <span>转发服务配置</span>
+                  <span>转发服务配置(-F)</span>
                   <button
                     className="w-5 h-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded active:bg-green-600 hover:bg-green-600 focus:outline-none focus:shadow-outline-green"
                     onClick={() => setChainNodes(chainNodes.concat([""]))}
