@@ -8,24 +8,13 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+    - name: Use Node.js 15
+      uses: actions/setup-node@v2-beta
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '15'
+        check-latest: true
     - run: yarn
-    - 
-      id: yarn_build
-      name: build
-      run: yarn run build
-    -
-      name: Print digest
-      run: echo ${{ steps.yarn_build.outputs.digest }}
+    - run: yarn run build
