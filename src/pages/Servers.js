@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@windmill/react-ui";
 import ReactLoading from "react-loading";
-import { Question, CheckCircle, WarningCircle } from "phosphor-react";
+import { CheckCircle, WarningCircle } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
 import ServerEditor from "../components/ServerEditor";
