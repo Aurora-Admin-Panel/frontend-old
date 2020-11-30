@@ -27,7 +27,7 @@ jobs:
         node-version: '15'
         check-latest: true
     - run: yarn
-    - run: yarn run build
+    - run: REACT_APP_VERSION=${{ github.event.release.tag_name }} yarn run build
     -
       name: Build and push
       id: docker_build
