@@ -18,21 +18,6 @@ import {
   DELETE_SERVER_USER,
 } from "../actionTypes";
 
-export const getServers = () => {
-  return (dispatch) => {
-    serversGet()
-      .then((response) => {
-        const data = response.data;
-        if (data) {
-          dispatch({
-            type: ADD_SERVERS,
-            payload: data,
-          });
-        }
-      })
-      .catch((error) => handleError(dispatch, error));
-  };
-};
 
 export const getServer = (server_id) => {
   return (dispatch) => {
@@ -44,6 +29,36 @@ export const getServer = (server_id) => {
             type: ADD_SERVER,
             payload: data,
           });
+          if (!data.config.facts) {
+            setTimeout(
+              () => dispatch(getServer(server_id)),
+              2000
+            );
+          }
+        }
+      })
+      .catch((error) => handleError(dispatch, error));
+  };
+};
+
+export const getServers = () => {
+  return (dispatch) => {
+    serversGet()
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          dispatch({
+            type: ADD_SERVERS,
+            payload: data,
+          });
+          for (const server of data) {
+            if (!server.config.facts) {
+              setTimeout(
+                () => dispatch(getServer(server.id)),
+                2000
+              );
+            }
+          }
         }
       })
       .catch((error) => handleError(dispatch, error));
@@ -60,6 +75,12 @@ export const createServer = (data) => {
             type: ADD_SERVER,
             payload: data,
           });
+          if (!data.config.facts) {
+            setTimeout(
+              () => dispatch(getServer(data.id)),
+              2000
+            );
+          }
         }
       })
       .catch((error) => handleError(dispatch, error));
@@ -76,6 +97,12 @@ export const editServer = (server_id, data) => {
             type: ADD_SERVER,
             payload: data,
           });
+          if (!data.config.facts) {
+            setTimeout(
+              () => dispatch(getServer(server_id)),
+              2000
+            );
+          }
         }
       })
       .catch((error) => handleError(dispatch, error));

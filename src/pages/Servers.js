@@ -11,6 +11,7 @@ import {
   TableCell,
   TableRow,
 } from "@windmill/react-ui";
+import ReactLoading from "react-loading";
 import { Question, CheckCircle, WarningCircle } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
@@ -120,7 +121,12 @@ function Servers() {
                           <CheckCircle weight="bold" size={20} />
                         )
                       ) : (
-                        <Question weight="bold" size={20} />
+                        <ReactLoading
+                          height={20}
+                          width={20}
+                          type="spinningBubbles"
+                          color="#000"
+                        />
                       )}
                     </div>
                     {showFacts[server_id] ? (
@@ -139,7 +145,10 @@ function Servers() {
                   <div className="flex justify-start space-x-1">
                     <Button
                       size="small"
-                      onClick={() => {dispatch(clearServerPorts());history.push(`/app/servers/${server_id}`)}}
+                      onClick={() => {
+                        dispatch(clearServerPorts());
+                        history.push(`/app/servers/${server_id}`);
+                      }}
                     >
                       查看
                     </Button>

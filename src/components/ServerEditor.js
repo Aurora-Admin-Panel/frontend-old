@@ -94,6 +94,8 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
     setIsDelete(false);
     setSshPassword("");
     setSudoPassword("");
+    setSshPasswordNeeded(false);
+    setSudoPasswordNeeded(false);
     if (server) {
       setName(server.name);
       setAddress(server.address);
@@ -103,6 +105,8 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       else setAnsibleHost("");
       if (server.ansible_port) setAnsiblePort(server.ansible_port);
       else setAnsiblePort("");
+      if (server.ssh_password) setSshPasswordNeeded(true);
+      if (server.sudo_password) setSudoPasswordNeeded(true)
     } else if (lastServer) {
       setName("");
       setAddress("");
@@ -196,6 +200,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
             {sshPasswordNeeded ? (
               <Input
                 className="mt-1"
+                type="password"
                 placeholder={"可为空，默认使用ssh key"}
                 value={sshPassword}
                 valid={() => !sshPassword || sshPassword.length >= 6}
@@ -221,6 +226,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
             {sudoPasswordNeeded ? (
               <Input
                 className="mt-1"
+                type="password"
                 placeholder={"可为空，用户非root且需输sudo密码则需填写"}
                 value={sudoPassword}
                 valid={() => !sudoPassword || sudoPassword.length >= 6}
