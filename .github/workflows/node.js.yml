@@ -30,13 +30,22 @@ jobs:
     - run: REACT_APP_VERSION=${{ github.event.release.tag_name }} yarn run build
     -
       name: Build and push
-      id: docker_build
+      id: docker_build_latest
       uses: docker/build-push-action@v2
       with:
         context: .
         file: ./Dockerfile
         push: true
-        tags: leishi1313/aurora-admin-frontend-test:latest
+        tags: leishi1313/aurora-admin-frontend:latest
+    -
+      name: Build and push
+      id: docker_build_tagged_version
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: leishi1313/aurora-admin-frontend:${{ github.event.release.tag_name }}
     -
       name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
