@@ -10,9 +10,9 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import { At } from 'phosphor-react'
+import { At } from "phosphor-react";
 
-import { TwoDotIcon } from "../icons" 
+import { TwoDotIcon } from "../icons";
 import {
   createServer,
   editServer,
@@ -21,6 +21,7 @@ import {
 
 const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
+  const [lastServer, setLastServer] = useState(null);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [ansibleName, setAnsibleName] = useState("");
@@ -28,7 +29,9 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
   const [ansiblePort, setAnsiblePort] = useState(22);
   const [sshUser, setSshUser] = useState("root");
   const [sshPassword, setSshPassword] = useState("");
+  const [sshPasswordNeeded, setSshPasswordNeeded] = useState(false);
   const [sudoPassword, setSudoPassword] = useState("");
+  const [sudoPasswordNeeded, setSudoPasswordNeeded] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
 
   const validName = () => name.length > 0;
@@ -59,8 +62,16 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       };
       if (ansibleHost) data.ansible_host = ansibleHost;
       if (ansiblePort) data.ansible_port = ansiblePort;
-      if (sshPassword) data.ssh_password = sshPassword;
-      if (sudoPassword) data.sudo_password = sudoPassword;
+      if (!sshPasswordNeeded) {
+        data.ssh_password = null;
+      } else if (sshPassword) {
+        data.ssh_password = sshPassword;
+      }
+      if (!sudoPasswordNeeded) {
+        data.sudo_password = null;
+      } else if (sudoPassword) {
+        data.sudo_password = sudoPassword;
+      }
 
       if (server) {
         dispatch(editServer(server.id, data));
@@ -69,6 +80,14 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       }
     }
     setIsModalOpen(false);
+    setName("");
+    setAddress("");
+    setAnsibleName("");
+    setAnsibleHost("");
+    setAnsiblePort(22);
+    setSshUser("root");
+    setSshPasswordNeeded(false);
+    setSudoPasswordNeeded(false);
   };
 
   useEffect(() => {
@@ -84,7 +103,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       else setAnsibleHost("");
       if (server.ansible_port) setAnsiblePort(server.ansible_port);
       else setAnsiblePort("");
-    } else {
+    } else if (lastServer) {
       setName("");
       setAddress("");
       setAnsibleName("");
@@ -92,6 +111,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       setAnsiblePort(22);
       setSshUser("root");
     }
+    setLastServer(server);
   }, [isModalOpen, server]);
 
   return (
@@ -161,24 +181,54 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
             </div>
           </Label>
           <Label className="mt-1">
-            <span>SSH密码</span>
-            <Input
-              className="mt-1"
-              placeholder={"可为空，默认使用ssh key"}
-              value={sshPassword}
-              valid={() => !sshPassword || sshPassword.length >= 6}
-              onChange={(e) => setSshPassword(e.target.value)}
-            />
+            <div className="flex flex-row justify-between items-center">
+              <span>SSH密码</span>
+              <div>
+                <Input
+                  type="checkbox"
+                  className="mr-1"
+                  checked={!sshPasswordNeeded}
+                  onChange={() => setSshPasswordNeeded(!sshPasswordNeeded)}
+                />
+                <span>不需要SSH密码</span>
+              </div>
+            </div>
+            {sshPasswordNeeded ? (
+              <Input
+                className="mt-1"
+                placeholder={"可为空，默认使用ssh key"}
+                value={sshPassword}
+                valid={() => !sshPassword || sshPassword.length >= 6}
+                onChange={(e) => setSshPassword(e.target.value)}
+              />
+            ) : (
+              <Input className="mt-1" disabled={true} />
+            )}
           </Label>
           <Label className="mt-1">
-            <span>SUDO密码</span>
-            <Input
-              className="mt-1"
-              placeholder={"可为空，用户非root且需输sudo密码则需填写"}
-              value={sudoPassword}
-              valid={() => !sudoPassword || sudoPassword.length >= 6}
-              onChange={(e) => setSudoPassword(e.target.value)}
-            />
+            <div className="flex flex-row justify-between items-center">
+              <span>SUDO密码</span>
+              <div>
+                <Input
+                  type="checkbox"
+                  className="mr-1"
+                  checked={!sudoPasswordNeeded}
+                  onChange={() => setSudoPasswordNeeded(!sudoPasswordNeeded)}
+                />
+                <span>不需要SUDO密码</span>
+              </div>
+            </div>
+            {sudoPasswordNeeded ? (
+              <Input
+                className="mt-1"
+                placeholder={"可为空，用户非root且需输sudo密码则需填写"}
+                value={sudoPassword}
+                valid={() => !sudoPassword || sudoPassword.length >= 6}
+                onChange={(e) => setSudoPassword(e.target.value)}
+              />
+            ) : (
+              <Input className="mt-1" disabled={true} />
+            )}
           </Label>
 
           {server ? (

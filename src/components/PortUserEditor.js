@@ -53,16 +53,19 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
               ? port.allowed_users.map((user, idx) => (
                   <Label className="mt-4" key={`port_user_editor_users_${idx}`}>
                     <div className="flex flex-row flex-wrap justify-start items-center">
-                      <div className="flex w-1/2 items-center text-gray-500 focus-within:text-purple-600 dark:focus-within:text-purple-400">
+                      <div className="flex w-1/2 items-center text-gray-500 focus-within:text-purple-600 dark:focus-within:text-purple-400"
+                      onClick={e => {e.preventDefault();alert(e.target.value)}}  
+                      >
                         <span className="flex flex-auto ml-2">
                           {user.user.email}
                         </span>
                       </div>
                       <div className="flex flex-row w-1/2 justify-end  items-center">
+                        <Button className="hidden" />
                           <Button
                             layout="link"
                             aria-label="delete"
-                            onClick={() =>
+                            onClick={e => {e.preventDefault();
                               dispatch(
                                 deleteServerPortUser(
                                   serverId,
@@ -70,7 +73,7 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
                                   user.user_id
                                 )
                               )
-                            }
+                            }}
                           >
                             删除
                           </Button>

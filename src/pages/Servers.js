@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
+  Badge,
   Button,
   TableBody,
   TableContainer,
@@ -10,15 +11,50 @@ import {
   TableCell,
   TableRow,
 } from "@windmill/react-ui";
+import { Question, CheckCircle, WarningCircle } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
+import AuthSelector from "../components/AuthSelector";
 import ServerEditor from "../components/ServerEditor";
 import { getServers } from "../redux/actions/servers";
 import PageTitle from "../components/Typography/PageTitle";
+import { clearServerPorts } from "../redux/actions/ports";
+
+const serverFactsToBadge = (facts, permission) => {
+  if (!facts)
+    return (
+      <>
+        <Badge type="warning">SSH状态未知</Badge>
+        {permission === "user" ? (
+          <span>请通知管理员更新服务器状态</span>
+        ) : (
+          <span>请稍等片刻或重新编辑一次服务器以触发服务器状态更新</span>
+        )}
+      </>
+    );
+  if (!facts.ansible_distribution)
+    return (
+      <>
+        <Badge type="warning">SSH连接失败</Badge>
+        {permission === "user" ? (
+          <span>请通知管理员检查SSH连接信息</span>
+        ) : (
+          <span>请检查SSH连接信息</span>
+        )}
+      </>
+    );
+  return (
+    <>
+      <Badge type="success">SSH连接成功</Badge>
+      <span>{`${facts.ansible_distribution} ${facts.ansible_distribution_version} (${facts.ansible_distribution_release}) ${facts.ansible_architecture}`}</span>
+    </>
+  );
+};
 
 function Servers() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [currentServer, setCurrentServer] = useState(null);
+  const [showFacts, setShowFacts] = useState({});
   const servers = useSelector((state) => state.servers.servers);
   const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
@@ -56,9 +92,10 @@ function Servers() {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>名字</TableCell>
+              <TableCell>地址</TableCell>
+              <TableCell>SSH状态</TableCell>
+              <TableCell>动作</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
@@ -71,10 +108,39 @@ function Servers() {
                   <span className="text-sm">{servers[server_id].address}</span>
                 </TableCell>
                 <TableCell>
+                  <div className="relative z-20 inline-flex">
+                    <div
+                      onMouseEnter={() => setShowFacts({ [server_id]: true })}
+                      onMouseLeave={() => setShowFacts({ [server_id]: false })}
+                    >
+                      {servers[server_id].config.facts ? (
+                        !servers[server_id].config.facts
+                          .ansible_distribution ? (
+                          <WarningCircle weight="bold" size={20} />
+                        ) : (
+                          <CheckCircle weight="bold" size={20} />
+                        )
+                      ) : (
+                        <Question weight="bold" size={20} />
+                      )}
+                    </div>
+                    {showFacts[server_id] ? (
+                      <div className="relative">
+                        <div className="absolute top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
+                          {serverFactsToBadge(
+                            servers[server_id].config.facts,
+                            permission
+                          )}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                </TableCell>
+                <TableCell>
                   <div className="flex justify-start space-x-1">
                     <Button
                       size="small"
-                      onClick={() => history.push(`/app/servers/${server_id}`)}
+                      onClick={() => {dispatch(clearServerPorts());history.push(`/app/servers/${server_id}`)}}
                     >
                       查看
                     </Button>

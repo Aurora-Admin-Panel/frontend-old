@@ -197,7 +197,7 @@ const ForwardRuleEditor = ({
                   <div className="flex flex-3 items-center">
                     <button
                       className="mr-3 h-5 w-5 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-red-500 border border-transparent rounded active:bg-red-600 hover:bg-red-700 focus:outline-none focus:shadow-outline-red"
-                      onClick={() =>
+                      onClick={e => e.preventDefault() &&
                         retries > 0 ? setRetries(retries - 1) : setRetries(0)
                       }
                     >

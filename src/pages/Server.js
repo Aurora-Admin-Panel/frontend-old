@@ -25,7 +25,7 @@ import {
 
 import { getServer } from "../redux/actions/servers";
 import { PlusIcon, InfinityIcon } from "../icons";
-import { clearServerPorts, getServerPorts } from "../redux/actions/ports";
+import { getServerPorts } from "../redux/actions/ports";
 import FullScreenLoading from "../components/FullScreenLoading";
 import AuthSelector from "../components/AuthSelector";
 import PortEditor from "../components/PortEditor";
@@ -106,7 +106,6 @@ function Server() {
   const [showUsers, setShowUsers] = useState({});
 
   useEffect(() => {
-    dispatch(clearServerPorts());
     dispatch(getServerPorts(server_id));
     if (!(server_id in servers)) {
       dispatch(getServer(server_id));

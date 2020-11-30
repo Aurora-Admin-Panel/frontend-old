@@ -38,13 +38,15 @@ const ServerPortUserAdd = ({
 
   return (
     <div className="relative">
+      <button className="hidden" />
       <button
         className={
           addingType === "port"
             ? "align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-1 py-1 rounded-md text-sm text-white bg-green-400 border border-transparent active:bg-green-600 hover:bg-green-700 focus:shadow-outline-green"
             : "align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-4 py-2 rounded-lg text-sm text-white bg-purple-600 border border-transparent active:bg-purple-600 hover:bg-purple-700 focus:shadow-outline-purple"
         }
-        onClick={() => {
+        onClick={e => {
+          e.preventDefault();
           setIsAdding(!isAdding);
           setSearchText("");
         }}

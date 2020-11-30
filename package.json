@@ -25,6 +25,7 @@
     "faker": "4.1.0",
     "jwt-decode": "^3.0.0",
     "phosphor-react": "^1.0.0",
+    "postcss": "^8.1.10",
     "react": "^16.13.1",
     "react-chartjs-2": "2.9.0",
     "react-dom": "^16.13.1",
