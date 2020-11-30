@@ -27,7 +27,6 @@ import {
   DELETE_SERVER_PORT_USER,
   ADD_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORT_FORWARD_RULE,
-  SHOW_BANNER,
 } from "../actionTypes";
 
 export const createServerPort = (server_id, data) => {

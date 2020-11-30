@@ -112,7 +112,7 @@ const ServerEditor = ({ server, isModalOpen, setIsModalOpen }) => {
       setSshUser("root");
     }
     setLastServer(server);
-  }, [isModalOpen, server]);
+  }, [isModalOpen, server, lastServer]);
 
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

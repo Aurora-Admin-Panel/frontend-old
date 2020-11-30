@@ -1,4 +1,4 @@
-import React, { useContext, Suspense, useEffect, lazy } from "react";
+import React, { useContext, useCallback, Suspense, useEffect, lazy } from "react";
 import {
   Switch,
   Route,
@@ -21,6 +21,7 @@ function Layout() {
   const permission = useSelector((state) => state.auth.permission);
   const me = useSelector(state => state.users.me);
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
+  const closeSideBarCallback = useCallback(closeSidebar, [])
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -28,8 +29,8 @@ function Layout() {
     dispatch(getMe())
   }, [dispatch]);
   useEffect(() => {
-    closeSidebar();
-  }, [location]);
+    closeSideBarCallback();
+  }, [location, closeSideBarCallback]);
 
   if (!me) {
     return <Redirect from={location.pathname} to="/login" />;

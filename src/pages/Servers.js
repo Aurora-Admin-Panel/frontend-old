@@ -14,7 +14,6 @@ import {
 import { Question, CheckCircle, WarningCircle } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
-import AuthSelector from "../components/AuthSelector";
 import ServerEditor from "../components/ServerEditor";
 import { getServers } from "../redux/actions/servers";
 import PageTitle from "../components/Typography/PageTitle";
