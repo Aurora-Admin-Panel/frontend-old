@@ -60,7 +60,7 @@ const formatSpeed = (speed, setSpeed, setScalar) => {
 const formatQuota = (quota, setQuota, setScalar) => {
   if (!quota) {
     setQuota("");
-    setScalar(1000000000)
+    setScalar(1000000000);
     return;
   }
   quota = parseInt(quota, 10);
@@ -102,7 +102,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const validValidUntilDate = () =>
     !validUntilDate ||
     (!isNaN(Date.parse(validUntilDate)) &&
-      (new Date(Date.parse(validUntilDate)) > Date.now()));
+      new Date(Date.parse(validUntilDate)) > Date.now());
 
   const validForm = () =>
     isDelete || (validNum() && validExternalNum() && validValidUntilDate());
@@ -115,11 +115,11 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       download_accumulate: 0,
       upload_accumulate: 0,
       download_checkpoint: 0,
-      upload_checkpoint: 0
-    }
-    dispatch(editServerPortUsage(serverId, port.id, data))
-    setIsModalOpen(false)
-  }
+      upload_checkpoint: 0,
+    };
+    dispatch(editServerPortUsage(serverId, port.id, data));
+    setIsModalOpen(false);
+  };
   const submitForm = () => {
     if (isDelete) {
       dispatch(deleteServerPort(serverId, port.id));
@@ -132,7 +132,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
           valid_until: null,
           due_action: 0,
           quota: null,
-          quota_action: 0
+          quota_action: 0,
         },
       };
       if (externalNum) data.external_num = externalNum;
@@ -183,9 +183,9 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
 
       formatQuota(port.config.quota, setQuota, setQuotaScalar);
       if (port.config.quota_action) {
-        setQuotaAction(port.config.quota_action)
+        setQuotaAction(port.config.quota_action);
       } else {
-        setQuotaAction(0)
+        setQuotaAction(0);
       }
     } else {
       setNum(0);
@@ -386,9 +386,11 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       </ModalBody>
       <ModalFooter>
         <div className="w-full flex flex-row justify-end space-x-2">
-          <Button layout="outline" onClick={resetUsage}>
-            重置流量
-          </Button>
+          {port ? (
+            <Button layout="outline" onClick={resetUsage}>
+              重置流量
+            </Button>
+          ) : null}
           <Button layout="outline" onClick={() => setIsModalOpen(false)}>
             取消
           </Button>
