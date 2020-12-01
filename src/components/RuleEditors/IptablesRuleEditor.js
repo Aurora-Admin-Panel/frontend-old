@@ -1,22 +1,9 @@
 import React, { useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
-import {
-  Input,
-  Label,
-  Select,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from "@windmill/react-ui";
+import { Input, Label, Select } from "@windmill/react-ui";
 
-import {
-  createForwardRule,
-  editForwardRule,
-  deleteForwardRule,
-} from "../../redux/actions/ports";
+import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
 
 const TypeOptions = [
   { label: "TCP", value: "TCP" },
@@ -36,29 +23,45 @@ const IptablesRuleEditor = ({
   remotePort,
   setRemotePort,
   setValidRuleForm,
-  setSubmitRuleForm
+  setSubmitRuleForm,
 }) => {
   const dispatch = useDispatch();
-  const validRemoteAddress = () => remoteAddress.length > 0;
-  const validRemotePort = () =>
-    parseInt(remotePort, 10) > 0 && parseInt(remotePort, 10) < 65536;
-  
-  const validRuleForm = () => validRemoteAddress() && validRemotePort();
-  const submitRuleForm = () => {
+  const validRemoteAddress = useCallback(() => remoteAddress.length > 0, [
+    remoteAddress,
+  ]);
+  const validRemotePort = useCallback(
+    () => parseInt(remotePort, 10) > 0 && parseInt(remotePort, 10) < 65536,
+    [remotePort]
+  );
+
+  const validRuleForm = useCallback(
+    () => validRemoteAddress() && validRemotePort(),
+    [validRemoteAddress, validRemotePort]
+  );
+  const submitRuleForm = useCallback(() => {
     const data = {
       method,
       config: {
         type,
         remote_address: remoteAddress,
-        remote_port: remotePort
-      }
-    }
+        remote_port: remotePort,
+      },
+    };
     if (forwardRule) {
-      dispatch(editForwardRule(serverId, portId, data))
+      dispatch(editForwardRule(serverId, portId, data));
     } else {
-      dispatch(createForwardRule(serverId, portId, data))
+      dispatch(createForwardRule(serverId, portId, data));
     }
-  };
+  }, [
+    dispatch,
+    serverId,
+    portId,
+    method,
+    type,
+    remoteAddress,
+    remotePort,
+    forwardRule,
+  ]);
 
   useEffect(() => {
     if (forwardRule) {
@@ -75,14 +78,22 @@ const IptablesRuleEditor = ({
       setRemoteAddress("");
       setRemotePort(0);
     }
-  }, [forwardRule]);
+  }, [forwardRule, setRemoteAddress, setRemotePort, setType]);
 
   useEffect(() => {
-    if (method === 'iptables') {
-      setValidRuleForm(() => validRuleForm)
-      setSubmitRuleForm(() => submitRuleForm)
+    if (method === "iptables") {
+      setValidRuleForm(() => validRuleForm);
+      setSubmitRuleForm(() => submitRuleForm);
     }
-  }, [method, remoteAddress, remotePort]);
+  }, [
+    method,
+    remoteAddress,
+    remotePort,
+    setValidRuleForm,
+    setSubmitRuleForm,
+    validRuleForm,
+    submitRuleForm,
+  ]);
 
   return (
     <>

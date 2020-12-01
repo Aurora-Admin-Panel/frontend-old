@@ -1,20 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import {
-  Input,
-  Label,
-} from "@windmill/react-ui";
+import { Input, Label, Select } from "@windmill/react-ui";
 
 import { PlusIcon, MinusIcon } from "../../icons";
-import {
-  createForwardRule,
-  editForwardRule,
-} from "../../redux/actions/ports";
+import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
+
+const GostTemplates = [
+  { label: "不使用模版", value: 0 },
+  { label: "relay+tls", value: 1 },
+  { label: "relay+ws", value: 2 },
+  { label: "relay+wss", value: 3 },
+  { label: "ss隧道", value: 4 },
+];
 
 const GostRuleEditor = ({
   serverId,
-  portId,
+  port,
   method,
   forwardRule,
   serveNodes,
@@ -27,13 +29,17 @@ const GostRuleEditor = ({
   setSubmitRuleForm,
 }) => {
   const dispatch = useDispatch();
+  const [template, setTemplate] = useState(0);
   const validServeNode = (n) => n.length > 0;
   const validChainNode = (n) => n.length > 0;
-  const validRuleForm = () =>
-    serveNodes.length > 0 &&
-    serveNodes.every((n) => validServeNode(n)) &&
-    chainNodes.every((n) => validChainNode(n));
-  const submitRuleForm = () => {
+  const validRuleForm = useCallback(
+    () =>
+      serveNodes.length > 0 &&
+      serveNodes.every((n) => validServeNode(n)) &&
+      chainNodes.every((n) => validChainNode(n)),
+    [chainNodes, serveNodes]
+  );
+  const submitRuleForm = useCallback(() => {
     const data = {
       method,
       config: {
@@ -43,9 +49,51 @@ const GostRuleEditor = ({
       },
     };
     if (forwardRule) {
-      dispatch(editForwardRule(serverId, portId, data));
+      dispatch(editForwardRule(serverId, port.id, data));
     } else {
-      dispatch(createForwardRule(serverId, portId, data));
+      dispatch(createForwardRule(serverId, port.id, data));
+    }
+  }, [
+    dispatch,
+    serverId,
+    port,
+    retries,
+    serveNodes,
+    chainNodes,
+    forwardRule,
+    method,
+  ]);
+  const handleTemplate = (t) => {
+    setTemplate(t);
+    switch (t) {
+      case "1":
+        setServeNodes([
+          `tcp://:${port.external_num ? port.external_num : port.num}`,
+          `udp://:${port.external_num ? port.external_num : port.num}`,
+        ]);
+        setChainNodes([`relay+tls://落地IP:落地端口`]);
+        break;
+      case "2":
+        setServeNodes([
+          `tcp://:${port.external_num ? port.external_num : port.num}`,
+          `udp://:${port.external_num ? port.external_num : port.num}`,
+        ]);
+        setChainNodes([`relay+ws://落地IP:落地端口`]);
+        break;
+      case "3":
+        setServeNodes([
+          `tcp://:${port.external_num ? port.external_num : port.num}`,
+          `udp://:${port.external_num ? port.external_num : port.num}`,
+        ]);
+        setChainNodes([`relay+wss://落地IP:落地端口`]);
+        break;
+      case "4":
+        setServeNodes([`:${port.external_num ? port.external_num : port.num}`]);
+        setChainNodes([`ss://aes-128-cfb:密码@落地IP:落地端口?ota=1`]);
+        break;
+      default:
+        setServeNodes([]);
+        setChainNodes([]);
     }
   };
 
@@ -54,7 +102,15 @@ const GostRuleEditor = ({
       setValidRuleForm(() => validRuleForm);
       setSubmitRuleForm(() => submitRuleForm);
     }
-  }, [method, serveNodes, chainNodes]);
+  }, [
+    method,
+    serveNodes,
+    chainNodes,
+    setValidRuleForm,
+    setSubmitRuleForm,
+    validRuleForm,
+    submitRuleForm,
+  ]);
 
   useEffect(() => {
     if (forwardRule) {
@@ -71,10 +127,24 @@ const GostRuleEditor = ({
       setServeNodes([]);
       setChainNodes([]);
     }
-  }, [forwardRule]);
+  }, [forwardRule, setRetries, setServeNodes, setChainNodes]);
 
   return (
     <>
+      <Label className="mt-4">
+        <span>配置模版</span>
+        <Select
+          className="mt-1"
+          value={template}
+          onChange={(e) => handleTemplate(e.target.value)}
+        >
+          {GostTemplates.map((option) => (
+            <option value={option.value} key={`gost_template_${option.value}`}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </Label>
       <Label className="mt-4 flex flex-row justify-between items-center">
         <div className="flex flex-auto">
           <span>重试次数</span>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-
 import {
   Input,
   Label,
@@ -12,20 +11,12 @@ import {
   Button,
 } from "@windmill/react-ui";
 
-import { PlusIcon, MinusIcon } from "../icons";
 import {
-  createForwardRule,
-  editForwardRule,
   deleteForwardRule,
 } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";
 import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
 
-const TypeOptions = [
-  { label: "TCP", value: "TCP" },
-  { label: "UDP", value: "UDP" },
-  { label: "TCP & UDP", value: "ALL" },
-];
 const MethodOptions = [
   { label: "iptables", value: "iptables" },
   { label: "gost", value: "gost" },
@@ -72,7 +63,7 @@ const ForwardRuleEditor = ({
   return (
     <>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <ModalHeader>修改端口转发{remoteAddress}</ModalHeader>
+        <ModalHeader>修改端口转发</ModalHeader>
         <ModalBody>
           <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
             <Label className="mt-4">
@@ -115,7 +106,7 @@ const ForwardRuleEditor = ({
             {method === "gost" ? (
               <GostRuleEditor
               serverId={serverId}
-              portId={port.id}
+              port={port}
               isModalOpen={isModalOpen}
               method={method}
               forwardRule={forwardRule}
