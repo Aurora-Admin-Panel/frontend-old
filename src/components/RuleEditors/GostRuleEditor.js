@@ -12,6 +12,7 @@ const GostTemplates = [
   { label: "relay+ws", value: 2 },
   { label: "relay+wss", value: 3 },
   { label: "ss隧道", value: 4 },
+  { label: "端口转发", value: 5 },
 ];
 
 const GostRuleEditor = ({
@@ -90,6 +91,13 @@ const GostRuleEditor = ({
       case "4":
         setServeNodes([`:${port.external_num ? port.external_num : port.num}`]);
         setChainNodes([`ss://aes-128-cfb:密码@落地IP:落地端口?ota=1`]);
+        break;
+      case "5":
+        setServeNodes([
+          `tcp://:${port.external_num ? port.external_num : port.num}/远端IP:远端端口号`,
+          `udp://:${port.external_num ? port.external_num : port.num}/远端IP:远端端口号`,
+        ]);
+        setChainNodes([]);
         break;
       default:
         setServeNodes([]);

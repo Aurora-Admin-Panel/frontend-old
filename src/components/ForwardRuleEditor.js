@@ -63,13 +63,12 @@ const ForwardRuleEditor = ({
   return (
     <>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <ModalHeader>修改端口转发</ModalHeader>
-        <ModalBody>
-          <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-            <Label className="mt-4">
-              <span>转发方式</span>
+        <ModalHeader>
+          <div className="mt-1 flex flex-row justify-between items-center">
+          <span className="w-1/3">端口功能</span>
+              <div className="w-2/3">
               <Select
-                className="mt-1"
+                className="mt-1 w-1/2"
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
               >
@@ -82,7 +81,12 @@ const ForwardRuleEditor = ({
                   </option>
                 ))}
               </Select>
-            </Label>
+
+              </div>
+          </div>
+          </ModalHeader>
+        <ModalBody>
+          <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
 
             {method === "iptables" ? (
               <IptablesRuleEditor
