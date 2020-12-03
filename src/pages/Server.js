@@ -194,7 +194,7 @@ function Server() {
                       <AuthSelector permissions={["admin"]}>
                         {ports[port_id].num}
                         {ports[port_id].external_num ?
-                        <Tooptip tip={<Badge>ok</Badge>} >
+                        <Tooptip tip={<span><Badge>外部端口</Badge>{ports[port_id].external_num}</span>} >
                           <WarningCircle weight="bold" size={20} />
                         </Tooptip>
                         : null}
