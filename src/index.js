@@ -2,14 +2,15 @@ import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from "react-redux"
 import { PersistGate } from 'redux-persist/integration/react'
+import { Windmill } from '@windmill/react-ui'
 
 import './assets/css/tailwind.output.css'
 
 import App from './App'
+import theme from './theme';
 import { store, persistor } from "./redux/store"
 import { SidebarProvider } from './context/SidebarContext'
 import ThemedSuspense from './components/ThemedSuspense'
-import { Windmill } from '@windmill/react-ui'
 import * as serviceWorker from './serviceWorker'
 
 // if (process.env.NODE_ENV !== 'production') {
@@ -22,7 +23,7 @@ ReactDOM.render(
         <PersistGate loading={null} persistor={persistor}>
         <SidebarProvider>
             <Suspense fallback={<ThemedSuspense />}>
-                <Windmill usePreferences>
+                <Windmill theme={theme}>
                     <App />
                 </Windmill>
             </Suspense>
