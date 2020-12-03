@@ -71,6 +71,7 @@ export default function (state = initialState, action) {
       state.servers[
         action.payload.server_id
       ].allowed_users[index] = action.payload
+      // TODO: Handle add server user.
       return {
         ...state,
         servers: {

@@ -11,6 +11,7 @@ import {
   ModalFooter,
   Select,
   HelperText,
+  Textarea,
 } from "@windmill/react-ui";
 
 import {
@@ -27,6 +28,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
   const [num, setNum] = useState(0);
   const [externalNum, setExternalNum] = useState("");
+  const [notes, setNotes] = useState("");
   const [egressLimit, setEgressLimit] = useState("");
   const [egressLimitScalar, setEgressLimitScalar] = useState(1);
   const [ingressLimit, setIngressLimit] = useState("");
@@ -80,6 +82,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
         },
       };
       if (externalNum) data.external_num = externalNum;
+      if (notes) data.notes = notes;
       if (egressLimit)
         data.config.egress_limit = egressLimit * egressLimitScalar;
       if (ingressLimit)
@@ -104,6 +107,8 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       setNum(port.num);
       if (port.external_num) setExternalNum(port.external_num);
       else setExternalNum("");
+      if (port.notes) setNotes(port.notes);
+      else setNotes("");
       if (port.config.egress_limit) {
         formatSpeed(
           port.config.egress_limit,
@@ -134,6 +139,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
     } else {
       setNum(0);
       setExternalNum("");
+      setNotes("");
       setEgressLimit("");
       setIngressLimit("");
       setEgressLimitScalar(1);
@@ -161,7 +167,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
               />
             )}
           </Label>
-          <Label className="mt-4">
+          <Label className="mt-1">
             <span>公网端口</span>
             <Input
               className="mt-1"
@@ -169,6 +175,14 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
               value={externalNum}
               valid={validExternalNum()}
               onChange={(e) => setExternalNum(e.target.value)}
+            />
+          </Label>
+          <Label className="mt-1">
+            <span>备注</span>
+            <Textarea
+              rows="1"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
             />
           </Label>
           <Label className="mt-4">

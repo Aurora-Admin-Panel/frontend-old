@@ -32,6 +32,8 @@ import PortUserEditor from "../components/PortUserEditor";
 import PageTitle from "../components/Typography/PageTitle";
 import ForwardRuleEditor from "../components/ForwardRuleEditor";
 import UsageCell from "../components/TableCells/UsageCell";
+import Tooltip from "../components/Tooltip"
+import Tooptip from "../components/Tooltip";
 
 const statusToIcon = (rule) => {
   if (rule) {
@@ -174,10 +176,8 @@ function Server() {
             <tr>
               <TableCell>
                 端口号
-                <AuthSelector permissions={["admin"]}>
-                  &nbsp;(外部)
-                </AuthSelector>
               </TableCell>
+              <TableCell>备注</TableCell>
               <TableCell>转发</TableCell>
               <TableCell>限速</TableCell>
               <TableCell>流量</TableCell>
@@ -191,19 +191,31 @@ function Server() {
                 ports[port_id] && (
                   <TableRow key={`servers_server_${server_id}_${port_id}`}>
                     <TableCell>
+                      <div className="flex flex-row items-center">
                       <AuthSelector permissions={["admin"]}>
                         {ports[port_id].num}
-                        &nbsp;(
-                        {ports[port_id].external_num
-                          ? ports[port_id].external_num
-                          : ports[port_id].num}
-                        )
+                        {ports[port_id].external_num ?
+                        <Tooptip tip={<Badge>ok</Badge>} >
+                          <WarningCircle weight="bold" size={20} />
+                        </Tooptip>
+                        : null}
                       </AuthSelector>
                       <AuthSelector permissions={["user"]}>
                         {ports[port_id].external_num
                           ? ports[port_id].external_num
                           : ports[port_id].num}
                       </AuthSelector>
+
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {ports[port_id].notes ? (
+                          ports[port_id].notes.length > 5 ? (
+                            <Tooptip tip={ports[port_id].notes}>
+                              {`${ports[port_id].notes.slice(0,5)}...`}
+                            </Tooptip>
+                          ) : ports[port_id].notes
+                      ) : null}
                     </TableCell>
                     <TableCell>
                       <div className="relative z-20 inline-flex">
