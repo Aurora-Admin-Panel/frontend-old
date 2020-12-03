@@ -121,12 +121,14 @@ function Server() {
           <span>
             {servers[server_id].name}[{servers[server_id].address}]
           </span>
-          <Button
-            iconLeft={Users}
-            size="small"
-            layout="outline"
-            onClick={(e) => history.push(`/app/servers/${server_id}/users`)}
-          ></Button>
+          <AuthSelector permissions={["admin"]}>
+            <Button
+              iconLeft={Users}
+              size="small"
+              layout="outline"
+              onClick={(e) => history.push(`/app/servers/${server_id}/users`)}
+            ></Button>
+          </AuthSelector>
         </div>
       </PageTitle>
 
