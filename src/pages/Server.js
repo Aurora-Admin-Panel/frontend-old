@@ -32,7 +32,6 @@ import PortUserEditor from "../components/PortUserEditor";
 import PageTitle from "../components/Typography/PageTitle";
 import ForwardRuleEditor from "../components/ForwardRuleEditor";
 import UsageCell from "../components/TableCells/UsageCell";
-import Tooltip from "../components/Tooltip"
 import Tooptip from "../components/Tooltip";
 
 const statusToIcon = (rule) => {
