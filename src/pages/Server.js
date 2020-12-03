@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Badge,
@@ -18,7 +18,6 @@ import {
   Circle,
   CheckCircle,
   WarningCircle,
-  SmileyXEyes,
   User,
   Users,
 } from "phosphor-react";
@@ -32,6 +31,7 @@ import PortEditor from "../components/PortEditor";
 import PortUserEditor from "../components/PortUserEditor";
 import PageTitle from "../components/Typography/PageTitle";
 import ForwardRuleEditor from "../components/ForwardRuleEditor";
+import UsageCell from "../components/TableCells/UsageCell";
 
 const statusToIcon = (rule) => {
   if (rule) {
@@ -97,6 +97,7 @@ function Server() {
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);
   const dispatch = useDispatch();
+  const history = useHistory();
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState("");
   const [currentPort, setCurrentPort] = useState("");
@@ -116,7 +117,17 @@ function Server() {
   return (
     <>
       <PageTitle>
-        {servers[server_id].name}[{servers[server_id].address}]
+        <div className="flex flex-row justify-start space-x-2">
+          <span>
+            {servers[server_id].name}[{servers[server_id].address}]
+          </span>
+          <Button
+            iconLeft={Users}
+            size="small"
+            layout="outline"
+            onClick={(e) => history.push(`/app/servers/${server_id}/users`)}
+          ></Button>
+        </div>
       </PageTitle>
 
       <ForwardRuleEditor
@@ -244,22 +255,7 @@ function Server() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col justify-center">
-                        {ports[port_id].usage ? (
-                          <>
-                            <span className="flex flex-auto items-center">
-                              <ArrowUp size={16} />
-                              {ports[port_id].usage.readable_upload}
-                            </span>
-                            <span className="flex flex-auto items-center">
-                              <ArrowDown size={16} />
-                              {ports[port_id].usage.readable_download}
-                            </span>
-                          </>
-                        ) : (
-                          <SmileyXEyes weight="bold" size={20} />
-                        )}
-                      </div>
+                      <UsageCell usage={ports[port_id].usage} />
                     </TableCell>
                     <TableCell>
                       <div className="relative z-20 inline-flex">

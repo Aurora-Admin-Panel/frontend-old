@@ -26,6 +26,7 @@ import { getServerPort } from "../redux/actions/ports";
 import PageTitle from "../components/Typography/PageTitle";
 import SectionTitle from "../components/Typography/SectionTitle";
 import FullScreenLoading from "../components/FullScreenLoading";
+import UsageCell from "../components/TableCells/UsageCell";
 
 const User = () => {
   const user_id = parseInt(useParams().user_id);
@@ -64,9 +65,10 @@ const User = () => {
         userServers.length === 0 ? (
           <SectionTitle>用户没有权限访问任何服务器和端口</SectionTitle>
         ) : (
-          userServers.map((server) => (
+          userServers.map((server) => servers[server.server_id] && (
             <div className="mt-3 flex flex-col">
               <div className="flex flex-row justify-between mb-2">
+                <div className="flex flex-row space-x-2">
                 <Button
                   layout="outline"
                   onClick={() =>
@@ -76,9 +78,13 @@ const User = () => {
                   {servers[server.server_id].name} [
                   {servers[server.server_id].address}]
                 </Button>
+                <UsageCell usage={server} flexStyle={"row"} />
+                </div>
+                <div className="flex flex-row">
                 {/* <Button size="regular" iconLeft={ArrowsDownUp} onClick={() => {}}>
                   限制用量
                 </Button> */}
+                </div>
               </div>
               <TableContainer key={`user_servers_${server.server_id}`}>
                 <Table>

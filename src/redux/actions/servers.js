@@ -5,6 +5,7 @@ import {
   serverEdit,
   serverDelete,
   serverUsersGet,
+  serverUserEdit,
   serverUserCreate,
   serverUserDelete,
 } from "../apis/servers";
@@ -142,6 +143,20 @@ export const getServerUsers = (server_id) => {
 export const createServerUser = (server_id, data) => {
   return dispatch => {
     serverUserCreate(server_id, data).then(response => {
+      const data = response.data;
+      if (data) {
+        dispatch({
+          type: ADD_SERVER_USER,
+          payload: data,
+        })
+      }
+    }).catch(error => handleError(dispatch, error))
+  }
+}
+
+export const editServerUser = (server_id, user_id, data) => {
+  return dispatch => {
+    serverUserEdit(server_id, user_id, data).then(response => {
       const data = response.data;
       if (data) {
         dispatch({

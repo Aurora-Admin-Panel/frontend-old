@@ -13,24 +13,18 @@ import {
   HelperText,
 } from "@windmill/react-ui";
 
-import {
-  createServerPort,
-  editServerPort,
-  deleteServerPort,
-  editServerPortUsage,
-} from "../redux/actions/ports";
-import { formatSpeed, formatQuota } from "../utils/formatter";
-import { SpeedLimitOptions, QuotaOptions, DueActionOptions } from "../utils/constants"
+import { editServerUser, deleteServerUser } from "../redux/actions/servers";
+import { formatQuota } from "../utils/formatter";
+import { QuotaOptions, DueActionOptions, DateOptions } from "../utils/constants";
 
 
-const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
+
+const ServerUserEditor = ({ serverUser, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
-  const [num, setNum] = useState(0);
-  const [externalNum, setExternalNum] = useState("");
-  const [egressLimit, setEgressLimit] = useState("");
-  const [egressLimitScalar, setEgressLimitScalar] = useState(1);
-  const [ingressLimit, setIngressLimit] = useState("");
-  const [ingressLimitScalar, setIngressLimitScalar] = useState(1);
+  // const [egressLimit, setEgressLimit] = useState("");
+  // const [egressLimitScalar, setEgressLimitScalar] = useState(1);
+  // const [ingressLimit, setIngressLimit] = useState("");
+  // const [ingressLimitScalar, setIngressLimitScalar] = useState(1);
   const [validUntilDate, setValidUntilDate] = useState("");
   const [dueAction, setDueAction] = useState(0);
   const [quota, setQuota] = useState("");
@@ -38,140 +32,60 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const [quotaAction, setQuotaAction] = useState(0);
   const [isDelete, setIsDelete] = useState(false);
 
-  const validNum = () => num > 0 && num < 65536;
-  const validExternalNum = () =>
-    !externalNum || (externalNum > 0 && externalNum < 65536);
-  const validEgress = () => !egressLimit || egressLimit > 0;
-  const validIngress = () => !ingressLimit || ingressLimit > 0;
+  // const validEgress = () => !egressLimit || egressLimit > 0;
+  // const validIngress = () => !ingressLimit || ingressLimit > 0;
   const validValidUntilDate = () =>
     !validUntilDate ||
-    (!isNaN(Date.parse(validUntilDate)) &&
-      new Date(Date.parse(validUntilDate)) > Date.now());
+    (!isNaN(new Date(validUntilDate)) && new Date(validUntilDate) > Date.now());
 
-  const validForm = () =>
-    isDelete || (validNum() && validExternalNum() && validValidUntilDate());
+  const validForm = () => isDelete || validValidUntilDate();
 
-  const resetUsage = () => {
-    const data = {
-      port_id: port.id,
-      download: 0,
-      upload: 0,
-      download_accumulate: 0,
-      upload_accumulate: 0,
-      download_checkpoint: 0,
-      upload_checkpoint: 0,
-    };
-    dispatch(editServerPortUsage(serverId, port.id, data));
-    setIsModalOpen(false);
-  };
   const submitForm = () => {
     if (isDelete) {
-      dispatch(deleteServerPort(serverId, port.id));
+      dispatch(deleteServerUser(serverUser.server_id, serverUser.user_id));
     } else {
       const data = {
-        num,
-        config: {
-          egress_limit: null,
-          ingress_limit: null,
-          valid_until: null,
-          due_action: 0,
-          quota: null,
-          quota_action: 0,
-        },
+        config: {},
       };
-      if (externalNum) data.external_num = externalNum;
-      if (egressLimit)
-        data.config.egress_limit = egressLimit * egressLimitScalar;
-      if (ingressLimit)
-        data.config.ingress_limit = ingressLimit * ingressLimitScalar;
       if (validUntilDate) data.config.valid_until = Date.parse(validUntilDate);
       if (dueAction) data.config.due_action = parseInt(dueAction);
       if (quota) data.config.quota = quota * quotaScalar;
       if (quotaAction) data.config.quota_action = parseInt(quotaAction);
-
-      if (port) {
-        dispatch(editServerPort(serverId, port.id, data));
-      } else {
-        dispatch(createServerPort(serverId, data));
-      }
+      dispatch(editServerUser(serverUser.server_id, serverUser.user_id, data));
     }
     setIsModalOpen(false);
   };
 
   useEffect(() => {
     setIsDelete(false);
-    if (port) {
-      setNum(port.num);
-      if (port.external_num) setExternalNum(port.external_num);
-      else setExternalNum("");
-      if (port.config.egress_limit) {
-        formatSpeed(
-          port.config.egress_limit,
-          setEgressLimit,
-          setEgressLimitScalar
-        );
-      } else setEgressLimit("");
-      if (port.config.ingress_limit) {
-        formatSpeed(
-          port.config.ingress_limit,
-          setIngressLimit,
-          setIngressLimitScalar
-        );
-      } else setIngressLimit("");
-      if (port.config.valid_until) {
-        setValidUntilDate(new Date(port.config.valid_until).toISOString());
-      } else setValidUntilDate("");
-      if (port.config.due_action) {
-        setDueAction(port.config.due_action);
-      } else setDueAction(0);
+    if (serverUser.config && serverUser.config.valid_until) {
+      setValidUntilDate(
+        new Date(serverUser.config.valid_until).toLocaleString(
+          "zh-CN",
+          DateOptions
+        )
+      );
+    } else setValidUntilDate("");
+    if (serverUser.config && serverUser.config.due_action) {
+      setDueAction(serverUser.config.due_action);
+    } else setDueAction(0);
 
-      formatQuota(port.config.quota, setQuota, setQuotaScalar);
-      if (port.config.quota_action) {
-        setQuotaAction(port.config.quota_action);
-      } else {
-        setQuotaAction(0);
-      }
-    } else {
-      setNum(0);
-      setExternalNum("");
-      setEgressLimit("");
-      setIngressLimit("");
-      setEgressLimitScalar(1);
-      setIngressLimitScalar(1);
+    if (serverUser.config) {
+      formatQuota(serverUser.config.quota, setQuota, setQuotaScalar);
     }
-  }, [isModalOpen, port]);
+    if (serverUser.config && serverUser.config.quota_action) {
+      setQuotaAction(serverUser.config.quota_action);
+    } else {
+      setQuotaAction(0);
+    }
+  }, [isModalOpen, serverUser]);
 
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-      <ModalHeader>{port ? "修改" : "添加"}端口</ModalHeader>
+      <ModalHeader>限制服务器用户</ModalHeader>
       <ModalBody>
         <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-          <Label className="mt-4">
-            <span>端口</span>
-            {port ? (
-              <Input className="mt-1" value={num} disabled={true} />
-            ) : (
-              <Input
-                className="mt-1"
-                placeholder={"8000"}
-                value={num}
-                disabled={port}
-                valid={!port && validNum()}
-                onChange={(e) => setNum(e.target.value)}
-              />
-            )}
-          </Label>
-          <Label className="mt-4">
-            <span>公网端口</span>
-            <Input
-              className="mt-1"
-              placeholder={"可为空，如服务器为NAT则填写"}
-              value={externalNum}
-              valid={validExternalNum()}
-              onChange={(e) => setExternalNum(e.target.value)}
-            />
-          </Label>
-          <Label className="mt-4">
+          {/* <Label className="mt-4">
             <div className="flex flex-row">
               <span className="w-1/2">限制出站流量</span>
               <span className="w-1/2">限制入站流量</span>
@@ -224,7 +138,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
                 </Select>
               </div>
             </div>
-          </Label>
+          </Label> */}
           <Label className="mt-4">
             <div className="flex flex-row">
               <span className="w-1/2">转发到期时间</span>
@@ -259,11 +173,10 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
             </div>
             {isNaN(Date.parse(validUntilDate)) ? null : (
               <div className="flex flex-row items-center">
-                <HelperText>{`转发将在${new Date(
-                  Date.parse(validUntilDate)
-                ).toLocaleString("zh-CN", {
-                  timeZone: "UTC",
-                })} UTC 到期`}</HelperText>
+                <HelperText>{`转发将在${new Date(validUntilDate).toLocaleString(
+                  "zh-CN",
+                  DateOptions
+                )}到期`}</HelperText>
               </div>
             )}
           </Label>
@@ -316,30 +229,23 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
             </div>
           </Label>
 
-          {port ? (
-            <Label className="mt-6">
-              <Input
-                type="checkbox"
-                checked={isDelete}
-                onChange={() => setIsDelete(!isDelete)}
-              />
-              <span className="ml-2">我要删除这个端口</span>
-            </Label>
-          ) : null}
+          <Label className="mt-6">
+            <Input
+              type="checkbox"
+              checked={isDelete}
+              onChange={() => setIsDelete(!isDelete)}
+            />
+            <span className="ml-2">我要取消用户对这台服务器的权限</span>
+          </Label>
         </div>
       </ModalBody>
       <ModalFooter>
         <div className="w-full flex flex-row justify-end space-x-2">
-          {port ? (
-            <Button layout="outline" onClick={resetUsage}>
-              重置流量
-            </Button>
-          ) : null}
           <Button layout="outline" onClick={() => setIsModalOpen(false)}>
             取消
           </Button>
           <Button onClick={submitForm} disabled={!validForm()}>
-            {port ? "修改" : "添加"}
+            确认
           </Button>
         </div>
       </ModalFooter>
@@ -347,4 +253,4 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   );
 };
 
-export default PortEditor;
+export default ServerUserEditor;

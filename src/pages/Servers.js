@@ -150,18 +150,18 @@ function Servers() {
                         history.push(`/app/servers/${server_id}`);
                       }}
                     >
-                      查看
+                      查看端口
                     </Button>
                     {permission === "admin" ? (
                       <>
-                        {/* <Button
+                        <Button
                           size="small"
                           onClick={() =>
                             history.push(`/app/servers/${server_id}/users`)
                           }
                         >
                           查看用户
-                        </Button> */}
+                        </Button>
                         <Button
                           size="small"
                           onClick={() => {

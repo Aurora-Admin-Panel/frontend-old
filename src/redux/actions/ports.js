@@ -275,6 +275,7 @@ export const deleteForwardRule = (server_id, port_id) => {
       .then((response) => {
         const data = response.data;
         if (data) {
+          dispatch(showBanner("转发删除成功", "正在生效中", "success"))
           dispatch({
             type: DELETE_SERVER_PORT_FORWARD_RULE,
             payload: {

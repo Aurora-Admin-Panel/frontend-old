@@ -43,7 +43,7 @@ export default function (state = initialState, action) {
       };
     }
     case ADD_SERVER_USERS: {
-      if (!action.payload) return { ...state };
+      if (!action.payload || action.payload.length <= 0) return { ...state };
       const server_id = action.payload[0].server_id
       return {
         ...state,
@@ -59,11 +59,18 @@ export default function (state = initialState, action) {
     case ADD_SERVER_USER: {
       if (
         !state.servers[action.payload.server_id] ||
-        state.servers[action.payload.server_id].allowed_users.find(
+        !state.servers[action.payload.server_id].allowed_users.find(
           (su) => su.user_id === action.payload.user_id
         )
-      )
+      ){
         return { ...state };
+      }
+      const index = state.servers[
+        action.payload.server_id
+      ].allowed_users.findIndex(su => su.user_id===action.payload.user_id)
+      state.servers[
+        action.payload.server_id
+      ].allowed_users[index] = action.payload
       return {
         ...state,
         servers: {
@@ -72,7 +79,7 @@ export default function (state = initialState, action) {
             ...state.servers[action.payload.server_id],
             allowed_users: state.servers[
               action.payload.server_id
-            ].allowed_users.concat(action.payload),
+            ].allowed_users
           },
         },
       };

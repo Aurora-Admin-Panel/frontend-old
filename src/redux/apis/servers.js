@@ -38,6 +38,12 @@ export const serverUserCreate = (server_id, data) => v1AuthRequest({
     data: data
 })
 
+export const serverUserEdit = (server_id, user_id, data) => v1AuthRequest({
+    method: "put",
+    url: `/servers/${server_id}/users/${user_id}`,
+    data: data
+})
+
 export const serverUserDelete = (server_id, user_id) => v1AuthRequest({
     method: "delete",
     url: `/servers/${server_id}/users/${user_id}`
