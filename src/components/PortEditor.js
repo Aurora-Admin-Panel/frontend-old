@@ -72,6 +72,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
     } else {
       const data = {
         num,
+        external_num: null,
         config: {
           egress_limit: null,
           ingress_limit: null,
@@ -82,7 +83,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
         },
       };
       if (externalNum) data.external_num = externalNum;
-      if (notes) data.notes = notes;
+      data.notes = notes;
       if (egressLimit)
         data.config.egress_limit = egressLimit * egressLimitScalar;
       if (ingressLimit)

@@ -16,6 +16,8 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@sentry/react": "^5.28.0",
+    "@sentry/tracing": "^5.28.0",
     "@testing-library/jest-dom": "4.2.4",
     "@testing-library/react": "9.5.0",
     "@testing-library/user-event": "7.2.1",
