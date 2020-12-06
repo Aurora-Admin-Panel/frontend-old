@@ -16,38 +16,39 @@ import { CheckCircle, WarningCircle } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
 import ServerEditor from "../components/ServerEditor";
-import { getServers } from "../redux/actions/servers";
 import PageTitle from "../components/Typography/PageTitle";
+import Tooltip from "../components/Tooltip"
+import { getServers, connectServer } from "../redux/actions/servers";
 import { clearServerPorts } from "../redux/actions/ports";
 
-const serverFactsToBadge = (facts, permission) => {
-  if (!facts)
+const serverFactsToBadge = (system, permission) => {
+  if (!system)
     return (
-      <>
+      <div className="">
         <Badge type="warning">SSH状态未知</Badge>
         {permission === "user" ? (
           <span>请通知管理员更新服务器状态</span>
         ) : (
           <span>请稍等片刻或重新编辑一次服务器以触发服务器状态更新</span>
         )}
-      </>
+      </div>
     );
-  if (!facts.ansible_distribution)
+  if (!system.os_family)
     return (
-      <>
+      <div className="">
         <Badge type="warning">SSH连接失败</Badge>
         {permission === "user" ? (
           <span>请通知管理员检查SSH连接信息</span>
         ) : (
-          <span>请检查SSH连接信息</span>
+        <span>{system.msg}</span>
         )}
-      </>
+      </div>
     );
   return (
-    <>
-      <Badge type="success">SSH连接成功</Badge>
-      <span>{`${facts.ansible_distribution} ${facts.ansible_distribution_version} (${facts.ansible_distribution_release}) ${facts.ansible_architecture}`}</span>
-    </>
+    <div className="">
+      <Badge type="success" className="w-auto">SSH连接成功</Badge>
+      <span>{`${system.distribution} ${system.distribution_version} (${system.distribution_release}) ${system.architecture}`}</span>
+    </div>
   );
 };
 
@@ -108,14 +109,21 @@ function Servers() {
                   <span className="text-sm">{servers[server_id].address}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="relative z-20 inline-flex">
-                    <div
-                      onMouseEnter={() => setShowFacts({ [server_id]: true })}
-                      onMouseLeave={() => setShowFacts({ [server_id]: false })}
+                  <Tooltip
+                    tip={serverFactsToBadge(
+                      servers[server_id].config.system,
+                      permission
+                    )}
                     >
-                      {servers[server_id].config.facts ? (
-                        !servers[server_id].config.facts
-                          .ansible_distribution ? (
+                    <Button
+                      size="smaill"
+                      layout="link"
+                      onClick={e => {e.preventDefault();dispatch(connectServer(server_id, {}))}}
+                    >
+                      {servers[server_id].config.system ? (
+                        !servers[server_id].config.system
+                          .os_family ? (
+                          
                           <WarningCircle weight="bold" size={20} />
                         ) : (
                           <CheckCircle weight="bold" size={20} />
@@ -128,18 +136,9 @@ function Servers() {
                           color="#000"
                         />
                       )}
-                    </div>
-                    {showFacts[server_id] ? (
-                      <div className="relative">
-                        <div className="absolute top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
-                          {serverFactsToBadge(
-                            servers[server_id].config.facts,
-                            permission
-                          )}
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
+                      </Button>
+
+                    </Tooltip>
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-start space-x-1">

@@ -13,7 +13,7 @@ const Tooptip = ({ children, tip }) => {
       {showTip ? (
         <div className="relative">
           <div
-            className="absolute top-0 z-30 w-auto p-2 mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg"
+            className="absolute top-0 z-30 w-auto whitespace-pre p-2 mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg"
             onMouseEnter={() => setShowTip(true)}
             onMouseLeave={() => setShowTip(false)}
           >

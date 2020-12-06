@@ -1,6 +1,7 @@
 import {
   serversGet,
   serverGet,
+  serverConnect,
   serverCreate,
   serverEdit,
   serverDelete,
@@ -30,7 +31,7 @@ export const getServer = (server_id) => {
             type: ADD_SERVER,
             payload: data,
           });
-          if (!data.config.facts) {
+          if (!data.config.system) {
             setTimeout(
               () => dispatch(getServer(server_id)),
               2000
@@ -53,7 +54,7 @@ export const getServers = () => {
             payload: data,
           });
           for (const server of data) {
-            if (!server.config.facts) {
+            if (!server.config.system) {
               setTimeout(
                 () => dispatch(getServer(server.id)),
                 2000
@@ -76,7 +77,7 @@ export const createServer = (data) => {
             type: ADD_SERVER,
             payload: data,
           });
-          if (!data.config.facts) {
+          if (!data.config.system) {
             setTimeout(
               () => dispatch(getServer(data.id)),
               2000
@@ -98,7 +99,7 @@ export const editServer = (server_id, data) => {
             type: ADD_SERVER,
             payload: data,
           });
-          if (!data.config.facts) {
+          if (!data.config.system) {
             setTimeout(
               () => dispatch(getServer(server_id)),
               2000
@@ -120,6 +121,28 @@ export const deleteServer = (server_id) => {
             type: REMOVE_SERVER,
             payload: data,
           });
+        }
+      })
+      .catch((error) => handleError(dispatch, error));
+  };
+};
+
+export const connectServer = (server_id, data) => {
+  return (dispatch) => {
+    serverConnect(server_id, data)
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          dispatch({
+            type: ADD_SERVER,
+            payload: data,
+          });
+          if (!data.config.system) {
+            setTimeout(
+              () => dispatch(getServer(server_id)),
+              2000
+            );
+          }
         }
       })
       .catch((error) => handleError(dispatch, error));
