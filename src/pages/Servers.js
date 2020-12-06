@@ -27,7 +27,7 @@ const serverFactsToBadge = (system, permission) => {
       <div className="">
         <Badge type="warning">SSH状态未知</Badge>
         {permission === "user" ? (
-          <span>请通知管理员更新服务器状态</span>
+          <span>请稍等片刻</span>
         ) : (
           <span>请稍等片刻或重新编辑一次服务器以触发服务器状态更新</span>
         )}
@@ -55,7 +55,6 @@ const serverFactsToBadge = (system, permission) => {
 function Servers() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [currentServer, setCurrentServer] = useState(null);
-  const [showFacts, setShowFacts] = useState({});
   const servers = useSelector((state) => state.servers.servers);
   const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();

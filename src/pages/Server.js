@@ -55,17 +55,30 @@ const statusToIcon = (rule) => {
   } else return <Circle weight="bold" size={20} />;
 };
 const statusToBadge = (rule) => {
+  const ret = [];
   if (rule) {
     const status = rule.status;
     if (status === "running" || status === "starting") {
-      return <Badge type="warning">转发中</Badge>;
+      ret.push(<Badge type="warning">转发中</Badge>);
     } else {
       if (status === "successful")
-        return <Badge type="success">转发成功</Badge>;
+        ret.push(<Badge type="success">转发成功</Badge>);
       else if (status === "failed")
-        return <Badge type="danger">转发失败</Badge>;
+        ret.push(<Badge type="danger">转发失败</Badge>);
     }
-  } else return null;
+    if (rule.method === "iptables") {
+      ret.push(
+        <span>{`[${rule.config.type}] ${rule.config.remote_address}:${rule.config.remote_port}`}</span>
+      );
+    } else if (rule.method === "gost") {
+      ret.push(
+        `gost${rule.config.ServeNodes.map(
+          (n) => "\n-L " + n
+        ).join('')}${rule.config.ChainNodes.map((n) => "\n-F " + n).join('')}`
+      );
+    }
+  }
+  return <>{ret}</>;
 };
 
 const usersToBadge = (users) => {
@@ -140,13 +153,13 @@ function Server() {
         isModalOpen={ruleEditorOpen}
         setIsModalOpen={setRuleEditorOpen}
       />
+      <PortEditor
+        port={currentPort}
+        serverId={server_id}
+        isModalOpen={portEditorOpen}
+        setIsModalOpen={setPortEditorOpen}
+      />
       <AuthSelector permissions={["admin"]}>
-        <PortEditor
-          port={currentPort}
-          serverId={server_id}
-          isModalOpen={portEditorOpen}
-          setIsModalOpen={setPortEditorOpen}
-        />
         <PortUserEditor
           portId={currentPort.id}
           serverId={server_id}
@@ -173,9 +186,7 @@ function Server() {
         <Table>
           <TableHeader>
             <tr>
-              <TableCell>
-                端口号
-              </TableCell>
+              <TableCell>端口号</TableCell>
               <TableCell>备注</TableCell>
               <TableCell>转发</TableCell>
               <TableCell>限速</TableCell>
@@ -191,53 +202,43 @@ function Server() {
                   <TableRow key={`servers_server_${server_id}_${port_id}`}>
                     <TableCell>
                       <div className="flex flex-row items-center">
-                      <AuthSelector permissions={["admin"]}>
-                        {ports[port_id].num}
-                        {ports[port_id].external_num ?
-                        <Tooptip tip={<span><Badge>外部端口</Badge>{ports[port_id].external_num}</span>} >
-                          <WarningCircle weight="bold" size={20} />
-                        </Tooptip>
-                        : null}
-                      </AuthSelector>
-                      <AuthSelector permissions={["user"]}>
-                        {ports[port_id].external_num
-                          ? ports[port_id].external_num
-                          : ports[port_id].num}
-                      </AuthSelector>
-
+                        <AuthSelector permissions={["admin"]}>
+                          {ports[port_id].num}
+                          {ports[port_id].external_num ? (
+                            <Tooptip
+                              tip={
+                                <span>
+                                  <Badge>外部端口</Badge>
+                                  {ports[port_id].external_num}
+                                </span>
+                              }
+                            >
+                              <WarningCircle weight="bold" size={20} />
+                            </Tooptip>
+                          ) : null}
+                        </AuthSelector>
+                        <AuthSelector permissions={["user"]}>
+                          {ports[port_id].external_num
+                            ? ports[port_id].external_num
+                            : ports[port_id].num}
+                        </AuthSelector>
                       </div>
                     </TableCell>
                     <TableCell>
                       {ports[port_id].notes ? (
-                          ports[port_id].notes.length > 5 ? (
-                            <Tooptip tip={ports[port_id].notes}>
-                              {`${ports[port_id].notes.slice(0,5)}...`}
-                            </Tooptip>
-                          ) : ports[port_id].notes
+                        ports[port_id].notes.length > 10 ? (
+                          <Tooptip tip={ports[port_id].notes}>
+                            {`${ports[port_id].notes.slice(0, 10)}...`}
+                          </Tooptip>
+                        ) : (
+                          ports[port_id].notes
+                        )
                       ) : null}
                     </TableCell>
                     <TableCell>
-                      <div className="relative z-20 inline-flex">
-                        <div
-                          onMouseEnter={() => setShowRule({ [port_id]: true })}
-                          onMouseLeave={() => setShowRule({ [port_id]: false })}
-                        >
-                          {statusToIcon(ports[port_id].forward_rule)}
-                        </div>
-                        {showRule[port_id] ? (
-                          <div className="relative">
-                            <div className="absolute top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
-                              {statusToBadge(ports[port_id].forward_rule)}
-                              {ports[port_id].forward_rule
-                                ? ports[port_id].forward_rule.method ===
-                                  "iptables"
-                                  ? `[${ports[port_id].forward_rule.config.type}] ${ports[port_id].forward_rule.config.remote_address}:${ports[port_id].forward_rule.config.remote_port}`
-                                  : ports[port_id].forward_rule.method
-                                : "无转发设置"}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
+                      <Tooptip tip={statusToBadge(ports[port_id].forward_rule)}>
+                        {statusToIcon(ports[port_id].forward_rule)}
+                      </Tooptip>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col justify-center">
@@ -305,21 +306,21 @@ function Server() {
                             size="small"
                             onClick={() => {
                               setCurrentPort(ports[port_id]);
-                              setPortEditorOpen(true);
-                            }}
-                          >
-                            修改端口
-                          </Button>
-                          <Button
-                            size="small"
-                            onClick={() => {
-                              setCurrentPort(ports[port_id]);
                               setPortUserEditorOpen(true);
                             }}
                           >
                             查看用户
                           </Button>
                         </AuthSelector>
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setCurrentPort(ports[port_id]);
+                            setPortEditorOpen(true);
+                          }}
+                        >
+                          修改端口
+                        </Button>
                         {ports[port_id].forward_rule ? (
                           <>
                             <Button

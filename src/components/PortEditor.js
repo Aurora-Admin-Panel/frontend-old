@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch  } from "react-redux";
 
 import {
   Button,
@@ -11,9 +11,9 @@ import {
   ModalFooter,
   Select,
   HelperText,
-  Textarea,
 } from "@windmill/react-ui";
 
+import AuthSelector from "../components/AuthSelector"
 import {
   createServerPort,
   editServerPort,
@@ -153,7 +153,8 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       <ModalHeader>{port ? "修改" : "添加"}端口</ModalHeader>
       <ModalBody>
         <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-          <Label className="mt-4">
+          <AuthSelector permissions={['admin']}>
+          <Label className="mt-2">
             <span>端口</span>
             {port ? (
               <Input className="mt-1" value={num} disabled={true} />
@@ -179,14 +180,6 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
             />
           </Label>
           <Label className="mt-1">
-            <span>备注</span>
-            <Textarea
-              rows="1"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </Label>
-          <Label className="mt-4">
             <div className="flex flex-row">
               <span className="w-1/2">限制出站流量</span>
               <span className="w-1/2">限制入站流量</span>
@@ -240,7 +233,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
               </div>
             </div>
           </Label>
-          <Label className="mt-4">
+          <Label className="mt-1">
             <div className="flex flex-row">
               <span className="w-1/2">转发到期时间</span>
               <span className="w-1/2">到期时动作</span>
@@ -282,7 +275,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
               </div>
             )}
           </Label>
-          <Label className="mt-4">
+          <Label className="mt-1">
             <div className="flex flex-row">
               <span className="w-1/2">限制流量</span>
               <span className="w-1/2">流量超限时动作</span>
@@ -330,9 +323,19 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
               </div>
             </div>
           </Label>
+          </AuthSelector>
+          <Label className="mt-1">
+            <span>备注</span>
+            <Input
+            className="mt-1"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </Label>
 
+        <AuthSelector permissions={['admin']}>
           {port ? (
-            <Label className="mt-6">
+            <Label className="mt-4">
               <Input
                 type="checkbox"
                 checked={isDelete}
@@ -341,6 +344,8 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
               <span className="ml-2">我要删除这个端口</span>
             </Label>
           ) : null}
+
+        </AuthSelector>
         </div>
       </ModalBody>
       <ModalFooter>

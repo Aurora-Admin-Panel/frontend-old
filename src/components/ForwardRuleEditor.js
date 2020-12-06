@@ -64,9 +64,9 @@ const ForwardRuleEditor = ({
     <>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalHeader>
-          <div className="mt-1 flex flex-row justify-between items-center">
-          <span className="w-1/3">端口功能</span>
-              <div className="w-2/3">
+          <div className="mt-1 flex flex-row justify-start items-center">
+          <span className="w-auto">端口功能</span>
+              <div className="w-1/3 ml-3">
               <Select
                 className="mt-1 w-1/2"
                 value={method}
