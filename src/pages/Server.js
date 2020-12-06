@@ -117,7 +117,6 @@ function Server() {
   const [currentPort, setCurrentPort] = useState("");
   const [portEditorOpen, setPortEditorOpen] = useState(false);
   const [portUserEditorOpen, setPortUserEditorOpen] = useState(false);
-  const [showRule, setShowRule] = useState({});
   const [showUsers, setShowUsers] = useState({});
 
   useEffect(() => {
