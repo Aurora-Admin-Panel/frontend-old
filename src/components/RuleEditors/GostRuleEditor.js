@@ -20,16 +20,13 @@ const GostRuleEditor = ({
   port,
   method,
   forwardRule,
-  serveNodes,
-  setServeNodes,
-  chainNodes,
-  setChainNodes,
-  retries,
-  setRetries,
   setValidRuleForm,
   setSubmitRuleForm,
 }) => {
   const dispatch = useDispatch();
+  const [serveNodes, setServeNodes] = useState([]);
+  const [chainNodes, setChainNodes] = useState([]);
+  const [retries, setRetries] = useState(0)
   const [template, setTemplate] = useState(0);
   const validServeNode = (n) => n.length > 0;
   const validChainNode = (n) => n.length > 0;
@@ -140,9 +137,10 @@ const GostRuleEditor = ({
   return (
     <>
       <Label className="mt-4">
-        <span>配置模版</span>
+        <div className="flex flex-row justify-between items-center mt-1">
+        <span className="w-1/2">配置模版</span>
         <Select
-          className="mt-1"
+          className="w-1/2"
           value={template}
           onChange={(e) => handleTemplate(e.target.value)}
         >
@@ -152,6 +150,8 @@ const GostRuleEditor = ({
             </option>
           ))}
         </Select>
+
+        </div>
       </Label>
       <Label className="mt-4 flex flex-row justify-between items-center">
         <div className="flex flex-auto">

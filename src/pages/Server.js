@@ -61,21 +61,27 @@ const statusToBadge = (rule) => {
     if (status === "running" || status === "starting") {
       ret.push(<Badge type="warning">转发中</Badge>);
     } else {
-      if (status === "successful")
+      if (status === "successful") {
         ret.push(<Badge type="success">转发成功</Badge>);
-      else if (status === "failed")
+        if (rule.method === "iptables") {
+          ret.push(
+            <span>{`[${rule.config.type}] ${rule.config.remote_address}:${rule.config.remote_port}`}</span>
+          );
+        } else if (rule.method === "gost") {
+          ret.push(
+            `gost${rule.config.ServeNodes.map((n) => "\n-L " + n).join(
+              ""
+            )}${rule.config.ChainNodes.map((n) => "\n-F " + n).join("")}`
+          );
+        } else {
+          ret.push(rule.method);
+        }
+      } else if (status === "failed") {
         ret.push(<Badge type="danger">转发失败</Badge>);
-    }
-    if (rule.method === "iptables") {
-      ret.push(
-        <span>{`[${rule.config.type}] ${rule.config.remote_address}:${rule.config.remote_port}`}</span>
-      );
-    } else if (rule.method === "gost") {
-      ret.push(
-        `gost${rule.config.ServeNodes.map(
-          (n) => "\n-L " + n
-        ).join('')}${rule.config.ChainNodes.map((n) => "\n-F " + n).join('')}`
-      );
+        if (rule.config && rule.config.error) {
+          ret.push(`\n${rule.config.error}`);
+        }
+      }
     }
   }
   return <>{ret}</>;
@@ -202,13 +208,15 @@ function Server() {
                     <TableCell>
                       <div className="flex flex-row items-center">
                         <AuthSelector permissions={["admin"]}>
-                          {ports[port_id].num}
+                          {ports[port_id].external_num
+                            ? ports[port_id].external_num
+                            : ports[port_id].num}
                           {ports[port_id].external_num ? (
                             <Tooptip
                               tip={
                                 <span>
-                                  <Badge>外部端口</Badge>
-                                  {ports[port_id].external_num}
+                                  <Badge>内部端口</Badge>
+                                  {ports[port_id].num}
                                 </span>
                               }
                             >

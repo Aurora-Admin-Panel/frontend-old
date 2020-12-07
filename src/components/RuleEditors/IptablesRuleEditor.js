@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { Input, Label, Select } from "@windmill/react-ui";
@@ -16,16 +16,13 @@ const IptablesRuleEditor = ({
   portId,
   method,
   forwardRule,
-  type,
-  setType,
-  remoteAddress,
-  setRemoteAddress,
-  remotePort,
-  setRemotePort,
   setValidRuleForm,
   setSubmitRuleForm,
 }) => {
   const dispatch = useDispatch();
+  const [type, setType] = useState("TCP");
+  const [remoteAddress, setRemoteAddress] = useState("");
+  const [remotePort, setRemotePort] = useState(0);
   const validRemoteAddress = useCallback(() => remoteAddress.length > 0, [
     remoteAddress,
   ]);

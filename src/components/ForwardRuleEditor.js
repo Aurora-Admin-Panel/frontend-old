@@ -11,15 +11,15 @@ import {
   Button,
 } from "@windmill/react-ui";
 
-import {
-  deleteForwardRule,
-} from "../redux/actions/ports";
+import { deleteForwardRule } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";
 import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
+import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
 
 const MethodOptions = [
   { label: "iptables", value: "iptables" },
   { label: "gost", value: "gost" },
+  { label: "v2ray", value: "v2ray" },
 ];
 
 const ForwardRuleEditor = ({
@@ -30,18 +30,12 @@ const ForwardRuleEditor = ({
   setIsModalOpen,
 }) => {
   const dispatch = useDispatch();
-  const [type, setType] = useState("TCP");
   const [method, setMethod] = useState("iptables");
-  const [remoteAddress, setRemoteAddress] = useState("");
-  const [remotePort, setRemotePort] = useState(0);
-  const [serveNodes, setServeNodes] = useState([]);
-  const [chainNodes, setChainNodes] = useState([]);
-  const [retries, setRetries] = useState(0);
   const [validRuleForm, setValidRuleForm] = useState(() => () => false);
   const [submitRuleForm, setSubmitRuleForm] = useState(() => () => {});
   const [isDelete, setIsDelete] = useState(false);
 
-  const validForm = () => isDelete || validRuleForm()
+  const validForm = () => isDelete || validRuleForm();
   const submitForm = () => {
     if (isDelete) {
       dispatch(deleteForwardRule(serverId, port.id));
@@ -52,11 +46,13 @@ const ForwardRuleEditor = ({
   };
 
   useEffect(() => {
-    setIsDelete(false);
-    if (forwardRule) {
-      setMethod(forwardRule.method);
-    } else {
-      setMethod("iptables")
+    if (isModalOpen) {
+      setIsDelete(false);
+      if (forwardRule) {
+        setMethod(forwardRule.method);
+      } else {
+        setMethod("v2ray");
+      }
     }
   }, [isModalOpen, forwardRule]);
 
@@ -65,8 +61,8 @@ const ForwardRuleEditor = ({
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalHeader>
           <div className="mt-1 flex flex-row justify-start items-center">
-          <span className="w-auto">端口功能</span>
-              <div className="w-1/3 ml-3">
+            <span className="w-auto">端口功能</span>
+            <div className="w-1/3 ml-3">
               <Select
                 className="mt-1 w-1/2"
                 value={method}
@@ -81,13 +77,11 @@ const ForwardRuleEditor = ({
                   </option>
                 ))}
               </Select>
-
-              </div>
+            </div>
           </div>
-          </ModalHeader>
+        </ModalHeader>
         <ModalBody>
           <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-
             {method === "iptables" ? (
               <IptablesRuleEditor
                 serverId={serverId}
@@ -95,35 +89,34 @@ const ForwardRuleEditor = ({
                 isModalOpen={isModalOpen}
                 method={method}
                 forwardRule={forwardRule}
-                type={type}
-                setType={setType}
-                remoteAddress={remoteAddress}
-                setRemoteAddress={setRemoteAddress}
-                remotePort={remotePort}
-                setRemotePort={setRemotePort}
                 setValidRuleForm={setValidRuleForm}
                 setSubmitRuleForm={setSubmitRuleForm}
-                />
-
+              />
             ) : null}
 
             {method === "gost" ? (
               <GostRuleEditor
-              serverId={serverId}
-              port={port}
-              isModalOpen={isModalOpen}
-              method={method}
-              forwardRule={forwardRule}
-              serveNodes={serveNodes}
-              setServeNodes={setServeNodes}
-              chainNodes={chainNodes}
-              setChainNodes={setChainNodes}
-              retries={retries}
-              setRetries={setRetries}
-              setValidRuleForm={setValidRuleForm}
-              setSubmitRuleForm={setSubmitRuleForm}
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
               />
-          ) : null}
+            ) : null}
+
+{method === "v2ray" ? (
+              <V2rayRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
 
             {forwardRule ? (
               <Label className="mt-6">
@@ -138,14 +131,14 @@ const ForwardRuleEditor = ({
           </div>
         </ModalBody>
         <ModalFooter>
-        <div className="w-full flex flex-row justify-end space-x-2">
-          <Button layout="outline" onClick={() => setIsModalOpen(false)}>
-            取消
-          </Button>
-          <Button onClick={submitForm} disabled={!validForm()}>
-            {forwardRule ? "修改" : "添加"}
-          </Button>
-        </div>
+          <div className="w-full flex flex-row justify-end space-x-2">
+            <Button layout="outline" onClick={() => setIsModalOpen(false)}>
+              取消
+            </Button>
+            <Button onClick={submitForm} disabled={!validForm()}>
+              {forwardRule ? "修改" : "添加"}
+            </Button>
+          </div>
         </ModalFooter>
       </Modal>
     </>
