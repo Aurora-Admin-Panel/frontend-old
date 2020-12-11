@@ -54,15 +54,15 @@ const statusToIcon = (rule) => {
     }
   } else return <Circle weight="bold" size={20} />;
 };
-const statusToBadge = (rule) => {
+const statusToBadge = (rule, server, port) => {
   const ret = [];
   if (rule) {
     const status = rule.status;
     if (status === "running" || status === "starting") {
-      ret.push(<Badge type="warning">转发中</Badge>);
+      ret.push(<Badge type="warning">部署中</Badge>);
     } else {
       if (status === "successful") {
-        ret.push(<Badge type="success">转发成功</Badge>);
+        ret.push(<Badge type="success">端口功能已部署</Badge>);
         if (rule.method === "iptables") {
           ret.push(
             <span>{`[${rule.config.type}] ${rule.config.remote_address}:${rule.config.remote_port}`}</span>
@@ -73,18 +73,31 @@ const statusToBadge = (rule) => {
               ""
             )}${rule.config.ChainNodes.map((n) => "\n-F " + n).join("")}`
           );
+        } else if (rule.method === "brook") {
+          ret.push(
+            `brook ${rule.config.command}`
+          );
+        } else if (rule.method === "node_exporter") {
+          ret.push('node_exporter')
+          ret.push(
+            `请添加${server.address}:${port.external_num ? port.external_num : port.num}到promethus.yml中`
+          );
         } else {
           ret.push(rule.method);
         }
       } else if (status === "failed") {
-        ret.push(<Badge type="danger">转发失败</Badge>);
+        ret.push(<Badge type="danger">端口功能部署失败</Badge>);
         if (rule.config && rule.config.error) {
           ret.push(`\n${rule.config.error}`);
         }
       }
     }
   }
-  return <>{ret}</>;
+  return <>{ret.map((c, idx) => (
+    <div key={`forward_status_badge_${idx}`}>
+      {c}
+    </div>
+  ))}</>;
 };
 
 const usersToBadge = (users) => {
@@ -193,7 +206,7 @@ function Server() {
             <tr>
               <TableCell>端口号</TableCell>
               <TableCell>备注</TableCell>
-              <TableCell>转发</TableCell>
+              <TableCell>功能</TableCell>
               <TableCell>限速</TableCell>
               <TableCell>流量</TableCell>
               <TableCell>用户</TableCell>
@@ -243,7 +256,7 @@ function Server() {
                       ) : null}
                     </TableCell>
                     <TableCell>
-                      <Tooptip tip={statusToBadge(ports[port_id].forward_rule)}>
+                      <Tooptip tip={statusToBadge(ports[port_id].forward_rule, servers[server_id], ports[port_id])}>
                         {statusToIcon(ports[port_id].forward_rule)}
                       </Tooptip>
                     </TableCell>

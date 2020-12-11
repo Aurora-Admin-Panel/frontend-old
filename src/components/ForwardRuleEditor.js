@@ -5,7 +5,6 @@ import {
   Label,
   Select,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
   Button,
@@ -14,12 +13,18 @@ import {
 import { deleteForwardRule } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";
 import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
-import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
+// import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
+import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
+import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
+import NodeExporterRuleEditor from "../components/RuleEditors/NodeExporterRuleEditor";
 
 const MethodOptions = [
   { label: "iptables", value: "iptables" },
   { label: "gost", value: "gost" },
-  { label: "v2ray", value: "v2ray" },
+  { label: "brook", value: "brook" },
+  { label: "socat", value: "socat" },
+  { label: "node_exporter", value: "node_exporter" },
+  // { label: "v2ray", value: "v2ray" },
 ];
 
 const ForwardRuleEditor = ({
@@ -59,7 +64,7 @@ const ForwardRuleEditor = ({
   return (
     <>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <ModalHeader>
+        <div className="-mt-6 mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">
           <div className="mt-1 flex flex-row justify-start items-center">
             <span className="w-auto">端口功能</span>
             <div className="w-1/3 ml-3">
@@ -79,7 +84,7 @@ const ForwardRuleEditor = ({
               </Select>
             </div>
           </div>
-        </ModalHeader>
+        </div>
         <ModalBody>
           <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
             {method === "iptables" ? (
@@ -106,10 +111,46 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
-{method === "v2ray" ? (
+            {/* {method === "v2ray" ? (
               <V2rayRuleEditor
                 serverId={serverId}
                 port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null} */}
+
+            {method === "brook" ? (
+              <BrookRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+            {method === "socat" ? (
+              <SocatRuleEditor
+                serverId={serverId}
+                portId={port.id}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+            {method === "node_exporter" ? (
+              <NodeExporterRuleEditor
+                serverId={serverId}
+                portId={port.id}
                 isModalOpen={isModalOpen}
                 method={method}
                 forwardRule={forwardRule}
@@ -125,7 +166,7 @@ const ForwardRuleEditor = ({
                   checked={isDelete}
                   onChange={() => setIsDelete(!isDelete)}
                 />
-                <span className="ml-2">我要删除这条转发规则</span>
+                <span className="ml-2">我要关闭此端口功能</span>
               </Label>
             ) : null}
           </div>

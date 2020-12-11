@@ -1,10 +1,17 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import { v4 as uuidv4 } from 'uuid';
 
-import { Input, Label, Select, Button } from "@windmill/react-ui";
+import {
+  ArrowClockwise,
+  Plus,
+  Minus
+} from "phosphor-react";
+import { Input, Label, Select, Button, HelperText } from "@windmill/react-ui";
 
-import { PlusIcon, MinusIcon } from "../../icons";
+// import { PlusIcon, MinusIcon } from "../../icons";
 import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
+import VmessEditor from "./V2ray/VmessEditor"
 
 const V2rayTemplates = [
   { label: "不使用模版", value: 0 },
@@ -16,6 +23,7 @@ const V2rayTemplates = [
 ];
 
 const InboundProtocols = [
+  { label: "请选择协议", value: "0" },
   { label: "vmess", value: "vmess" },
   { label: "shadowsocks", value: "shadowsocks" },
   { label: "dokodemo-door", value: "dokodemo-door" },
@@ -23,6 +31,7 @@ const InboundProtocols = [
   { label: "socks", value: "socks" },
 ];
 const OutboundProtocols = [
+  { label: "请选择协议", value: "0" },
   { label: "freedom", value: "freedom" },
   { label: "blackhole", value: "blackhole" },
   { label: "vmess", value: "vmess" },
@@ -30,6 +39,8 @@ const OutboundProtocols = [
   { label: "http", value: "http" },
   { label: "socks", value: "socks" },
 ];
+
+
 
 const V2rayRuleEditor = ({
   serverId,
@@ -41,8 +52,15 @@ const V2rayRuleEditor = ({
 }) => {
   const dispatch = useDispatch();
   const [template, setTemplate] = useState(0);
+  const [inboundProtocol, setInboundProtocol] = useState(0);
+  const [inboundSettings, setInboundSettings] = useState({});
+  const [inboundStreamSettings, setInboundStreamSettings] = useState({});
+  const [outboundProtocol, setOutboundProtocol] = useState(0);
+  const [outboundSettings, setOutboundSettings] = useState({});
+  const [outboundStreamSettings, setOutboundStreamSettings] = useState({});
   const [tab, setTab] = useState({ inbound: true });
-  const validRuleForm = useCallback(() => {}, []);
+  const validRuleForm = useCallback(() => {
+  }, []);
   const submitRuleForm = useCallback(() => {
     const data = {
       method,
@@ -70,6 +88,34 @@ const V2rayRuleEditor = ({
       default:
     }
   };
+  const handleInboundProtocol = (p) => {
+    setInboundProtocol(p);
+    switch (p) {
+      case "vmess":
+        setInboundSettings({
+          clients: [{
+            uuid: uuidv4(),
+            alterId: 64
+          }]
+        })
+        break;
+      default:
+    }
+  }
+  const handleOutboundProtocol = (p) => {
+    setOutboundProtocol(p);
+    switch (p) {
+      case "vmess":
+        setOutboundSettings({
+          clients: [{
+            uuid: uuidv4(),
+            alterId: 64
+          }]
+        })
+        break;
+      default:
+    }
+  }
 
   useEffect(() => {
     if (method === "v2ray") {
@@ -138,12 +184,56 @@ const V2rayRuleEditor = ({
           </div>
         </div>
       </Label>
-      <Label className="mt-1">
-        配置
-      </Label>
-      <Label className="mt-1">
-        传输配置
-      </Label>
+      {tab.inbound ?
+        <>
+          <Label className="mt-1">
+            <div className="flex flex-row justify-between items-center mt-1">
+              <span className="w-1/2">协议</span>
+              <Select
+                className="w-1/2"
+                value={inboundProtocol}
+                onChange={(e) => handleInboundProtocol(e.target.value)}
+              >
+                {InboundProtocols.map((option) => (
+                  <option value={option.value} key={`inbound_protocol_${option.value}`}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+
+            </div>
+          </Label>
+          <Label className="mt-1">
+            {inboundProtocol === "vmess" ?
+              <VmessEditor settings={inboundSettings} setSettings={setInboundSettings} />
+              : null}
+          </Label>
+        </> : null}
+        {tab.outbound ?
+        <>
+          <Label className="mt-1">
+            <div className="flex flex-row justify-between items-center mt-1">
+              <span className="w-1/2">协议</span>
+              <Select
+                className="w-1/2"
+                value={outboundProtocol}
+                onChange={(e) => handleOutboundProtocol(e.target.value)}
+              >
+                {OutboundProtocols.map((option) => (
+                  <option value={option.value} key={`outbound_protocol_${option.value}`}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+
+            </div>
+          </Label>
+          <Label className="mt-1">
+            {outboundProtocol === "vmess" ?
+              <VmessEditor settings={inboundSettings} setSettings={setInboundSettings} />
+              : null}
+          </Label>
+        </> : null}
     </>
   );
 };
