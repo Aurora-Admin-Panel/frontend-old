@@ -64,7 +64,7 @@ const ForwardRuleEditor = ({
       if (forwardRule) {
         setMethod(forwardRule.method);
       } else {
-        setMethod("v2ray");
+        setMethod("iptables");
       }
     }
   }, [isModalOpen, forwardRule]);
@@ -119,7 +119,7 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
-{method === "ehco" ? (
+            {method === "ehco" ? (
               <EhcoRuleEditor
                 serverId={serverId}
                 port={port}
@@ -131,7 +131,7 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
-{method === "wstunnel" ? (
+            {method === "wstunnel" ? (
               <WstunnelRuleEditor
                 serverId={serverId}
                 port={port}
@@ -190,7 +190,7 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
-{method === "tiny_port_mapper" ? (
+            {method === "tiny_port_mapper" ? (
               <TinyPortMapperRuleEditor
                 serverId={serverId}
                 portId={port.id}
