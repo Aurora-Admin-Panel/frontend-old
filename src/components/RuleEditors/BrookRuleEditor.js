@@ -22,7 +22,7 @@ const BrookRuleEditor = ({
   setSubmitRuleForm,
 }) => {
   const dispatch = useDispatch();
-  const [command, setCommand] = useState("TCP");
+  const [command, setCommand] = useState("relay");
   const [remoteAddress, setRemoteAddress] = useState("");
   const [remotePort, setRemotePort] = useState(0);
   const [password, setPassword] = useState("");

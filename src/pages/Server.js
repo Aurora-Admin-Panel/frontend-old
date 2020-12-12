@@ -77,6 +77,10 @@ const statusToBadge = (rule, server, port) => {
           ret.push(
             `brook ${rule.config.command}`
           );
+        } else if (rule.method === "tiny_port_mapper") {
+          ret.push(
+            `tinyPortMapper -l0.0.0.0:${port.external_num ? port.external_num : port.num} -r${rule.config.remote_address}:${rule.config.remote_port}`
+          );
         } else if (rule.method === "node_exporter") {
           ret.push('node_exporter')
           ret.push(

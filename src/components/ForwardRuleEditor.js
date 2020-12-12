@@ -12,18 +12,24 @@ import {
 
 import { deleteForwardRule } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";
+import EhcoRuleEditor from "../components/RuleEditors/EhcoRuleEditor";
 import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
 // import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
 import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
+import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
 import NodeExporterRuleEditor from "../components/RuleEditors/NodeExporterRuleEditor";
+import TinyPortMapperRuleEditor from "../components/RuleEditors/TinyPortMapperRuleEditor";
 
 const MethodOptions = [
   { label: "iptables", value: "iptables" },
   { label: "gost", value: "gost" },
+  { label: "ehco", value: "ehco" },
   { label: "brook", value: "brook" },
   { label: "socat", value: "socat" },
-  { label: "node_exporter", value: "node_exporter" },
+  { label: "wstunnel", value: "wstunnel" },
+  { label: "tinyPortMapper", value: "tiny_port_mapper" },
+  { label: "prometheus node exporter", value: "node_exporter" },
   // { label: "v2ray", value: "v2ray" },
 ];
 
@@ -111,6 +117,30 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
+{method === "ehco" ? (
+              <EhcoRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+{method === "wstunnel" ? (
+              <WstunnelRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
             {/* {method === "v2ray" ? (
               <V2rayRuleEditor
                 serverId={serverId}
@@ -137,6 +167,18 @@ const ForwardRuleEditor = ({
 
             {method === "socat" ? (
               <SocatRuleEditor
+                serverId={serverId}
+                portId={port.id}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+{method === "tiny_port_mapper" ? (
+              <TinyPortMapperRuleEditor
                 serverId={serverId}
                 portId={port.id}
                 isModalOpen={isModalOpen}
