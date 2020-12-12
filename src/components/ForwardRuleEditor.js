@@ -18,6 +18,7 @@ import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
 import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
 import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
+import ShadowsocksRuleEditor from "../components/RuleEditors/ShadowsocksRuleEditor";
 import NodeExporterRuleEditor from "../components/RuleEditors/NodeExporterRuleEditor";
 import TinyPortMapperRuleEditor from "../components/RuleEditors/TinyPortMapperRuleEditor";
 
@@ -28,6 +29,7 @@ const MethodOptions = [
   { label: "brook", value: "brook" },
   { label: "socat", value: "socat" },
   { label: "wstunnel", value: "wstunnel" },
+  { label: "shadowsocks", value: "shadowsocks" },
   { label: "tinyPortMapper", value: "tiny_port_mapper" },
   { label: "prometheus node exporter", value: "node_exporter" },
   // { label: "v2ray", value: "v2ray" },
@@ -152,6 +154,17 @@ const ForwardRuleEditor = ({
                 setSubmitRuleForm={setSubmitRuleForm}
               />
             ) : null} */}
+            {method === "shadowsocks" ? (
+              <ShadowsocksRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
 
             {method === "brook" ? (
               <BrookRuleEditor
