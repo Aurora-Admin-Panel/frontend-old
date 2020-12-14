@@ -221,7 +221,7 @@ const EhcoRuleEditor = ({
       </Label>
 
       <Label className="mt-1">
-        <span>远端IP/127.0.0.1</span>
+        <span>远端IP(服务端)/127.0.0.1(客户端)</span>
         <Input
           className="mt-1"
           placeholder="1.1.1.1"
@@ -231,7 +231,7 @@ const EhcoRuleEditor = ({
         />
       </Label>
       <Label className="mt-1">
-        <span>远端/本地端口</span>
+        <span>远端隧道端口(服务端)/代理本地端口(客户端)</span>
         <Input
           className="mt-1"
           placeholder="8888"

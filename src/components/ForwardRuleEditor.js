@@ -14,7 +14,7 @@ import { deleteForwardRule } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";
 import EhcoRuleEditor from "../components/RuleEditors/EhcoRuleEditor";
 import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
-// import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
+import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
 import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
 import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
@@ -26,13 +26,13 @@ const MethodOptions = [
   { label: "iptables", value: "iptables" },
   { label: "gost", value: "gost" },
   { label: "ehco", value: "ehco" },
+  // { label: "v2ray", value: "v2ray" },
   { label: "brook", value: "brook" },
   { label: "socat", value: "socat" },
   { label: "wstunnel", value: "wstunnel" },
   { label: "shadowsocks", value: "shadowsocks" },
   { label: "tinyPortMapper", value: "tiny_port_mapper" },
   { label: "prometheus node exporter", value: "node_exporter" },
-  // { label: "v2ray", value: "v2ray" },
 ];
 
 const ForwardRuleEditor = ({
@@ -143,7 +143,7 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
-            {/* {method === "v2ray" ? (
+            {method === "v2ray" ? (
               <V2rayRuleEditor
                 serverId={serverId}
                 port={port}
@@ -153,7 +153,8 @@ const ForwardRuleEditor = ({
                 setValidRuleForm={setValidRuleForm}
                 setSubmitRuleForm={setSubmitRuleForm}
               />
-            ) : null} */}
+            ) : null}
+
             {method === "shadowsocks" ? (
               <ShadowsocksRuleEditor
                 serverId={serverId}

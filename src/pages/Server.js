@@ -324,7 +324,7 @@ function Server() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col flex-wrap md:flex-row md:items-end md:space-x-1 space-y-1">
+                      <div className="flex flex-col flex-wrap lg:flex-row lg:items-end lg:space-x-1 space-y-1">
                         <AuthSelector permissions={["admin"]}>
                           <Button
                             size="small"
