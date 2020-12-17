@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Badge,
@@ -60,6 +60,7 @@ const statusToBadge = (rule, server, port) => {
     const status = rule.status;
     if (status === "running" || status === "starting") {
       ret.push(<Badge type="warning">部署中</Badge>);
+      ret.push(<Link className="text-blue-600" to={`/app/servers/${server.id}/${port.id}/artifacts`}>查看日志</Link>)
     } else {
       if (status === "successful") {
         ret.push(<Badge type="success">端口功能已部署</Badge>);
@@ -91,6 +92,7 @@ const statusToBadge = (rule, server, port) => {
         }
       } else if (status === "failed") {
         ret.push(<Badge type="danger">端口功能部署失败</Badge>);
+        ret.push(<Link className="text-blue-600" to={`/app/servers/${server.id}/${port.id}/artifacts`}>查看日志</Link>)
         if (rule.config && rule.config.error) {
           ret.push(`\n${rule.config.error}`);
         }

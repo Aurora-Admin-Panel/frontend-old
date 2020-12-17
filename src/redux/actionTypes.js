@@ -39,3 +39,5 @@ export const SET_FILTER = "SET_FILTER";
 
 export const SHOW_BANNER = "SHOW_BANNER";
 export const CLEAR_BANNER = "CLEAR_BANNER";
+
+export const ADD_ARTIFACTS = "ADD_ARTIFACTS";

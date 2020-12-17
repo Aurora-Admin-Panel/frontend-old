@@ -17,6 +17,7 @@ const About = lazy(() => import('../pages/About'))
 const Me = lazy(() => import('../pages/Me'))
 const User = lazy(() => import('../pages/User'))
 const ServerUsers = lazy(() => import('../pages/ServerUsers'))
+const Artifacts = lazy(() => import('../pages/Artifacts'))
 
 /**
  * ⚠ These are internal routes!
@@ -53,6 +54,11 @@ const routes = [
     path: '/servers/:server_id/users',
     component: ServerUsers,
     permissions: ['admin']
+  },
+  {
+    path: '/servers/:server_id/:port_id/artifacts',
+    component: Artifacts,
+    permissions: ['admin', 'user']
   },
   {
     path: '/users/:user_id',

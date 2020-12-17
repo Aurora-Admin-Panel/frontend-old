@@ -71,6 +71,11 @@ export const serverPortForwardRuleDelete = (server_id, port_id) => v1AuthRequest
     url: `/servers/${server_id}/ports/${port_id}/forward_rule`,
 })
 
+export const serverPortForwardRuleArtifactsGet = (server_id, port_id) => v1AuthRequest({
+    method: "get",
+    url: `/servers/${server_id}/ports/${port_id}/forward_rule/artifacts`
+})
+
 export const serverPortUsageEdit = (server_id, port_id, data) => v1AuthRequest({
     method: "post",
     url: `/servers/${server_id}/ports/${port_id}/usage`,

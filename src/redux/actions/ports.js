@@ -15,8 +15,10 @@ import {
   serverPortForwardRuleCreate,
   serverPortForwardRuleEdit,
   serverPortForwardRuleDelete,
+  serverPortForwardRuleArtifactsGet,
 } from "../apis/ports";
 import {
+  ADD_ARTIFACTS,
   ADD_SERVER_PORTS,
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
@@ -298,6 +300,26 @@ export const editServerPortUsage = (server_id, port_id, data) => {
           type: ADD_SERVER_PORT_USAGE,
           payload: data
         })
+      }
+    }).catch(error => handleError(dispatch, error))
+  }
+}
+
+export const artifactsGet = (server_id, port_id) => {
+  return dispatch => {
+    serverPortForwardRuleArtifactsGet(server_id, port_id).then(response => {
+      const data = response.data;
+      if (data) {
+        dispatch({
+          type: ADD_ARTIFACTS,
+          payload: {
+            server_id, port_id,
+            ...data
+          }
+        })
+        if (data.stdout && !data.stdout.includes("PLAY RECAP")) {
+          setTimeout(() => dispatch(artifactsGet(server_id, port_id)), 1000);
+        }
       }
     }).catch(error => handleError(dispatch, error))
   }
