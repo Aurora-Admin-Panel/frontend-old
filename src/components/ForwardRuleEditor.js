@@ -14,7 +14,8 @@ import { deleteForwardRule } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";
 import EhcoRuleEditor from "../components/RuleEditors/EhcoRuleEditor";
 import IptablesRuleEditor from "../components/RuleEditors/IptablesRuleEditor";
-// import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
+import CaddyRuleEditor from "../components/RuleEditors/CaddyRuleEditor";
+import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
 import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
 import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
@@ -29,6 +30,7 @@ const MethodOptions = [
   // { label: "v2ray", value: "v2ray" },
   { label: "brook", value: "brook" },
   { label: "socat", value: "socat" },
+  // { label: "caddy", value: "caddy" },
   { label: "wstunnel", value: "wstunnel" },
   { label: "shadowsocks", value: "shadowsocks" },
   { label: "tinyPortMapper", value: "tiny_port_mapper" },
@@ -143,7 +145,7 @@ const ForwardRuleEditor = ({
               />
             ) : null}
 
-            {/* {method === "v2ray" ? (
+            {method === "v2ray" ? (
               <V2rayRuleEditor
                 serverId={serverId}
                 port={port}
@@ -153,7 +155,7 @@ const ForwardRuleEditor = ({
                 setValidRuleForm={setValidRuleForm}
                 setSubmitRuleForm={setSubmitRuleForm}
               />
-            ) : null} */}
+            ) : null}
 
             {method === "shadowsocks" ? (
               <ShadowsocksRuleEditor
@@ -169,6 +171,18 @@ const ForwardRuleEditor = ({
 
             {method === "brook" ? (
               <BrookRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+            {method === "caddy" ? (
+              <CaddyRuleEditor
                 serverId={serverId}
                 port={port}
                 isModalOpen={isModalOpen}

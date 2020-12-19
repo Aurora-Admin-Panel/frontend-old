@@ -1,19 +1,20 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
-import { v4 as uuidv4, validate as uuidValidate } from "uuid";
-
-import { ArrowClockwise, Plus, Minus } from "phosphor-react";
-import { Input, Label, Select, Button, Textarea } from "@windmill/react-ui";
+import { Label, Select, Button } from "@windmill/react-ui";
 
 // import { PlusIcon, MinusIcon } from "../../icons";
 import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
 import VmessInboundEditor from "./V2ray/VmessInboundEditor";
 import ShadowsocksInboundEditor from "./V2ray/ShadowsocksInboundEditor";
 import DokodemoDoorInboundEditor from "./V2ray/DokodemoDoorInboundEditor";
+import HttpInboundEditor from "./V2ray/HttpInboundEditor";
+import SocksInboundEditor from "./V2ray/SocksInboundEditor";
+import CustomInboundEditor from "./V2ray/CustomInboundEditor";
+import CustomOutboundEditor from "./V2ray/CustomOutboundEditor";
 import FreedomEditor from "./V2ray/FreedomEditor";
 import BlackholeEditor from "./V2ray/BlockholeEditor";
 
-import { isJSON } from "../../utils/json";
+
 
 const V2rayTemplates = [
   { label: "不使用模版", value: 0 },
@@ -27,10 +28,10 @@ const V2rayTemplates = [
 const InboundProtocols = [
   { label: "vmess", value: "vmess" },
   { label: "shadowsocks", value: "shadowsocks" },
+  { label: "dokodemo-door", value: "dokodemo-door" },
+  { label: "http", value: "http" },
+  { label: "socks", value: "socks" },
   { label: "自定义", value: "custom" },
-  // { label: "dokodemo-door", value: "dokodemo-door" },
-  // { label: "http", value: "http" },
-  // { label: "socks", value: "socks" },
 ];
 const OutboundProtocols = [
   { label: "freedom", value: "freedom" },
@@ -59,19 +60,17 @@ const V2rayRuleEditor = ({
   const [customInbound, setCustomInbound] = useState("");
   const [validInbound, setValidInbound] = useState(() => () => false);
   const [outboundProtocol, setOutboundProtocol] = useState("freedom");
+  // eslint-disable-next-line
   const [outboundSettings, setOutboundSettings] = useState({});
+  // eslint-disable-next-line
   const [outboundStreamSettings, setOutboundStreamSettings] = useState({});
   const [customOutbound, setCustomOutbound] = useState("");
   const [validOutbound, setValidOutbound] = useState(() => () => false);
   const [tab, setTab] = useState({ inbound: true });
 
   const validRuleForm = useCallback(
-    () =>
-      (inboundProtocol === "custom" ? isJSON(customInbound) : validInbound()) &&
-      (outboundProtocol === "custom"
-        ? isJSON(customOutbound)
-        : validOutbound()),
-    [validInbound, validOutbound, customInbound, customOutbound]
+    () => validInbound() && validOutbound(),
+    [validInbound, validOutbound]
   );
   const submitRuleForm = useCallback(() => {
     const data = {
@@ -159,9 +158,6 @@ const V2rayRuleEditor = ({
       forwardRule.config.custom_inbound
     ) {
       setInboundProtocol("custom");
-      setCustomInbound(
-        JSON.stringify(forwardRule.config.inbound, undefined, 2)
-      );
     } else if (
       forwardRule &&
       forwardRule.config &&
@@ -180,7 +176,6 @@ const V2rayRuleEditor = ({
       forwardRule.config.custom_outbound
     ) {
       setOutboundProtocol("custom");
-      setCustomOutbound(JSON.stringify(forwardRule.config.outbound));
     } else if (
       forwardRule &&
       forwardRule.config &&
@@ -314,12 +309,31 @@ const V2rayRuleEditor = ({
               setValid={setValidInbound}
             />
           ) : null}
+          {inboundProtocol === "http" ? (
+            <HttpInboundEditor
+              forwardRule={forwardRule}
+              protocol={inboundProtocol}
+              settings={inboundSettings}
+              setSettings={setInboundSettings}
+              setValid={setValidInbound}
+            />
+          ) : null}
+          {inboundProtocol === "socks" ? (
+            <SocksInboundEditor
+              forwardRule={forwardRule}
+              protocol={inboundProtocol}
+              settings={inboundSettings}
+              setSettings={setInboundSettings}
+              setValid={setValidInbound}
+            />
+          ) : null}
           {inboundProtocol === "custom" ? (
-            <Textarea
-              className="mt-4"
-              rows="6"
-              value={customInbound}
-              onChange={(e) => setCustomInbound(e.target.value)}
+            <CustomInboundEditor
+              forwardRule={forwardRule}
+              protocol={inboundProtocol}
+              settings={customInbound}
+              setSettings={setCustomInbound}
+              setValid={setValidInbound}
             />
           ) : null}
         </Label>
@@ -366,12 +380,13 @@ const V2rayRuleEditor = ({
             />
           ) : null}
           {outboundProtocol === "custom" ? (
-            <Textarea
-              className="mt-4"
-              rows="6"
-              value={customOutbound}
-              onChange={(e) => setCustomOutbound(e.target.value)}
-            />
+            <CustomOutboundEditor
+            forwardRule={forwardRule}
+            protocol={outboundProtocol}
+            settings={customOutbound}
+            setSettings={setCustomOutbound}
+            setValid={setValidOutbound}
+          />
           ) : null}
         </Label>
       </div>

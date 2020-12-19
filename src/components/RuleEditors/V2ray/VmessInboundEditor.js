@@ -2,12 +2,15 @@ import React, { useEffect, useCallback } from "react";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 
 import { ArrowClockwise } from "phosphor-react";
-import { Input, Label, Select, Button, HelperText } from "@windmill/react-ui";
+import { Input, Label, Select, HelperText } from "@windmill/react-ui";
 
 const NetworkOptions = [
-  { label: "TCP", value: "tcp" },
-  { label: "KCP", value: "kcp" },
-  { label: "Websocket", value: "ws" },
+  { label: "tcp", value: "tcp" },
+  { label: "kcp", value: "kcp" },
+  { label: "ws", value: "ws" },
+  { label: "http", value: "http" },
+  { label: "domainsocket", value: "domainsocket" },
+  { label: "quic", value: "quic" },
 ];
 
 const VmessInboundEditor = ({
@@ -36,6 +39,25 @@ const VmessInboundEditor = ({
     e.preventDefault();
     settings.clients[idx].email = e.target.value;
     setSettings({ ...settings });
+  };
+  const handleNetWorkChange = (e) => {
+    e.preventDefault();
+    setStreamSettings({ ...streamSettings, network: e.target.value });
+    switch (e.target.value) {
+      case "tcp":
+        setStreamSettings({
+          ...streamSettings,
+          ...{
+            acceptProxyProtocol: false,
+            header: {
+              type: "none",
+            },
+          },
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   const validInbound = useCallback(
@@ -69,6 +91,21 @@ const VmessInboundEditor = ({
           },
         ],
       });
+    const defautStreamSettings = {
+      network: "tcp",
+      security: "none",
+      tcpSettings: {
+        acceptProxyProtocol: false,
+        header: {
+          type: "none",
+        },
+      },
+      sockopt: {
+        mark: 0,
+        tcpFastOpen: false,
+        tproxy: "off",
+      },
+    };
     if (
       forwardRule &&
       forwardRule.config &&
@@ -76,8 +113,11 @@ const VmessInboundEditor = ({
       forwardRule.config.inbound.protocol === "vmess" &&
       forwardRule.config.inbound.streamSettings
     )
-      setStreamSettings(forwardRule.config.inbound.streamSettings);
-    else setStreamSettings({});
+      setStreamSettings({
+        ...defautStreamSettings,
+        ...forwardRule.config.inbound.streamSettings,
+      });
+    else setStreamSettings(defautStreamSettings);
     if (
       forwardRule &&
       forwardRule.config &&
@@ -141,8 +181,7 @@ const VmessInboundEditor = ({
             </div>
           ))
         : null}
-      {settings.network ? (
-      <Label className="mt-1">
+      <Label className="mt-4">
         <div className="flex flex-row justify-between items-center mt-1">
           <div className="w-1/3">
             <span>传输方式</span>
@@ -150,10 +189,8 @@ const VmessInboundEditor = ({
           <div className="w-2/3">
             <Select
               className="w-1/2"
-              value={settings.network}
-              onChange={(e) =>
-                setSettings({ ...settings, network: e.target.value })
-              }
+              value={streamSettings.network}
+              onChange={(e) => handleNetWorkChange(e)}
             >
               {NetworkOptions.map((option) => (
                 <option
@@ -167,7 +204,33 @@ const VmessInboundEditor = ({
           </div>
         </div>
       </Label>
-      ): null }
+      {streamSettings.tcpSettings ? (
+        <>
+          <Label className="mt-1">
+            <div className="flex flex-row justify-between items-center mt-1">
+              <div className="w-1/3">
+                <span>acceptProxyProtocol</span>
+              </div>
+              <div className="w-2/3">
+                <Input
+                  type="checkbox"
+                  checked={streamSettings.tcpSettings.acceptProxyProtocol}
+                  onChange={() =>
+                    setStreamSettings({
+                      ...streamSettings,
+                      tcpSettings: {
+                        ...streamSettings.tcpSettings,
+                        acceptProxyProtocol: !streamSettings.tcpSettings
+                          .acceptProxyProtocol,
+                      },
+                    })
+                  }
+                />
+              </div>
+            </div>
+          </Label>
+        </>
+      ) : null}
     </div>
   );
 };

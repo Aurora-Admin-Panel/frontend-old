@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback } from "react";
-import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 
-import { Input, Label, Select, Button, HelperText } from "@windmill/react-ui";
+import { Input, Label, Select } from "@windmill/react-ui";
 
 const NetworkOptions = [
   { label: "TCP", value: "tcp", idx: 0 },

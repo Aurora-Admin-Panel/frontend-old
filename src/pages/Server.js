@@ -60,7 +60,14 @@ const statusToBadge = (rule, server, port) => {
     const status = rule.status;
     if (status === "running" || status === "starting") {
       ret.push(<Badge type="warning">部署中</Badge>);
-      ret.push(<Link className="text-blue-600" to={`/app/servers/${server.id}/${port.id}/artifacts`}>查看日志</Link>)
+      ret.push(
+        <Link
+          className="text-blue-600"
+          to={`/app/servers/${server.id}/${port.id}/artifacts`}
+        >
+          查看日志
+        </Link>
+      );
     } else {
       if (status === "successful") {
         ret.push(<Badge type="success">端口功能已部署</Badge>);
@@ -75,35 +82,46 @@ const statusToBadge = (rule, server, port) => {
             )}${rule.config.ChainNodes.map((n) => "\n-F " + n).join("")}`
           );
         } else if (rule.method === "brook") {
-          ret.push(
-            `brook ${rule.config.command}`
-          );
+          ret.push(`brook ${rule.config.command}`);
         } else if (rule.method === "tiny_port_mapper") {
           ret.push(
-            `tinyPortMapper -l0.0.0.0:${port.external_num ? port.external_num : port.num} -r${rule.config.remote_address}:${rule.config.remote_port}`
+            `tinyPortMapper -l0.0.0.0:${
+              port.external_num ? port.external_num : port.num
+            } -r${rule.config.remote_address}:${rule.config.remote_port}`
           );
         } else if (rule.method === "node_exporter") {
-          ret.push('node_exporter')
+          ret.push("node_exporter");
           ret.push(
-            `请添加${server.address}:${port.external_num ? port.external_num : port.num}到promethus.yml中`
+            `请添加${server.address}:${
+              port.external_num ? port.external_num : port.num
+            }到promethus.yml中`
           );
         } else {
           ret.push(rule.method);
         }
       } else if (status === "failed") {
         ret.push(<Badge type="danger">端口功能部署失败</Badge>);
-        ret.push(<Link className="text-blue-600" to={`/app/servers/${server.id}/${port.id}/artifacts`}>查看日志</Link>)
+        ret.push(
+          <Link
+            className="text-blue-600"
+            to={`/app/servers/${server.id}/${port.id}/artifacts`}
+          >
+            查看日志
+          </Link>
+        );
         if (rule.config && rule.config.error) {
           ret.push(`\n${rule.config.error}`);
         }
       }
     }
   }
-  return <>{ret.map((c, idx) => (
-    <div key={`forward_status_badge_${idx}`}>
-      {c}
-    </div>
-  ))}</>;
+  return (
+    <>
+      {ret.map((c, idx) => (
+        <div key={`forward_status_badge_${idx}`}>{c}</div>
+      ))}
+    </>
+  );
 };
 
 const usersToBadge = (users) => {
@@ -135,6 +153,7 @@ function Server() {
   const server_id = parseInt(useParams().server_id);
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);
+  const permission = useSelector((state) => state.auth.permission);
   const dispatch = useDispatch();
   const history = useHistory();
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
@@ -262,7 +281,13 @@ function Server() {
                       ) : null}
                     </TableCell>
                     <TableCell>
-                      <Tooptip tip={statusToBadge(ports[port_id].forward_rule, servers[server_id], ports[port_id])}>
+                      <Tooptip
+                        tip={statusToBadge(
+                          ports[port_id].forward_rule,
+                          servers[server_id],
+                          ports[port_id]
+                        )}
+                      >
                         {statusToIcon(ports[port_id].forward_rule)}
                       </Tooptip>
                     </TableCell>
@@ -357,12 +382,15 @@ function Server() {
                                 setRuleEditorOpen(true);
                               }}
                               disabled={
-                                (!ports[port_id].forward_rule.count ||
+                                ((!ports[port_id].forward_rule.count ||
                                   ports[port_id].forward_rule.count <= 10) &&
-                                (ports[port_id].forward_rule.status ===
-                                  "starting" ||
-                                  ports[port_id].forward_rule.status ===
-                                    "running")
+                                  (ports[port_id].forward_rule.status ===
+                                    "starting" ||
+                                    ports[port_id].forward_rule.status ===
+                                      "running")) ||
+                                (ports[port_id].forward_rule.method ===
+                                  "caddy" &&
+                                  permission === "user")
                               }
                             >
                               修改转发
