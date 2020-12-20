@@ -6,8 +6,8 @@ import { Input, Label, Select } from "@windmill/react-ui";
 import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
 
 const EncryptionOptions = [
-  { label: "AEAD_AES_128_GCM", value: "AEAD_CHACHA20_POLY1305" },
-  { label: "AEAD_AES_256_GCM", value: "AEAD_CHACHA20_POLY1305" },
+  { label: "AEAD_AES_128_GCM", value: "AEAD_AES_128_GCM" },
+  { label: "AEAD_AES_256_GCM", value: "AEAD_AES_256_GCMjff" },
   { label: "AEAD_CHACHA20_POLY1305", value: "AEAD_CHACHA20_POLY1305" },
   { label: "aes-128-cfb", value: "aes-128-cfb" },
   { label: "aes-192-cfb", value: "aes-192-cfb" },
@@ -36,6 +36,7 @@ const ShadowsocksRuleEditor = ({
   const dispatch = useDispatch();
   const [encryption, setEncryption] = useState("AEAD_AES_128_GCM");
   const [password, setPassword] = useState("");
+  const [udpEnabled, setUdpEnabled] = useState(false);
 
   const validPassword = useCallback(() => password.length > 0, [password]);
   const validRuleForm = useCallback(() => validPassword(), [validPassword]);
@@ -45,6 +46,7 @@ const ShadowsocksRuleEditor = ({
       config: {
         encryption,
         password,
+        udp: udpEnabled
       },
     };
     if (forwardRule) {
@@ -52,7 +54,7 @@ const ShadowsocksRuleEditor = ({
     } else {
       dispatch(createForwardRule(serverId, port.id, data));
     }
-  }, [dispatch, serverId, port.id, method, encryption, password, forwardRule]);
+  }, [dispatch, serverId, port.id, method, encryption, password, udpEnabled, forwardRule]);
 
   useEffect(() => {
     if (forwardRule && forwardRule.config.encryption)
@@ -61,6 +63,9 @@ const ShadowsocksRuleEditor = ({
     if (forwardRule && forwardRule.config.password)
       setPassword(forwardRule.config.password);
     else setPassword("");
+    if (forwardRule && forwardRule.config.udp)
+      setUdpEnabled(true);
+    else setUdpEnabled(false);
   }, [forwardRule, setEncryption, setPassword]);
 
   useEffect(() => {
@@ -105,6 +110,14 @@ const ShadowsocksRuleEditor = ({
           value={password}
           valid={validPassword()}
           onChange={(e) => setPassword(e.target.value)}
+        />
+      </Label>
+      <Label className="mt-1">
+        <span className="mr-2">开启UDP</span>
+        <Input
+          type="checkbox"
+          checked={udpEnabled}
+          onChange={() => setUdpEnabled(!udpEnabled)}
         />
       </Label>
     </>
