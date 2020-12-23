@@ -19,12 +19,7 @@ import TlsEditor from "./V2ray/TlsEditor";
 
 
 const V2rayTemplates = [
-  { label: "不使用模版", value: 0 },
-  { label: "relay+tls", value: 1 },
-  { label: "relay+ws", value: 2 },
-  { label: "relay+wss", value: 3 },
-  { label: "ss隧道", value: 4 },
-  { label: "端口转发", value: 5 },
+  { label: "暂无使用模版", value: 0 },
 ];
 
 const InboundProtocols = [

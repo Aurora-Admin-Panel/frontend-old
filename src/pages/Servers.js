@@ -83,7 +83,7 @@ function Servers() {
       </div>
 
       <ServerEditor
-        server={currentServer}
+        serverId={currentServer}
         isModalOpen={editorOpen}
         setIsModalOpen={setEditorOpen}
       />
@@ -163,7 +163,7 @@ function Servers() {
                         <Button
                           size="small"
                           onClick={() => {
-                            setCurrentServer(servers[server_id]);
+                            setCurrentServer(server_id);
                             setEditorOpen(true);
                           }}
                         >

@@ -22,6 +22,12 @@ export const serverEdit = (server_id, data) => v1AuthRequest({
     data: data
 })
 
+export const serverConfigEdit = (server_id, config) => v1AuthRequest({
+    method: "put",
+    url: `/servers/${server_id}/config`,
+    data: config
+})
+
 export const serverDelete = (server_id) => v1AuthRequest({
     method: "delete",
     url: `/servers/${server_id}`,

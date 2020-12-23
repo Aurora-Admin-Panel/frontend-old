@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Input,
   Label,
@@ -45,6 +45,7 @@ const ForwardRuleEditor = ({
   setIsModalOpen,
 }) => {
   const dispatch = useDispatch();
+  const server = useSelector((state) => state.servers.servers[serverId]);
   const [method, setMethod] = useState("iptables");
   const [validRuleForm, setValidRuleForm] = useState(() => () => false);
   const [submitRuleForm, setSubmitRuleForm] = useState(() => () => {});
@@ -83,7 +84,12 @@ const ForwardRuleEditor = ({
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
               >
-                {MethodOptions.map((option) => (
+                {MethodOptions.filter(
+                  (option) =>
+                    !server ||
+                    !server.config ||
+                    !server.config[`${option.value}_disabled`]
+                ).map((option) => (
                   <option
                     value={option.value}
                     key={`forward_rule_method_${option.value}`}

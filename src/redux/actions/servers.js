@@ -4,6 +4,7 @@ import {
   serverConnect,
   serverCreate,
   serverEdit,
+  serverConfigEdit,
   serverDelete,
   serverUsersGet,
   serverUserEdit,
@@ -92,6 +93,28 @@ export const createServer = (data) => {
 export const editServer = (server_id, data) => {
   return (dispatch) => {
     serverEdit(server_id, data)
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          dispatch({
+            type: ADD_SERVER,
+            payload: data,
+          });
+          if (!data.config.system) {
+            setTimeout(
+              () => dispatch(getServer(server_id)),
+              2000
+            );
+          }
+        }
+      })
+      .catch((error) => handleError(dispatch, error));
+  };
+};
+
+export const editServerConfig = (server_id, config) => {
+  return (dispatch) => {
+    serverConfigEdit(server_id, config)
       .then((response) => {
         const data = response.data;
         if (data) {
