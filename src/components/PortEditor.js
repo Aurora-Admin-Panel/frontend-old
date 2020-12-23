@@ -21,7 +21,7 @@ import {
   editServerPortUsage,
 } from "../redux/actions/ports";
 import { formatSpeed, formatQuota } from "../utils/formatter";
-import { SpeedLimitOptions, QuotaOptions, DueActionOptions } from "../utils/constants"
+import { SpeedLimitOptions, QuotaOptions, DueActionOptions, DateOptions } from "../utils/constants"
 
 
 const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
@@ -47,8 +47,8 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const validIngress = () => !ingressLimit || ingressLimit > 0;
   const validValidUntilDate = () =>
     !validUntilDate ||
-    (!isNaN(Date.parse(validUntilDate)) &&
-      new Date(Date.parse(validUntilDate)) > Date.now());
+    (!isNaN(new Date(validUntilDate)) &&
+      new Date(validUntilDate) > Date.now());
 
   const validForm = () =>
     isDelete || (validNum() && validExternalNum() && validValidUntilDate());
@@ -267,11 +267,10 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
             </div>
             {isNaN(Date.parse(validUntilDate)) ? null : (
               <div className="flex flex-row items-center">
-                <HelperText>{`转发将在${new Date(
-                  Date.parse(validUntilDate)
-                ).toLocaleString("zh-CN", {
-                  timeZone: "UTC",
-                })} UTC 到期`}</HelperText>
+                <HelperText>{`转发将在${new Date(validUntilDate).toLocaleString(
+                  "zh-CN",
+                  DateOptions
+                )}到期`}</HelperText>
               </div>
             )}
           </Label>

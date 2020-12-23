@@ -1,9 +1,11 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Label, Select, Button } from "@windmill/react-ui";
 
 // import { PlusIcon, MinusIcon } from "../../icons";
 import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
+import { ReverseProxies } from "../../utils/constants";
+import CaddyEditor from "../ReverseProxy/CaddyEditor";
 import VmessInboundEditor from "./V2ray/VmessInboundEditor";
 import ShadowsocksInboundEditor from "./V2ray/ShadowsocksInboundEditor";
 import DokodemoDoorInboundEditor from "./V2ray/DokodemoDoorInboundEditor";
@@ -13,7 +15,7 @@ import CustomInboundEditor from "./V2ray/CustomInboundEditor";
 import CustomOutboundEditor from "./V2ray/CustomOutboundEditor";
 import FreedomEditor from "./V2ray/FreedomEditor";
 import BlackholeEditor from "./V2ray/BlockholeEditor";
-
+import TlsEditor from "./V2ray/TlsEditor";
 
 
 const V2rayTemplates = [
@@ -43,6 +45,7 @@ const OutboundProtocols = [
   // { label: "socks", value: "socks" },
 ];
 
+
 const V2rayRuleEditor = ({
   serverId,
   port,
@@ -59,6 +62,7 @@ const V2rayRuleEditor = ({
   const [inboundSniffing, setInboundSniffing] = useState({ enabled: false });
   const [customInbound, setCustomInbound] = useState("");
   const [validInbound, setValidInbound] = useState(() => () => false);
+
   const [outboundProtocol, setOutboundProtocol] = useState("freedom");
   // eslint-disable-next-line
   const [outboundSettings, setOutboundSettings] = useState({});
@@ -66,17 +70,39 @@ const V2rayRuleEditor = ({
   const [outboundStreamSettings, setOutboundStreamSettings] = useState({});
   const [customOutbound, setCustomOutbound] = useState("");
   const [validOutbound, setValidOutbound] = useState(() => () => false);
+
+  const [tlsProvider, setTlsProvider] = useState("none");
+  const [tlsSettings, setTlsSettings] = useState({});
+
+  const ports = useSelector((state) => state.ports.ports);
+  const tlsOptions = useMemo(() => [
+    { label: "无", value: "none" },
+    { label: "自定义证书(请勿使用,暂不支持)", value: "certificate" },
+  ].concat(Object.entries(ports)
+    .filter(([_, port]) =>
+      port.forward_rule && ReverseProxies.find(m => m === port.forward_rule.method))
+    .map(arr => ({
+      label: `${arr[1].forward_rule.method} - ${arr[1].external_num ? arr[1].external_num : arr[1].num}`,
+      value: arr[1].id
+    }))), [ports]);
+  const [validTls, setValidTls] = useState(() => () => true);
+  const validTlsSettings = useCallback(() => tlsProvider === 'none' ? true : validTls(), [tlsProvider, validTls]);
+
   const [tab, setTab] = useState({ inbound: true });
 
   const validRuleForm = useCallback(
-    () => validInbound() && validOutbound(),
-    [validInbound, validOutbound]
+    () => validInbound() && validOutbound() && validTlsSettings(),
+    [validInbound, validOutbound, validTlsSettings]
   );
   const submitRuleForm = useCallback(() => {
     const data = {
       method,
-      config: {},
+      config: {
+        tls_provider: tlsProvider,
+        tls_settings: tlsSettings,
+      },
     };
+    if (tlsProvider !== "none" && tlsProvider !== "certificate") data.config.reverse_proxy = parseInt(tlsProvider)
     if (inboundProtocol === "custom") {
       data.config.inbound = JSON.parse(customInbound);
       data.config.custom_inbound = true;
@@ -120,6 +146,8 @@ const V2rayRuleEditor = ({
     outboundProtocol,
     outboundSettings,
     outboundStreamSettings,
+    tlsProvider,
+    tlsSettings,
   ]);
   const handleTemplate = (t) => {
     setTemplate(t);
@@ -187,7 +215,29 @@ const V2rayRuleEditor = ({
     ) {
       setOutboundProtocol(forwardRule.config.outbound.protocol);
     } else setOutboundProtocol("freedom");
+
+    if (
+      forwardRule &&
+      forwardRule.config &&
+      forwardRule.config.tls_provider &&
+      ports[parseInt(forwardRule.config.tls_provider)] && 
+      ports[parseInt(forwardRule.config.tls_provider)].forward_rule
+    ) {
+      setTlsProvider(forwardRule.config.tls_provider);
+    } else {
+      setTlsProvider("none");
+    }
+    if (
+      forwardRule &&
+      forwardRule.config &&
+      forwardRule.config.tls_settings
+    ) {
+      setTlsSettings(forwardRule.config.tls_settings)
+    } else {
+      setTlsSettings({});
+    }
   }, [
+    ports,
     forwardRule,
     setInboundProtocol,
     setOutboundProtocol,
@@ -223,9 +273,8 @@ const V2rayRuleEditor = ({
         <div className="flex flex-row justify-start items-center space-x-2">
           <Button className="hidden" />
           <div
-            className={`${tab.inbound ? "border-b-2" : ""} ${
-              !validInbound() ? "border-red-500 border-b-2 text-red-500" : ""
-            }`}
+            className={`${tab.inbound ? "border-b-2" : ""} ${!validInbound() ? "border-red-500 border-b-2 text-red-500" : ""
+              }`}
           >
             <Button
               layout="link"
@@ -238,9 +287,8 @@ const V2rayRuleEditor = ({
             </Button>
           </div>
           <div
-            className={`${tab.outbound ? "border-b-2" : ""} ${
-              !validOutbound() ? "border-red-600 border-b-2" : ""
-            }`}
+            className={`${tab.outbound ? "border-b-2" : ""} ${!validOutbound() ? "border-red-600 border-b-2" : ""
+              }`}
           >
             <Button
               layout="link"
@@ -250,6 +298,20 @@ const V2rayRuleEditor = ({
               }}
             >
               Outbound
+            </Button>
+          </div>
+          <div
+            className={`${tab.tls ? "border-b-2" : ""} ${!validTlsSettings() ? "border-red-600 border-b-2" : ""
+              }`}
+          >
+            <Button
+              layout="link"
+              onClick={(e) => {
+                e.preventDefault();
+                setTab({ tls: true });
+              }}
+            >
+              TLS
             </Button>
           </div>
         </div>
@@ -339,7 +401,7 @@ const V2rayRuleEditor = ({
         </Label>
       </div>
       <div className={`${tab.outbound ? "block" : "hidden"}`}>
-        <Label className="mt-4">
+        <Label className="mt-1">
           <div className="flex flex-row justify-between items-center mt-1">
             <span className="w-1/2">协议</span>
             <Select
@@ -381,14 +443,57 @@ const V2rayRuleEditor = ({
           ) : null}
           {outboundProtocol === "custom" ? (
             <CustomOutboundEditor
-            forwardRule={forwardRule}
-            protocol={outboundProtocol}
-            settings={customOutbound}
-            setSettings={setCustomOutbound}
-            setValid={setValidOutbound}
-          />
+              forwardRule={forwardRule}
+              protocol={outboundProtocol}
+              settings={customOutbound}
+              setSettings={setCustomOutbound}
+              setValid={setValidOutbound}
+            />
           ) : null}
         </Label>
+      </div>
+      <div className={`${tab.tls ? "block" : "hidden"}`}>
+        <Label className="mt-4">
+          <div className="flex flex-row justify-between items-center mt-1">
+            <div className="w-1/3">
+              <span>TLS</span>
+            </div>
+            <div className="w-2/3">
+              <Select
+                value={tlsProvider}
+                onChange={(e) => setTlsProvider(e.target.value)}
+              >
+                {tlsOptions.map((option) => (
+                  <option
+                    value={option.value}
+                    key={`v2ray_tls_providers_${option.value}`}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+        </Label>
+        {tlsProvider !== "none" &&
+          ports[parseInt(tlsProvider)] &&
+          ports[parseInt(tlsProvider)].forward_rule &&
+          ports[parseInt(tlsProvider)].forward_rule.method === "caddy" ?
+          <CaddyEditor
+            port={ports[tlsProvider]}
+            forwardRule={forwardRule}
+            settings={tlsSettings}
+            setSettings={setTlsSettings}
+            setValid={setValidTls}
+          />: null}
+        {tlsProvider === "certificate" ?
+          <TlsEditor
+            tlsProvider={tlsProvider}
+            forwardRule={forwardRule}
+            settings={tlsSettings}
+            setSettings={setTlsSettings}
+            setValid={setValidTls}
+          />: null}
       </div>
     </>
   );

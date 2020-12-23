@@ -16,7 +16,7 @@ const SocksInboundEditor = ({
   const validPass = useCallback(() => settings.auth === "password" ? pass.length > 0 : true, [pass, settings]);
   const validIp = useCallback(() => settings.udp ? settings.ip.length > 0 : true, [settings]);;
   const validInbound = useCallback(() => validUser() && validPass() && validIp(), [validUser, validPass, validIp]);
-  
+
   const handleUser = (u) => {
     setUser(u);
     let account;
@@ -87,42 +87,40 @@ const SocksInboundEditor = ({
       </Label>
       {settings.auth === "password" ? (
         <>
-        <Label className="mt-1">
-        <div className="flex flex-row justify-between items-center mt-1">
-          <div className="w-1/3">
-            <span>用户名</span>
-          </div>
-          <div className="w-2/3">
-            <Input
-              className="mt-1"
-              placeholder="可为空"
-              value={user}
-              valid={validUser()}
-              onChange={(e) => handleUser(e.target.value)}
-            />
-          </div>
-        </div>
-      </Label>
-      <Label className="mt-1">
-        <div className="flex flex-row justify-between items-center mt-1">
-          <div className="w-1/3">
-            <span>密码</span>
-          </div>
-          <div className="w-2/3">
-            <Input
-              className="mt-1"
-              placeholder="可为空"
-              value={settings.port}
-              valid={validPass()}
-              onChange={(e) => handlePass(e.target.value)}
-            />
-          </div>
-        </div>
-      </Label>
-      </>
-      ): null}
-      
-      
+          <Label className="mt-1">
+            <div className="flex flex-row justify-between items-center mt-1">
+              <div className="w-1/3">
+                <span>用户名</span>
+              </div>
+              <div className="w-2/3">
+                <Input
+                  className="mt-1"
+                  value={user}
+                  valid={validUser()}
+                  onChange={(e) => handleUser(e.target.value)}
+                />
+              </div>
+            </div>
+          </Label>
+          <Label className="mt-1">
+            <div className="flex flex-row justify-between items-center mt-1">
+              <div className="w-1/3">
+                <span>密码</span>
+              </div>
+              <div className="w-2/3">
+                <Input
+                  className="mt-1"
+                  value={settings.port}
+                  valid={validPass()}
+                  onChange={(e) => handlePass(e.target.value)}
+                />
+              </div>
+            </div>
+          </Label>
+        </>
+      ) : null}
+
+
       <Label className="mt-1">
         <div className="flex flex-row justify-between items-center mt-1">
           <div className="w-1/3">
@@ -142,24 +140,24 @@ const SocksInboundEditor = ({
           </div>
         </div>
       </Label>
-      {settings.udp ? 
-      <Label className="mt-1">
-      <div className="flex flex-row justify-between items-center mt-1">
-        <div className="w-1/3">
-          <span>本机IP</span>
-        </div>
-        <div className="w-2/3">
-          <Input
-            className="mt-1"
-            placeholder="UDP需填写本机IP"
-            value={settings.ip}
-            valid={validIp()}
-            onChange={(e) => setSettings({ ...settings, ip: e.target.value})}
-          />
-        </div>
-      </div>
-    </Label>
-    : null}
+      {settings.udp ?
+        <Label className="mt-1">
+          <div className="flex flex-row justify-between items-center mt-1">
+            <div className="w-1/3">
+              <span>本机IP</span>
+            </div>
+            <div className="w-2/3">
+              <Input
+                className="mt-1"
+                placeholder="UDP需填写本机IP"
+                value={settings.ip}
+                valid={validIp()}
+                onChange={(e) => setSettings({ ...settings, ip: e.target.value })}
+              />
+            </div>
+          </div>
+        </Label>
+        : null}
     </div>
   );
 };
