@@ -60,6 +60,18 @@ const SocksInboundEditor = ({
       forwardRule.config.inbound.settings
     )
       setSettings({ ...defaultSettings, ...forwardRule.config.inbound.settings });
+      if (
+        forwardRule.config.inbound.settings.accounts && 
+        forwardRule.config.inbound.settings.accounts.length > 0 &&
+        forwardRule.config.inbound.settings.accounts[0].user) {
+          setUser(forwardRule.config.inbound.settings.accounts[0].user)
+      }
+      if (
+        forwardRule.config.inbound.settings.accounts && 
+        forwardRule.config.inbound.settings.accounts.length > 0 &&
+        forwardRule.config.inbound.settings.accounts[0].pass) {
+          setPass(forwardRule.config.inbound.settings.accounts[0].pass)
+      }
     else
       setSettings(defaultSettings);
   }, [forwardRule, protocol, setSettings]);
@@ -110,7 +122,7 @@ const SocksInboundEditor = ({
               <div className="w-2/3">
                 <Input
                   className="mt-1"
-                  value={settings.port}
+                  value={pass}
                   valid={validPass()}
                   onChange={(e) => handlePass(e.target.value)}
                 />
