@@ -15,7 +15,7 @@ const HttpInboundEditor = ({
   const validUser = useCallback(() => !pass ? !user : user.length > 0, [user, pass]);
   const validPass = useCallback(() => !user ? !pass : pass.length > 0, [user, pass]);
   const validInbound = useCallback(() => validUser() && validPass(), [validUser, validPass]);
-  
+
   const handleUser = (u) => {
     setUser(u);
     let account;
@@ -25,7 +25,7 @@ const HttpInboundEditor = ({
     } else {
       account = { user: u, pass: "" }
     }
-    setSettings({ ...settings, accounts: [account]})
+    setSettings({ ...settings, accounts: [account] })
   }
   const handlePass = (p) => {
     setPass(p)
@@ -36,7 +36,7 @@ const HttpInboundEditor = ({
     } else {
       account = { user: "", pass: p }
     }
-    setSettings({ ...settings, accounts: [account]})
+    setSettings({ ...settings, accounts: [account] })
   }
 
   useEffect(() => {
@@ -56,20 +56,21 @@ const HttpInboundEditor = ({
       forwardRule.config.inbound &&
       forwardRule.config.inbound.protocol === "http" &&
       forwardRule.config.inbound.settings
-    )
+    ) {
       setSettings({ ...defaultSettings, ...forwardRule.config.inbound.settings });
       if (
-        forwardRule.config.inbound.settings.accounts && 
+        forwardRule.config.inbound.settings.accounts &&
         forwardRule.config.inbound.settings.accounts.length > 0 &&
         forwardRule.config.inbound.settings.accounts[0].user) {
-          setUser(forwardRule.config.inbound.settings.accounts[0].user)
+        setUser(forwardRule.config.inbound.settings.accounts[0].user)
       }
       if (
-        forwardRule.config.inbound.settings.accounts && 
+        forwardRule.config.inbound.settings.accounts &&
         forwardRule.config.inbound.settings.accounts.length > 0 &&
         forwardRule.config.inbound.settings.accounts[0].pass) {
-          setPass(forwardRule.config.inbound.settings.accounts[0].pass)
+        setPass(forwardRule.config.inbound.settings.accounts[0].pass)
       }
+    }
     else
       setSettings(defaultSettings);
   }, [forwardRule, protocol, setSettings]);
@@ -123,7 +124,7 @@ const HttpInboundEditor = ({
           </div>
         </div>
       </Label>
-      
+
       <Label className="mt-1">
         <div className="flex flex-row justify-between items-center mt-1">
           <div className="w-1/3">
