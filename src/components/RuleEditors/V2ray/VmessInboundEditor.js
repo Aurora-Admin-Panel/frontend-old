@@ -46,7 +46,7 @@ const VmessInboundEditor = ({
   };
   const handleAlterIdChange = (e, idx) => {
     e.preventDefault();
-    settings.clients[idx].alterId = e.target.value;
+    settings.clients[idx].alterId = parseInt(e.target.value);
     setSettings({ ...settings });
   };
   const handleEmailChange = (e, idx) => {
@@ -272,6 +272,7 @@ const VmessInboundEditor = ({
               <div className="flex flex-row items-center space-x-2">
                 <div className="w-1/3">
                   <Input
+                    type="number"
                     value={client.alterId}
                     onChange={(e) => handleAlterIdChange(e, idx)}
                   />
