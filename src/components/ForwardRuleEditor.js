@@ -18,6 +18,7 @@ import CaddyRuleEditor from "../components/RuleEditors/CaddyRuleEditor";
 import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
 import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
+import IperfRuleEditor from "../components/RuleEditors/IperfRuleEditor";
 import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
 import ShadowsocksRuleEditor from "../components/RuleEditors/ShadowsocksRuleEditor";
 import NodeExporterRuleEditor from "../components/RuleEditors/NodeExporterRuleEditor";
@@ -25,12 +26,13 @@ import TinyPortMapperRuleEditor from "../components/RuleEditors/TinyPortMapperRu
 
 const MethodOptions = [
   { label: "iptables", value: "iptables" },
-  { label: "gost", value: "gost" },
-  { label: "ehco", value: "ehco" },
-  { label: "v2ray", value: "v2ray" },
   { label: "brook", value: "brook" },
-  { label: "socat", value: "socat" },
   { label: "caddy", value: "caddy" },
+  { label: "ehco", value: "ehco" },
+  { label: "gost", value: "gost" },
+  { label: "socat", value: "socat" },
+  { label: "v2ray", value: "v2ray" },
+  { label: "iperf3", value: "iperf" },
   { label: "wstunnel", value: "wstunnel" },
   { label: "shadowsocks", value: "shadowsocks" },
   { label: "tinyPortMapper", value: "tiny_port_mapper" },
@@ -201,6 +203,18 @@ const ForwardRuleEditor = ({
 
             {method === "socat" ? (
               <SocatRuleEditor
+                serverId={serverId}
+                portId={port.id}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+            {method === "iperf" ? (
+              <IperfRuleEditor
                 serverId={serverId}
                 portId={port.id}
                 isModalOpen={isModalOpen}
