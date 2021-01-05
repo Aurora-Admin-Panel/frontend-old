@@ -23,7 +23,7 @@ if (process.env.REACT_APP_VERSION !== "local") {
   Sentry.init({
     release: process.env.REACT_APP_VERSION,
     dsn:
-      "https://6c72847856564663a6009bdc29e68fce@o176406.ingest.sentry.io/5545243",
+      "https://b7e9b28f500e4ce0bae9a809d7f285f8@sentry.leishi.io/3",
     integrations: [new Integrations.BrowserTracing()],
     tracesSampleRate: 1.0,
   });
