@@ -43,7 +43,7 @@ function Layout() {
     >
       <Sidebar />
 
-      <div className="flex flex-col flex-1 w-full">
+      <div className="flex flex-col flex-1 w-full mb-5">
         <Header />
         <Main>
           <Suspense fallback={<ThemedSuspense />}>

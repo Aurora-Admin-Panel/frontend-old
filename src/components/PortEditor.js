@@ -26,7 +26,7 @@ import { SpeedLimitOptions, QuotaOptions, DueActionOptions, DateOptions } from "
 
 const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
-  const [num, setNum] = useState(0);
+  const [num, setNum] = useState("");
   const [externalNum, setExternalNum] = useState("");
   const [notes, setNotes] = useState("");
   const [egressLimit, setEgressLimit] = useState("");
@@ -40,7 +40,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const [quotaAction, setQuotaAction] = useState(0);
   const [isDelete, setIsDelete] = useState(false);
 
-  const validNum = () => num > 0 && num < 65536;
+  const validNum = () => num && num > 0 && num < 65536;
   const validExternalNum = () =>
     !externalNum || (externalNum > 0 && externalNum < 65536);
   const validEgress = () => !egressLimit || egressLimit > 0;
@@ -138,7 +138,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
         setQuotaAction(0);
       }
     } else {
-      setNum(0);
+      setNum("");
       setExternalNum("");
       setNotes("");
       setEgressLimit("");
