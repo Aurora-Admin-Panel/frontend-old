@@ -296,7 +296,7 @@ const ServerEditor = ({ serverId, isModalOpen, setIsModalOpen }) => {
                   {server.config[app] ? '更新' : '安装'}
                 </Button> */}
                 <button
-                  className={"align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-3 py-1 rounded-md text-sm text-white border border-transparent " + (`${!server.config[`${app}_disabled`] ? `bg-purple-600 active:bg-purple-600 hover:bg-purple-700` : `bg-red-600 active:bg-red-600 hover:bg-red-700`}`)}
+                  className={`align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-3 py-1 rounded-md text-sm text-white border border-transparent ${!server.config[`${app}_disabled`] ? `bg-purple-600 active:bg-purple-600 hover:bg-purple-700` : `bg-red-600 active:bg-red-600 hover:bg-red-700`}`}
                   onClick={() => toggleApp(server, app)}
                 >
                 {server.config[`${app}_disabled`] ? '已禁用' : '已启用'}
