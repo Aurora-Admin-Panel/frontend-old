@@ -8,11 +8,14 @@ import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
 
 const GostTemplates = [
   { label: "不使用模版", value: 0 },
-  { label: "relay+tls", value: 1 },
-  { label: "relay+ws", value: 2 },
-  { label: "relay+wss", value: 3 },
-  { label: "ss隧道", value: 4 },
-  { label: "端口转发", value: 5 },
+  { label: "relay+tls 入口端", value: 1 },
+  { label: "relay+ws 入口端", value: 2 },
+  { label: "relay+wss 入口端", value: 3 },
+  { label: "relay+tls 出口端", value: 4 },
+  { label: "relay+ws 出口端", value: 5 },
+  { label: "relay+wss 出口端", value: 6 },
+  { label: "ss隧道", value: 7 },
+  { label: "端口转发", value: 8 },
 ];
 
 const GostRuleEditor = ({
@@ -86,10 +89,22 @@ const GostRuleEditor = ({
         setChainNodes([`relay+wss://落地IP:落地端口`]);
         break;
       case "4":
+        setServeNodes([`relay+tls://127.0.0.1:代理端口`]);
+        setChainNodes([]);
+        break;
+      case "5":
+        setServeNodes([`relay+ws://127.0.0.1:代理端口`]);
+        setChainNodes([]);
+        break;
+      case "6":
+        setServeNodes([`relay+wss://127.0.0.1:代理端口`]);
+        setChainNodes([]);
+        break;
+      case "7":
         setServeNodes([`:${port.external_num ? port.external_num : port.num}`]);
         setChainNodes([`ss://aes-128-cfb:密码@落地IP:落地端口?ota=1`]);
         break;
-      case "5":
+      case "8":
         setServeNodes([
           `tcp://:${port.external_num ? port.external_num : port.num}/远端IP:远端端口号`,
           `udp://:${port.external_num ? port.external_num : port.num}/远端IP:远端端口号`,

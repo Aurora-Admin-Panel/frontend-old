@@ -15,12 +15,12 @@ const TypeOptions = [
 const Templates = [
   { label: "不使用模版", value: 0 },
   { label: "端口转发", value: 1 },
-  { label: "ws隧道服务端", value: 2 },
-  { label: "ws隧道客户端", value: 3 },
-  { label: "wss隧道服务端", value: 4 },
-  { label: "wss隧道客户端", value: 5 },
-  { label: "mwss隧道服务端", value: 6 },
-  { label: "mwws隧道客户端", value: 7 },
+  { label: "ws隧道入口端", value: 2 },
+  { label: "ws隧道出口端", value: 3 },
+  { label: "wss隧道入口端", value: 4 },
+  { label: "wss隧道出口端", value: 5 },
+  { label: "mwss隧道入口端", value: 6 },
+  { label: "mwws隧道出口端", value: 7 },
 ];
 
 const EhcoRuleEditor = ({
@@ -88,8 +88,8 @@ const EhcoRuleEditor = ({
       case "2":
         setListenType("raw");
         setTransportType("ws");
-        setRemoteAddress("ws隧道客户端IP，如1.1.1.1");
-        setRemotePort("ws隧道客户端端口，如8888");
+        setRemoteAddress("ws隧道出口端IP，如1.1.1.1");
+        setRemotePort("ws隧道出口端端口，如8888");
         break;
       case "3":
         setListenType("ws");
@@ -100,8 +100,8 @@ const EhcoRuleEditor = ({
       case "4":
         setListenType("raw");
         setTransportType("wss");
-        setRemoteAddress("wss隧道客户端IP，如1.1.1.1");
-        setRemotePort("ws隧道客户端端口，如8888");
+        setRemoteAddress("wss隧道出口端IP，如1.1.1.1");
+        setRemotePort("ws隧道出口端端口，如8888");
         break;
       case "5":
         setListenType("wss");
@@ -112,8 +112,8 @@ const EhcoRuleEditor = ({
       case "6":
         setListenType("raw");
         setTransportType("mwss");
-        setRemoteAddress("mwws隧道客户端IP，如1.1.1.1");
-        setRemotePort("ws隧道客户端端口，如8888");
+        setRemoteAddress("mwws隧道出口端IP，如1.1.1.1");
+        setRemotePort("ws隧道出口端端口，如8888");
         break;
       case "7":
         setListenType("mwws");
@@ -221,7 +221,7 @@ const EhcoRuleEditor = ({
       </Label>
 
       <Label className="mt-1">
-        <span>远端IP(服务端)/127.0.0.1(客户端)</span>
+        <span>远端IP(入口端)/127.0.0.1(出口端)</span>
         <Input
           className="mt-1"
           placeholder="1.1.1.1"
@@ -231,7 +231,7 @@ const EhcoRuleEditor = ({
         />
       </Label>
       <Label className="mt-1">
-        <span>远端隧道端口(服务端)/代理本地端口(客户端)</span>
+        <span>远端隧道端口(入口端)/代理本地端口(出口端)</span>
         <Input
           className="mt-1"
           placeholder="8888"

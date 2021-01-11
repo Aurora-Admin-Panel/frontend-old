@@ -10,8 +10,8 @@ const TypeOptions = [
   { label: "UDP", value: "UDP" },
 ];
 const ClientTypeOptions = [
-  { label: "服务端模式", value: "server" },
-  { label: "客户端模式", value: "client" },
+  { label: "隧道出口模式", value: "server" },
+  { label: "隧道入口模式", value: "client" },
 ];
 const ProtocolOptions = [
   { label: "ws", value: "ws" },
@@ -19,10 +19,10 @@ const ProtocolOptions = [
 ];
 const Templates = [
   { label: "不使用模版", value: 0 },
-  { label: "ws服务端", value: 1 },
-  { label: "ws客户端", value: 2 },
-  { label: "wss服务端", value: 3 },
-  { label: "wss客户端", value: 4 },
+  { label: "ws隧道出口端", value: 1 },
+  { label: "ws隧道入口端", value: 2 },
+  { label: "wss隧道出口端", value: 3 },
+  { label: "wss隧道入口端", value: 4 },
 ];
 
 const WstunnelRuleEditor = ({
@@ -99,8 +99,8 @@ const WstunnelRuleEditor = ({
         setClientType("client");
         setProtocol("ws");
         setProxyPort("ss/ssr/v2等协议的监听端口");
-        setRemoteAddress("ws隧道服务器IP，如1.1.1.1");
-        setRemotePort("ws隧道服务器端口，如8888");
+        setRemoteAddress("ws隧道出口端IP，如1.1.1.1");
+        setRemotePort("ws隧道出口端端口，如8888");
         break;
       case "3":
         setClientType("server");
@@ -111,8 +111,8 @@ const WstunnelRuleEditor = ({
         setClientType("client");
         setProtocol("wss");
         setProxyPort("ss/ssr/v2等协议的监听端口");
-        setRemoteAddress("wss隧道服务器IP，如1.1.1.1");
-        setRemotePort("wss隧道服务器端口，如8888");
+        setRemoteAddress("wss隧道出口端IP，如1.1.1.1");
+        setRemotePort("wss隧道出口端端口，如8888");
         break;
       default:
         break;
