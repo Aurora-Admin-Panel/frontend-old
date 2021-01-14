@@ -84,9 +84,9 @@ export const editUser = (user_id, data) => {
   };
 };
 
-export const deleteUser = (user_id) => {
+export const deleteUser = (user_id, data) => {
   return (dispatch) => {
-    userDelete(user_id)
+    userDelete(user_id, data)
       .then((response) => {
         const data = response.data;
         if (data) {

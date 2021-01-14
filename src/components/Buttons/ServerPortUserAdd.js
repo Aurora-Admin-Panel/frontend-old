@@ -67,21 +67,19 @@ const ServerPortUserAdd = ({
             onChange={(e) => setSearchText(e.target.value)}
           />
         </DropdownItem>
-        {Object.keys(users)
+        {users
           .filter(
-            (user_id) =>
-              !allowedUsers.find(
-                (u) => parseInt(u.user_id) === parseInt(user_id)
-              ) &&
-              (searchText === "" || users[user_id].email.includes(searchText))
+            user =>
+              !allowedUsers.find((u) => parseInt(u.user_id) === parseInt(user.id)) &&
+              (searchText === "" || user.email.toLowerCase().includes(searchText.toLowerCase()))
           )
           .slice(0, 10)
-          .map((user_id) => (
+          .map((user) => (
             <DropdownItem
-              key={`server_port_user_add_${user_id}`}
-              onClick={() => addUser(user_id)}
+              key={`server_port_user_add_${user.id}`}
+              onClick={() => addUser(user.id)}
             >
-                {users[user_id].email}
+                {user.email}
             </DropdownItem>
           ))}
       </Dropdown>

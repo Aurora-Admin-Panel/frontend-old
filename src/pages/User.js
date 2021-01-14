@@ -30,7 +30,7 @@ import UsageCell from "../components/TableCells/UsageCell";
 
 const User = () => {
   const user_id = parseInt(useParams().user_id);
-  const user = useSelector((state) => state.users.users[user_id]);
+  const user = useSelector((state) => state.users.users.find(u => u.id === user_id));
   const userServers = useSelector((state) => state.users.currentUserServers);
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);

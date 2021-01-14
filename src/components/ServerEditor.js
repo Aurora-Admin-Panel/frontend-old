@@ -94,8 +94,8 @@ const ServerEditor = ({ serverId, isModalOpen, setIsModalOpen }) => {
   };
   const toggleApp = (server, app) => {
     const config = {
-        [`${app}_disabled`]: !!!server.config[`${app}_disabled`]
-      }
+      [`${app}_disabled`]: !!!server.config[`${app}_disabled`]
+    }
     dispatch(editServerConfig(server.id, config));
   }
 
@@ -125,7 +125,8 @@ const ServerEditor = ({ serverId, isModalOpen, setIsModalOpen }) => {
       setSshUser("root");
     }
     setLastServer(server);
-  }, [isModalOpen, server, lastServer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalOpen]);
 
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -244,8 +245,8 @@ const ServerEditor = ({ serverId, isModalOpen, setIsModalOpen }) => {
                   onChange={(e) => setSshPassword(e.target.value)}
                 />
               ) : (
-                <Input className="mt-1" disabled={true} />
-              )}
+                  <Input className="mt-1" disabled={true} />
+                )}
             </Label>
             <Label className="mt-1">
               <div className="flex flex-row justify-between items-center">
@@ -270,8 +271,8 @@ const ServerEditor = ({ serverId, isModalOpen, setIsModalOpen }) => {
                   onChange={(e) => setSudoPassword(e.target.value)}
                 />
               ) : (
-                <Input className="mt-1" disabled={true} />
-              )}
+                  <Input className="mt-1" disabled={true} />
+                )}
             </Label>
 
             {server ? (
@@ -288,21 +289,21 @@ const ServerEditor = ({ serverId, isModalOpen, setIsModalOpen }) => {
         ) : null}
         {server && tab.app ? (
           <div className="flex flex-col justify-start px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-            {['brook', 'caddy', 'ehco', 'gost', 'node_exporter', 'shadowsocks', 'socat', 'tiny_port_mapper', 'v2ray', 'wstunnel'].map(app => 
+            {['brook', 'caddy', 'ehco', 'gost', 'node_exporter', 'shadowsocks', 'socat', 'tiny_port_mapper', 'v2ray', 'wstunnel'].map(app =>
               <Label className="mt-1 flex flex-row items-center" key={`server_${server.id}_${app}_toggle`}>
-              <span className="w-1/3">{app}</span>
-              <div className="w-2/3 space-x-2">
-                {/* <Button size="small" onClick={submitForm} disabled={!validForm()}>
+                <span className="w-1/3">{app}</span>
+                <div className="w-2/3 space-x-2">
+                  {/* <Button size="small" onClick={submitForm} disabled={!validForm()}>
                   {server.config[app] ? '更新' : '安装'}
                 </Button> */}
-                <button
-                  className={`align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-3 py-1 rounded-md text-sm text-white border border-transparent ${!server.config[`${app}_disabled`] ? `bg-purple-600 active:bg-purple-600 hover:bg-purple-700` : `bg-red-600 active:bg-red-600 hover:bg-red-700`}`}
-                  onClick={() => toggleApp(server, app)}
-                >
-                {server.config[`${app}_disabled`] ? '已禁用' : '已启用'}
-                </button>
-              </div>
-            </Label>
+                  <button
+                    className={`align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-3 py-1 rounded-md text-sm text-white border border-transparent ${!server.config[`${app}_disabled`] ? `bg-purple-600 active:bg-purple-600 hover:bg-purple-700` : `bg-red-600 active:bg-red-600 hover:bg-red-700`}`}
+                    onClick={() => toggleApp(server, app)}
+                  >
+                    {server.config[`${app}_disabled`] ? '已禁用' : '已启用'}
+                  </button>
+                </div>
+              </Label>
             )}
           </div>
         ) : null}

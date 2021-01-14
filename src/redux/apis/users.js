@@ -32,9 +32,10 @@ export const userEdit = (user_id, data) => v1AuthRequest({
     data: data
 })
 
-export const userDelete = (user_id) => v1AuthRequest({
+export const userDelete = (user_id, data) => v1AuthRequest({
     method: "delete",
     url: `/users/${user_id}`,
+    data: data
 })
 
 export const userServersGet = (user_id) => v1AuthRequest({

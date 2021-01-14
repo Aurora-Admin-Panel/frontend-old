@@ -9,7 +9,7 @@ import {
 } from "../actionTypes";
 
 const initialState = {
-  users: {},
+  users: [],
   me: null,
   currentUserServers: [],
 };
@@ -17,31 +17,21 @@ const initialState = {
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_USERS: {
-      const users = {};
-      for (const user of action.payload) {
-        users[user.id] = user;
-      }
       return {
         ...state,
-        users: users,
+        users: action.payload,
       };
     }
     case ADD_USER: {
       return {
         ...state,
-        users: {
-          ...state.users,
-          [action.payload.id]: action.payload,
-        },
+        users: [action.payload].concat(state.users)
       };
     }
     case DELETE_USER: {
-      delete state.users[action.payload.id];
       return {
         ...state,
-        users: {
-          ...state.users,
-        },
+        users: state.users.filter(u => u.id !== action.payload.id)
       };
     }
     case ADD_ME: {
