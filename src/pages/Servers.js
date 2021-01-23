@@ -99,7 +99,7 @@ function Servers() {
             </tr>
           </TableHeader>
           <TableBody>
-            {Object.keys(servers).map((server_id) => (
+            {Object.keys(servers).map((server_id) => servers[server_id].config && (
               <TableRow key={`servers_server_${server_id}`}>
                 <TableCell>
                   <span className="text-sm">{servers[server_id].name}</span>

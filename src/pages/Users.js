@@ -75,6 +75,7 @@ function Users() {
     dispatch(getUsers());
   }, [dispatch]);
 
+  console.log(users)
   return (
     <>
       <div className="flex justify-between items-center">
@@ -131,7 +132,7 @@ function Users() {
             </tr>
           </TableHeader>
           <TableBody>
-            {users.map(
+            {Array.isArray(users) && users.map(
               (user) =>
 
                 <TableRow key={`users_user_${user.id}`}>

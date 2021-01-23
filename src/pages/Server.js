@@ -168,7 +168,8 @@ function Server() {
     if (!(server_id in servers)) {
       dispatch(getServer(server_id));
     }
-  }, [dispatch, server_id, servers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, server_id]);
 
   if (!servers[server_id]) return <FullScreenLoading />;
   return (
