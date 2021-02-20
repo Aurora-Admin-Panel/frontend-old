@@ -112,6 +112,7 @@ function Servers() {
               <tr>
                 <TableCell>名字</TableCell>
                 <TableCell>地址</TableCell>
+                <TableCell>端口</TableCell>
                 <TableCell>SSH状态</TableCell>
                 <TableCell>动作</TableCell>
               </tr>
@@ -124,6 +125,13 @@ function Servers() {
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">{server.address}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm">
+                      {server.ports ? server.ports.filter(p => p.allowed_users.length > 0).length : "X"}
+                      /
+                      {server.ports ? server.ports.length : "X"}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Tooltip tip={serverFactsToBadge(server.config.system, permission)}>
