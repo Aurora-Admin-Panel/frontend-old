@@ -54,6 +54,7 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
     } else {
       setEmail("");
       setIsActive(true);
+      setNotes("");
     }
   }, [isModalOpen, user]);
 
