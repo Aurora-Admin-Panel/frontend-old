@@ -9,7 +9,6 @@ import {
   LOAD_USER_SERVERS,
   ADD_USER_SERVERS,
   DELETE_USER_SERVERS,
-  LOAD_CURRENT_SERVER,
 } from "../actionTypes";
 
 const initialState = {

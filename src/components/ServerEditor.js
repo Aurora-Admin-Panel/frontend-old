@@ -129,6 +129,7 @@ const ServerEditor = ({ isModalOpen, setIsModalOpen }) => {
       setTab({ server: true });
     }
     setLastServer(server);
+    // eslint-disable-next-line
   }, [isModalOpen, server]);
 
   return (

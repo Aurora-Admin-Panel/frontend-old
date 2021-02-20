@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useHistory, useParams, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   Badge,
   Button,
@@ -22,7 +22,7 @@ import PageTitle from "../components/Typography/PageTitle";
 import Tooltip from "../components/Tooltip"
 import AuthSelector from "../components/AuthSelector";
 import ColoredButton from "../components/Buttons/ColoredButton";
-import { getServers, getCurrentServer, connectServer, loadServers } from "../redux/actions/servers";
+import { getServers, getCurrentServer, connectServer } from "../redux/actions/servers";
 
 const serverFactsToBadge = (system, permission) => {
   if (!system)
@@ -76,12 +76,12 @@ function Servers() {
   useEffect(() => {
     if (!loading && servers && servers.items) {
       servers.items.forEach(s => {
-        console.log(s)
         if (!s.config.system) {
           dispatch(connectServer(s.id, {}))
         }
       })
     }
+    // eslint-disable-next-line
   }, [dispatch, loading])
 
   return (

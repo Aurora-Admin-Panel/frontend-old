@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@windmill/react-ui";
-import { DotsNine, ArrowBendUpRight } from "phosphor-react";
+import { DotsNine } from "phosphor-react";
 
 import { getReadableSize } from "../utils/formatter";
 import {

@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { handleError } from "./utils";
 import { showBanner } from "./banner"
 import {
@@ -24,7 +23,6 @@ import {
   LOAD_SERVER_PORTS,
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
-  DELETE_SERVER_PORT,
   ADD_SERVER_PORT_USAGE,
   ADD_SERVER_PORT_USERS,
   ADD_SERVER_PORT_USER,

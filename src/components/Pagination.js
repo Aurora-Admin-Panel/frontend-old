@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useHistory } from 'react-router-dom';
-import { Button, Dropdown, DropdownItem, Select } from '@windmill/react-ui'
+import { Button, Select } from '@windmill/react-ui'
 import theme from '../theme'
 
 const PrevIcon = function PrevIcon(props) {
@@ -129,6 +129,7 @@ const Pagination = React.forwardRef(function Pagination(props, ref) {
 
   useEffect(() => {
     onChange(activePage)
+    // eslint-disable-next-line
   }, [activePage])
 
 

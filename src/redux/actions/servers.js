@@ -1,5 +1,4 @@
 import {
-  serversGet,
   serverGet,
   serverConnect,
   serverCreate,
@@ -16,10 +15,7 @@ import {
 } from "../apis/servers";
 import { handleError } from "./utils";
 import {
-  ADD_SERVER,
   ADD_SERVER_USERS,
-  ADD_SERVER_USER,
-  DELETE_SERVER_USER,
   ADD_SERVERS,
   LOAD_SERVERS,
   UPDATE_SERVER,
@@ -28,7 +24,6 @@ import {
   LOAD_SERVER_USERS,
 } from "../actionTypes";
 import { store } from '../store';
-import { loadServerPorts } from "./ports";
 
 
 export const editServerConfig = (server_id, config) => {

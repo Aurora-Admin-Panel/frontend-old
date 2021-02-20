@@ -18,7 +18,7 @@ const ConfirmationModal = ({
   const submitForm = useCallback(() => {
     setIsModalOpen(false)
     return callback();
-  })
+  }, [setIsModalOpen, callback])
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
       {title ? <ModalHeader>{title}</ModalHeader> : null}

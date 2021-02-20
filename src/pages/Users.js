@@ -83,6 +83,7 @@ function Users() {
 
   useEffect(() => {
     dispatch(getUsers(page, size));
+    // eslint-disable-next-line
   }, [dispatch, location]);
 
   return (

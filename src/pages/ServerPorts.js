@@ -174,13 +174,13 @@ function ServerPorts() {
   const [currentPort, setCurrentPort] = useState("");
   const [portEditorOpen, setPortEditorOpen] = useState(false);
   const [portUserEditorOpen, setPortUserEditorOpen] = useState(false);
-  const [showUsers, setShowUsers] = useState({});
 
   useEffect(() => {
     dispatch(getCurrentServer(server_id));
   }, [dispatch, server_id]);
   useEffect(() => {
       dispatch(getServerPorts(server_id, page, size));
+      // eslint-disable-next-line
   }, [dispatch, server_id, location]);
   useEffect(() => {
     if (!portsLoading && ports) {
@@ -190,6 +190,7 @@ function ServerPorts() {
         }
       })
     }
+    // eslint-disable-next-line
   }, [dispatch, server_id, portsLoading])
 
   if (serverLoading) return <FullScreenLoading />;
