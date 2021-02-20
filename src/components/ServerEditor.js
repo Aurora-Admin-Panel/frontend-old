@@ -129,7 +129,7 @@ const ServerEditor = ({ isModalOpen, setIsModalOpen }) => {
       setTab({ server: true });
     }
     setLastServer(server);
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, server]);
 
   return (
