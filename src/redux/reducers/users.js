@@ -1,17 +1,31 @@
 import {
   ADD_USERS,
-  ADD_USER,
+  LOAD_USERS,
+  ADD_CURRENT_USER,
+  LOAD_CURRENT_USER,
   DELETE_USER,
   ADD_ME,
   DELETE_ME,
+  LOAD_USER_SERVERS,
   ADD_USER_SERVERS,
   DELETE_USER_SERVERS,
+  LOAD_CURRENT_SERVER,
 } from "../actionTypes";
 
 const initialState = {
-  users: [],
+  users: {
+    users: {},
+    loading: true
+  },
+  current: {
+    user: {},
+    loading: true
+  },
+  userServers: {
+    userServers: [],
+    loading: true
+  },
   me: null,
-  currentUserServers: [],
 };
 
 export default function (state = initialState, action) {
@@ -19,14 +33,38 @@ export default function (state = initialState, action) {
     case ADD_USERS: {
       return {
         ...state,
-        users: action.payload,
+        users: {
+          users: action.payload,
+          loading: false
+        }
       };
     }
-    case ADD_USER: {
+    case LOAD_USERS: {
       return {
         ...state,
-        users: [action.payload].concat(state.users)
+        users: {
+          ...state.users,
+          loading: true
+        }
+      }
+    }
+    case ADD_CURRENT_USER: {
+      return {
+        ...state,
+        current: {
+          user: action.payload,
+          loading: false
+        }
       };
+    }
+    case LOAD_CURRENT_USER: {
+      return {
+        ...state,
+        current: {
+          ...state.current,
+          loading: true
+        }
+      }
     }
     case DELETE_USER: {
       return {
@@ -46,11 +84,23 @@ export default function (state = initialState, action) {
         me: null,
       };
     }
+    case LOAD_USER_SERVERS: {
+      return {
+        ...state,
+        userServers: {
+          ...state.userServers,
+          loading: true
+        }
+      }
+    }
     case ADD_USER_SERVERS: {
       return {
         ...state,
-        currentUserServers: action.payload,
-      };
+        userServers: {
+          userServers: action.payload,
+          loading: false
+        }
+      }
     }
     case DELETE_USER_SERVERS: {
       return {

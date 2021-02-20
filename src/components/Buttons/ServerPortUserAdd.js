@@ -7,6 +7,7 @@ import {
   DropdownItem,
 } from "@windmill/react-ui";
 
+import FullScreenLoading from "../FullScreenLoading";
 import { createServerUser } from "../../redux/actions/servers";
 import { createServerPortUser } from "../../redux/actions/ports";
 import { getUsers } from "../../redux/actions/users";
@@ -21,7 +22,7 @@ const ServerPortUserAdd = ({
   setIsAdding,
 }) => {
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.users.users);
+  const { users, loading } = useSelector((state) => state.users.users);
   const [searchText, setSearchText] = useState("");
   const addUser = (user_id) => {
     if (addingType === "port") {
@@ -31,10 +32,10 @@ const ServerPortUserAdd = ({
     }
     setIsAdding(false)
   }
-
-  useEffect(() => {
-    if (isAdding) dispatch(getUsers());
-  }, [isAdding, dispatch]);
+  const searchUsers = (e) => {
+    setSearchText(e.target.value)
+    dispatch(getUsers(1, 10, e.target.value))
+  }
 
   return (
     <div className="relative">
@@ -64,16 +65,13 @@ const ServerPortUserAdd = ({
             autoFocus
             className="border-2 rounded h-8 w-full"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => searchUsers(e)}
           />
         </DropdownItem>
-        {users
+        {loading ? <FullScreenLoading />
+          : users.items
           .filter(
-            user =>
-              !allowedUsers.find((u) => parseInt(u.user_id) === parseInt(user.id)) &&
-              (searchText === "" || user.email.toLowerCase().includes(searchText.toLowerCase()))
-          )
-          .slice(0, 10)
+            user => !allowedUsers.find((u) => parseInt(u.user_id) === parseInt(user.id)))
           .map((user) => (
             <DropdownItem
               key={`server_port_user_add_${user.id}`}

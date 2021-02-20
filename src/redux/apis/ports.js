@@ -1,8 +1,9 @@
-import { v1AuthRequest } from "../../utils/api";
+import { v1AuthRequest, v2AuthRequest } from "../../utils/api";
 
-export const serverPortsGet = (server_id) => v1AuthRequest({
+export const serverPortsGet = (server_id, page, size) => v2AuthRequest({
     method: "get",
-    url: `/servers/${server_id}/ports`
+    url: `/servers/${server_id}/ports`,
+    params: { page: page-1, size }
 })
 
 export const serverPortCreate = (server_id, data) => v1AuthRequest({

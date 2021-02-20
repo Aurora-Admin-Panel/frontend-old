@@ -20,6 +20,7 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
   const [password, setPassword] = useState("");
   const [notes, setNotes] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [clearRules, setClearRules] = useState(false);
 
   const validEmail = () => !email || email.includes("@");
   const validPassword = () => !password || password.length > 5;
@@ -30,10 +31,11 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
   const submitForm = () => {
     const data = {
       email,
+      notes,
       is_active: isActive,
     };
+    if (!isActive && clearRules) data.clear_rules = true;
     if (password) data.password = password;
-    if (notes) data.notes = notes;
     if (user) {
       dispatch(editUser(user.id, data));
     } else {
@@ -44,6 +46,7 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
 
   useEffect(() => {
     setPassword("");
+    setClearRules(false);
     if (user) {
       setEmail(user.email);
       setIsActive(user.is_active);
@@ -95,6 +98,16 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
                 onChange={() => setIsActive(!isActive)}
               />
               <span className="ml-2">我要暂停这个用户(转发仍有效)</span>
+            </Label>
+          ) : null}
+          {user && !isActive ? (
+            <Label className="">
+              <Input
+                type="checkbox"
+                checked={clearRules}
+                onChange={() => setClearRules(!clearRules)}
+              />
+              <span className="ml-2">清退(删除所有转发，端口用量清零)</span>
             </Label>
           ) : null}
         </div>

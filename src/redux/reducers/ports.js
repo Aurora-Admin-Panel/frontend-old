@@ -1,5 +1,6 @@
 import {
   ADD_SERVER_PORTS,
+  LOAD_SERVER_PORTS,
   DELETE_SERVER_PORTS,
   ADD_SERVER_PORT,
   DELETE_SERVER_PORT,
@@ -12,26 +13,183 @@ import {
 } from "../actionTypes";
 
 const initialState = {
-  ports: {},
+  ports: {
+    ports: {},
+    loading: true
+  },
+  current: {
+    port: {},
+    loading: true
+  }
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_SERVER_PORTS: {
-      const ports = {};
-      for (const port of action.payload) {
-        ports[port.id] = port;
-      }
       return {
         ...state,
-        ports: ports,
+        ports: {
+          ports: action.payload,
+          loading: false
+        },
       };
+    }
+    case LOAD_SERVER_PORTS: {
+      return {
+        ...state,
+        ports: {
+          ...state.ports,
+          loading: true
+        }
+      }
     }
     case DELETE_SERVER_PORTS: {
       return {
         ...state,
         ports: {},
       };
+    }
+    case ADD_SERVER_PORT_FORWARD_RULE: {
+      const idx = state.ports.ports.items.findIndex(p => p.id === action.payload.port_id)
+      if (idx > -1) {
+        return {
+          ...state,
+          ports: {
+            ...state.ports,
+            ports: {
+              ...state.ports.ports,
+              items: [
+                ...state.ports.ports.items.slice(0, idx),
+                {
+                  ...state.ports.ports.items[idx],
+                  forward_rule: {
+                    ...action.payload,
+                    count: !state.ports.ports.items[idx].forward_rule || isNaN(state.ports.ports.items[idx].forward_rule.count)
+                      ? 0 : state.ports.ports.items[idx].forward_rule.count + 1
+                  }
+                },
+                ...state.ports.ports.items.slice(idx + 1)
+              ]
+            }
+          }
+        }
+      }
+      return { ...state }
+    }
+    case DELETE_SERVER_PORT_FORWARD_RULE: {
+      const idx = state.ports.ports.items.findIndex(p => p.id === action.payload.port_id)
+      if (idx > -1) {
+        return {
+          ...state,
+          ports: {
+            ...state.ports,
+            ports: {
+              ...state.ports.ports,
+              items: [
+                ...state.ports.ports.items.slice(0, idx),
+                {
+                  ...state.ports.ports.items[idx],
+                  forward_rule: null
+                },
+                ...state.ports.ports.items.slice(idx + 1)
+              ]
+            }
+          }
+        }
+      }
+      return { ...state }
+    }
+    case ADD_SERVER_PORT_USERS: {
+      const idx = state.ports.ports.items.findIndex(p => p.id === action.payload.port_id)
+      if (idx > -1) {
+        return {
+          ...state,
+          ports: {
+            ...state.ports,
+            ports: {
+              ...state.ports.ports,
+              items: [
+                ...state.ports.ports.items.slice(0, idx),
+                {
+                  ...state.ports.ports.items[idx],
+                  allowed_users: action.payload
+                },
+                ...state.ports.ports.items.slice(idx + 1)
+              ]
+            }
+          }
+        }
+      }
+      return { ...state }
+    }
+    case ADD_SERVER_PORT_USER: {
+      const idx = state.ports.ports.items.findIndex(p => p.id === action.payload.port_id)
+      if (idx > -1) {
+        return {
+          ...state,
+          ports: {
+            ...state.ports,
+            ports: {
+              ...state.ports.ports,
+              items: [
+                ...state.ports.ports.items.slice(0, idx),
+                {
+                  ...state.ports.ports.items[idx],
+                  allowed_users: state.ports.ports.items[idx].allowed_users.concat(action.payload)
+                },
+                ...state.ports.ports.items.slice(idx + 1)
+              ]
+            }
+          }
+        }
+      }
+      return { ...state }
+    }
+    case DELETE_SERVER_PORT_USER: {
+      const idx = state.ports.ports.items.findIndex(p => p.id === action.payload.port_id)
+      if (idx > -1) {
+        return {
+          ...state,
+          ports: {
+            ...state.ports,
+            ports: {
+              ...state.ports.ports,
+              items: [
+                ...state.ports.ports.items.slice(0, idx),
+                {
+                  ...state.ports.ports.items[idx],
+                  allowed_users: state.ports.ports.items[idx].allowed_users.filter(u => u.user_id !== action.payload.user_id)
+                },
+                ...state.ports.ports.items.slice(idx + 1)
+              ]
+            }
+          }
+        }
+      }
+      return { ...state }
+    }
+    case ADD_SERVER_PORT_USAGE: {
+      const idx = state.ports.ports.items.findIndex(p => p.id === action.payload.port_id)
+      if (idx > -1) {
+        return {
+          ...state,
+          ports: {
+            ...state.ports,
+            ports: {
+              ...state.ports.ports,
+              items: [
+                ...state.ports.ports.items.slice(0, idx),
+                {
+                  ...state.ports.ports.items[idx],
+                  usage: action.payload
+                },
+                ...state.ports.ports.items.slice(idx + 1)
+              ]
+            }
+          }
+        }
+      }
+      return { ...state }
     }
     case ADD_SERVER_PORT: {
       return {
@@ -51,117 +209,6 @@ export default function (state = initialState, action) {
         ports: {
           ...state.ports,
           [action.payload.id]: null,
-        },
-      };
-    }
-    case ADD_SERVER_PORT_USERS: {
-      if (!state.ports[action.payload.port_id]) {
-        return { ...state };
-      }
-      return {
-        ...state,
-        ports: {
-          ...state.ports,
-          [action.payload.port_id]: {
-            ...state.ports[action.payload.port_id],
-            allowed_users: action.payload,
-          },
-        },
-      };
-    }
-    case ADD_SERVER_PORT_USAGE: {
-      if (!state.ports[action.payload.port_id]) {
-        return { ...state };
-      }
-      return {
-        ...state,
-        ports: {
-          ...state.ports,
-          [action.payload.port_id]: {
-            ...state.ports[action.payload.port_id],
-            usage: action.payload,
-          },
-        },
-      };
-    }
-    case ADD_SERVER_PORT_USER: {
-      if (!state.ports[action.payload.port_id]) {
-        return { ...state };
-      }
-      return {
-        ...state,
-        ports: {
-          ...state.ports,
-          [action.payload.port_id]: {
-            ...state.ports[action.payload.port_id],
-            allowed_users: state.ports[action.payload.port_id].allowed_users
-              .filter((pu) => pu.user_id !== action.payload.user_id)
-              .concat(action.payload),
-          },
-        },
-      };
-    }
-    case DELETE_SERVER_PORT_USER: {
-      if (!state.ports[action.payload.port_id]) {
-        return { ...state };
-      }
-      return {
-        ...state,
-        ports: {
-          ...state.ports,
-          [action.payload.port_id]: {
-            ...state.ports[action.payload.port_id],
-            allowed_users: state.ports[
-              action.payload.port_id
-            ].allowed_users.filter(
-              (u) => parseInt(u.user_id) !== parseInt(action.payload.user_id)
-            ),
-          },
-        },
-      };
-    }
-    case ADD_SERVER_PORT_FORWARD_RULE: {
-      if (!state.ports[action.payload.port_id]) {
-        return { ...state };
-      }
-      let count = -1;
-      if (
-        action.payload.status === "running" ||
-        action.payload.status === "starting"
-      ) {
-        if (
-          state.ports[action.payload.port_id].forward_rule &&
-          state.ports[action.payload.port_id].forward_rule.count >= 0
-        ) {
-          count = state.ports[action.payload.port_id].forward_rule.count;
-        }
-      }
-      return {
-        ...state,
-        ports: {
-          ...state.ports,
-          [action.payload.port_id]: {
-            ...state.ports[action.payload.port_id],
-            forward_rule: {
-              ...action.payload,
-              count: count + 1,
-            },
-          },
-        },
-      };
-    }
-    case DELETE_SERVER_PORT_FORWARD_RULE: {
-      if (!state.ports[action.payload.port_id]) {
-        return { ...state };
-      }
-      return {
-        ...state,
-        ports: {
-          ...state.ports,
-          [action.payload.port_id]: {
-            ...state.ports[action.payload.port_id],
-            forward_rule: null,
-          },
         },
       };
     }

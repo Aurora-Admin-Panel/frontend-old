@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory, Link } from "react-router-dom";
+import { useParams, useHistory, useLocation, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Badge,
   Button,
   TableBody,
   TableContainer,
-  Table,
   TableHeader,
   TableCell,
   TableRow,
+  TableFooter,
 } from "@windmill/react-ui";
 import ReactLoading from "react-loading";
 import {
@@ -22,9 +22,12 @@ import {
   Users,
 } from "phosphor-react";
 
-import { getServer } from "../redux/actions/servers";
+import Table from "../components/Table"
+import Tooltip from "../components/Tooltip"
 import { PlusIcon, InfinityIcon } from "../icons";
-import { getServerPorts } from "../redux/actions/ports";
+import { getCurrentServer } from "../redux/actions/servers";
+import { getServerPorts, getServerPortForwardRule } from "../redux/actions/ports";
+import Pagination from "../components/Pagination";
 import FullScreenLoading from "../components/FullScreenLoading";
 import AuthSelector from "../components/AuthSelector";
 import PortEditor from "../components/PortEditor";
@@ -85,15 +88,13 @@ const statusToBadge = (rule, server, port) => {
           ret.push(`brook ${rule.config.command}`);
         } else if (rule.method === "tiny_port_mapper") {
           ret.push(
-            `tinyPortMapper -l0.0.0.0:${
-              port.external_num ? port.external_num : port.num
+            `tinyPortMapper -l0.0.0.0:${port.external_num ? port.external_num : port.num
             } -r${rule.config.remote_address}:${rule.config.remote_port}`
           );
         } else if (rule.method === "node_exporter") {
           ret.push("node_exporter");
           ret.push(
-            `请添加${server.address}:${
-              port.external_num ? port.external_num : port.num
+            `请添加${server.address}:${port.external_num ? port.external_num : port.num
             }到promethus.yml中`
           );
         } else {
@@ -124,15 +125,20 @@ const statusToBadge = (rule, server, port) => {
   );
 };
 
-const usersToBadge = (users) => {
+const usersToBadge = (history, users) => {
   if (users.length > 0) {
     return (
-      <>
+      <div className="flex flex-col">
         <Badge type="success">有{`${users.length}`}人正在使用此端口</Badge>
         {users.map((u) => (
-          <span key={`server_users_badge_${u.user_id}`}>{u.user.email}</span>
+          <button
+            onClick={() => history.push(`/app/users/${u.user_id}`)}
+            key={`server_users_badge_${u.user_id}`} 
+            className="text-blue-500">
+              {u.user.email}
+          </button>
         ))}
-      </>
+      </div>
     );
   }
   return <Badge type="warning">此端口无人使用</Badge>;
@@ -149,13 +155,20 @@ const formatSpeed = (speed) => {
   }
 };
 
-function Server() {
+function ServerPorts() {
   const server_id = parseInt(useParams().server_id);
-  const servers = useSelector((state) => state.servers.servers);
-  const ports = useSelector((state) => state.ports.ports);
-  const permission = useSelector((state) => state.auth.permission);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search)
+  const page = parseInt(query.get("page") || 1);
+  const size = parseInt(query.get('size') || 10)
+
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const { server, loading: serverLoading } = useSelector((state) => state.servers.current);
+  const { ports, loading: portsLoading } = useSelector((state) => state.ports.ports);
+  const permission = useSelector((state) => state.auth.permission);
+
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState("");
   const [currentPort, setCurrentPort] = useState("");
@@ -164,27 +177,35 @@ function Server() {
   const [showUsers, setShowUsers] = useState({});
 
   useEffect(() => {
-    dispatch(getServerPorts(server_id));
-    if (!(server_id in servers)) {
-      dispatch(getServer(server_id));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch(getCurrentServer(server_id));
   }, [dispatch, server_id]);
+  useEffect(() => {
+      dispatch(getServerPorts(server_id, page, size));
+  }, [dispatch, server_id, location]);
+  useEffect(() => {
+    if (!portsLoading && ports) {
+      ports.items.forEach(p => {
+        if (p.forward_rule && (p.forward_rule.status === 'starting' || p.forward_rule.status === 'running')) {
+          dispatch(getServerPortForwardRule(server_id, p.id))
+        }
+      })
+    }
+  }, [dispatch, server_id, portsLoading])
 
-  if (!servers[server_id]) return <FullScreenLoading />;
+  if (serverLoading) return <FullScreenLoading />;
   return (
     <>
       <PageTitle>
         <div className="flex flex-row justify-start space-x-2">
           <span>
-            {servers[server_id].name}[{servers[server_id].address}]
+            {server.name}[{server.address}]
           </span>
-          <AuthSelector permissions={["admin"]}>
+          <AuthSelector permissions={["admin", "ops"]}>
             <Button
               iconLeft={Users}
               size="small"
               layout="outline"
-              onClick={(e) => history.push(`/app/servers/${server_id}/users`)}
+              onClick={() => history.push(`/app/servers/${server_id}/users`)}
             ></Button>
           </AuthSelector>
         </div>
@@ -203,7 +224,7 @@ function Server() {
         isModalOpen={portEditorOpen}
         setIsModalOpen={setPortEditorOpen}
       />
-      <AuthSelector permissions={["admin"]}>
+      <AuthSelector permissions={["admin","ops"]}>
         <PortUserEditor
           portId={currentPort.id}
           serverId={server_id}
@@ -226,36 +247,34 @@ function Server() {
           </Button>
         </AuthSelector>
       </div>
-      <TableContainer>
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>端口号</TableCell>
-              <TableCell>备注</TableCell>
-              <TableCell>功能</TableCell>
-              <TableCell>限速</TableCell>
-              <TableCell>流量</TableCell>
-              <TableCell>用户</TableCell>
-              <TableCell>动作</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {Object.keys(ports).map(
-              (port_id) =>
-                ports[port_id] && (
-                  <TableRow key={`servers_server_${server_id}_${port_id}`}>
+      {portsLoading ? <FullScreenLoading /> : (
+        <TableContainer>
+          <Table>
+            <TableHeader>
+              <tr>
+                <TableCell>端口号</TableCell>
+                <TableCell>备注</TableCell>
+                <TableCell>功能</TableCell>
+                <TableCell>限速</TableCell>
+                <TableCell>流量</TableCell>
+                <TableCell>用户</TableCell>
+                <TableCell>动作</TableCell>
+              </tr>
+            </TableHeader>
+            <TableBody>
+              {ports && ports.items.map(
+                (port) => (
+                  <TableRow key={`servers_server_${server_id}_${port.id}`}>
                     <TableCell>
                       <div className="flex flex-row items-center">
-                        <AuthSelector permissions={["admin"]}>
-                          {ports[port_id].external_num
-                            ? ports[port_id].external_num
-                            : ports[port_id].num}
-                          {ports[port_id].external_num ? (
+                        {port.external_num ? port.external_num : port.num}
+                        <AuthSelector permissions={["admin", "ops"]}>
+                          {port.external_num ? (
                             <Tooptip
                               tip={
                                 <span>
                                   <Badge>内部端口</Badge>
-                                  {ports[port_id].num}
+                                  {port.num}
                                 </span>
                               }
                             >
@@ -263,93 +282,69 @@ function Server() {
                             </Tooptip>
                           ) : null}
                         </AuthSelector>
-                        <AuthSelector permissions={["user"]}>
-                          {ports[port_id].external_num
-                            ? ports[port_id].external_num
-                            : ports[port_id].num}
-                        </AuthSelector>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {ports[port_id].notes ? (
-                        ports[port_id].notes.length > 10 ? (
-                          <Tooptip tip={ports[port_id].notes}>
-                            {`${ports[port_id].notes.slice(0, 10)}...`}
+                      {port.notes ? (
+                        port.notes.length > 10 ? (
+                          <Tooptip tip={port.notes}>
+                            {`${port.notes.slice(0, 10)}...`}
                           </Tooptip>
-                        ) : (
-                          ports[port_id].notes
-                        )
+                        ) : (port.notes)
                       ) : null}
                     </TableCell>
                     <TableCell>
                       <Tooptip
-                        tip={statusToBadge(
-                          ports[port_id].forward_rule,
-                          servers[server_id],
-                          ports[port_id]
-                        )}
+                        tip={statusToBadge(port.forward_rule, server, port)}
                       >
-                        {statusToIcon(ports[port_id].forward_rule)}
+                        {statusToIcon(port.forward_rule)}
                       </Tooptip>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col justify-center">
-                        {ports[port_id].config &&
-                        (ports[port_id].config.egress_limit ||
-                          ports[port_id].ingress_limit) ? (
-                          <>
-                            {ports[port_id].config.ingress_limit ? (
-                              <span className="flex flex-auto items-center">
-                                <ArrowUp size={16} />
-                                {formatSpeed(
-                                  ports[port_id].config.ingress_limit
-                                )}
-                              </span>
-                            ) : null}
-                            {ports[port_id].config.egress_limit ? (
-                              <span className="flex flex-auto items-center">
-                                <ArrowDown size={16} />
-                                {formatSpeed(
-                                  ports[port_id].config.egress_limit
-                                )}
-                              </span>
-                            ) : null}
-                          </>
-                        ) : (
-                          <InfinityIcon weight="bold" size={24} />
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <UsageCell usage={ports[port_id].usage} />
-                    </TableCell>
-                    <TableCell>
-                      <div className="relative z-20 inline-flex">
-                        <div
-                          onMouseEnter={() => setShowUsers({ [port_id]: true })}
-                          onMouseLeave={() =>
-                            setShowUsers({ [port_id]: false })
-                          }
-                        >
-                          {ports[port_id].allowed_users &&
-                          ports[port_id].allowed_users.length > 0 ? (
-                            ports[port_id].allowed_users.length > 1 ? (
-                              <Users weight="bold" size={20} />
-                            ) : (
-                              <User weight="bold" size={20} />
-                            )
+                        {port.config &&
+                          (port.config.egress_limit ||
+                            port.ingress_limit) ? (
+                            <>
+                              {port.config.ingress_limit ? (
+                                <span className="flex flex-auto items-center">
+                                  <ArrowUp size={16} />
+                                  {formatSpeed(
+                                    port.config.ingress_limit
+                                  )}
+                                </span>
+                              ) : null}
+                              {port.config.egress_limit ? (
+                                <span className="flex flex-auto items-center">
+                                  <ArrowDown size={16} />
+                                  {formatSpeed(
+                                    port.config.egress_limit
+                                  )}
+                                </span>
+                              ) : null}
+                            </>
                           ) : (
-                            <Circle weight="bold" size={20} />
+                            <InfinityIcon weight="bold" size={24} />
                           )}
-                        </div>
-                        {showUsers[port_id] ? (
-                          <div className="relative">
-                            <div className="absolute flex flex-col top-0 z-30 w-auto p-2 -mt-1 text-sm leading-tight text-black transform -translate-x-1/2 -translate-y-full bg-white rounded-lg shadow-lg">
-                              {usersToBadge(ports[port_id].allowed_users)}
-                            </div>
-                          </div>
-                        ) : null}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <UsageCell usage={port.usage} />
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip tip={usersToBadge(history, port.allowed_users)} >
+                          {port.allowed_users &&
+                            port.allowed_users.length > 0 ? (
+                              port.allowed_users.length > 1 ? (
+                                <Users weight="bold" size={20} />
+                              ) : (
+                                  <User weight="bold" size={20} />
+                                )
+                            ) : (
+                              <Circle weight="bold" size={20} />
+                            )}
+
+                      </Tooltip>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col flex-wrap lg:flex-row lg:items-end lg:space-x-1 space-y-1">
@@ -357,7 +352,7 @@ function Server() {
                           <Button
                             size="small"
                             onClick={() => {
-                              setCurrentPort(ports[port_id]);
+                              setCurrentPort(port);
                               setPortUserEditorOpen(true);
                             }}
                           >
@@ -367,29 +362,29 @@ function Server() {
                         <Button
                           size="small"
                           onClick={() => {
-                            setCurrentPort(ports[port_id]);
+                            setCurrentPort(port);
                             setPortEditorOpen(true);
                           }}
                         >
                           修改端口
                         </Button>
-                        {ports[port_id].forward_rule ? (
+                        {port.forward_rule ? (
                           <>
                             <Button
                               size="small"
                               onClick={() => {
-                                setCurrentRule(ports[port_id].forward_rule);
-                                setCurrentPort(ports[port_id]);
+                                setCurrentRule(port.forward_rule);
+                                setCurrentPort(port);
                                 setRuleEditorOpen(true);
                               }}
                               disabled={
-                                ((!ports[port_id].forward_rule.count ||
-                                  ports[port_id].forward_rule.count <= 10) &&
-                                  (ports[port_id].forward_rule.status ===
+                                ((!port.forward_rule.count ||
+                                  port.forward_rule.count <= 5) &&
+                                  (port.forward_rule.status ===
                                     "starting" ||
-                                    ports[port_id].forward_rule.status ===
-                                      "running")) ||
-                                (ports[port_id].forward_rule.method ===
+                                    port.forward_rule.status ===
+                                    "running")) ||
+                                (port.forward_rule.method ===
                                   "caddy" &&
                                   permission === "user")
                               }
@@ -398,28 +393,39 @@ function Server() {
                             </Button>
                           </>
                         ) : (
-                          <Button
-                            size="small"
-                            onClick={() => {
-                              setCurrentRule(null);
-                              setCurrentPort(ports[port_id]);
-                              setRuleEditorOpen(true);
-                            }}
-                          >
-                            添加转发
-                          </Button>
-                        )}
+                            <Button
+                              size="small"
+                              onClick={() => {
+                                setCurrentRule(null);
+                                setCurrentPort(port);
+                                setRuleEditorOpen(true);
+                              }}
+                            >
+                              添加转发
+                            </Button>
+                          )}
                       </div>
                     </TableCell>
                   </TableRow>
                 )
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              )}
+            </TableBody>
+          </Table>
+          <TableFooter>
+            {/* TODO: ResultPerPage */}
+            <Pagination
+              totalResults={parseInt(ports.total)}
+              resultsPerPage={parseInt(ports.size)}
+              currentPage={page}
+              onChange={(p) => { p !== page && history.push(`/app/servers/${server_id}/ports?page=${p}&size=${size}`) }}
+              label="Servers"
+            />
+          </TableFooter>
+        </TableContainer>
+      )}
       <div className="h-3" />
     </>
   );
 }
 
-export default Server;
+export default ServerPorts;

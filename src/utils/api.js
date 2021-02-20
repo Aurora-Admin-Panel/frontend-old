@@ -10,3 +10,8 @@ export const v1AuthRequest = request => axios({
   url: `/api/v1${request.url}`,
   headers: {...request.headers, Authorization: `Bearer ${store.getState().auth.token}`}
 });
+export const v2AuthRequest = request => axios({
+  ...request,
+  url: `/api/v2${request.url}`,
+  headers: {...request.headers, Authorization: `Bearer ${store.getState().auth.token}`}
+});

@@ -19,18 +19,17 @@ import { getUsers } from "../redux/actions/users";
 
 
 const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
-  const port = useSelector((state) => state.ports.ports[portId]);
+  const port = useSelector((state) => state.ports.ports.ports.items.find(p => p.id === portId));
   const [isAdding, setIsAdding] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     setIsAdding(false);
-    if (isModalOpen && serverId) dispatch(getServerPortUsers(serverId, port.id));
-    if (isModalOpen) dispatch(getUsers());
-  }, [isModalOpen, dispatch, port, serverId]);
+    if (isModalOpen && serverId) dispatch(getServerPortUsers(serverId, portId));
+    if (isModalOpen) dispatch(getUsers(1, 5));
+  }, [isModalOpen, dispatch, portId, serverId]);
 
-  return (
-    isModalOpen && (
+  return isModalOpen && (
       <Modal
         className="w-full px-6 py-4 overflow-y-visible bg-white rounded-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-xl appear-done enter-done"
         isOpen={isModalOpen}
@@ -101,7 +100,6 @@ const PortUserEditor = ({ portId, serverId, isModalOpen, setIsModalOpen }) => {
         </ModalFooter>
       </Modal>
     )
-  );
 };
 
 export default PortUserEditor;

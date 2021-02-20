@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   Badge,
   Button,
@@ -16,13 +16,19 @@ import {
   TableHeader,
   TableCell,
   TableRow,
+  TableFooter,
 } from "@windmill/react-ui";
-import { CheckCircle, WarningCircle, NumberZero, NumberOne, Plus } from "phosphor-react";
+import { CheckCircle, XCircle, NumberZero, NumberOne, Plus } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
+import MyLinkify from '../components/MyLinkify';
+import Tooltip from "../components/Tooltip"
+import Pagination from "../components/Pagination";
+import PageTitle from "../components/Typography/PageTitle";
+import FullScreenLoading from "../components/FullScreenLoading";
+
 import { getUsers, deleteUser } from "../redux/actions/users";
 import UserEditor from "../components/UserEditor";
-import PageTitle from "../components/Typography/PageTitle";
 
 const privilegeToIcon = (user) => {
   if (!user || !user.allowed_ports || user.allowed_ports.length === 0) return <NumberZero weight="bold" size={20} />
@@ -42,7 +48,6 @@ const privilegeToBadge = (user, servers, ports) => {
     components.push(<Badge type="success">0个端口权限</Badge>)
   } else {
     components.push(<Badge type="success">{`${user.allowed_ports.length}个端口权限`}</Badge>)
-    components.push(<span>{user.allowed_ports.map(p => ports[p.port_id] && ports[p.port_id].num).join(',')}</span>)
   }
   return (
     <>
@@ -52,7 +57,12 @@ const privilegeToBadge = (user, servers, ports) => {
 }
 
 function Users() {
-  const users = useSelector((state) => state.users.users);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search)
+  const page = parseInt(query.get("page") || 1);
+  const size = parseInt(query.get('size') || 20);
+
+  const { users, loading } = useSelector((state) => state.users.users);
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);
   const [currentUser, setCurrentUser] = useState("");
@@ -72,10 +82,9 @@ function Users() {
   };
 
   useEffect(() => {
-    dispatch(getUsers());
-  }, [dispatch]);
+    dispatch(getUsers(page, size));
+  }, [dispatch, location]);
 
-  console.log(users)
   return (
     <>
       <div className="flex justify-between items-center">
@@ -83,7 +92,7 @@ function Users() {
         <Button
           size="regular"
           iconLeft={PlusIcon}
-          onClick={() => setIsUserEditorOpen(true)}
+          onClick={() => {setCurrentUser(null);setIsUserEditorOpen(true)}}
         >
           添加
         </Button>
@@ -104,7 +113,7 @@ function Users() {
                 checked={removeRule}
                 onChange={() => setRemoveRule(!removeRule)}
               />
-              <span className="ml-2">删除所有转发</span>
+              <span className="ml-2">清退(删除所有转发，端口用量清零)</span>
             </Label>
           </div>
         </ModalBody>
@@ -120,19 +129,20 @@ function Users() {
         </ModalFooter>
       </Modal>
 
+      {loading ? <FullScreenLoading /> :
       <TableContainer>
         <Table>
           <TableHeader>
             <tr>
               <TableCell>邮箱</TableCell>
-              <TableCell>活跃</TableCell>
-              <TableCell>权限</TableCell>
               <TableCell>备注</TableCell>
+              <TableCell>权限</TableCell>
+              <TableCell>活跃</TableCell>
               <TableCell>动作</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {Array.isArray(users) && users.map(
+            {users.items.map(
               (user) =>
 
                 <TableRow key={`users_user_${user.id}`}>
@@ -140,13 +150,13 @@ function Users() {
                     <span className="text-sm">{user.email}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">
-                      {user.is_active ? (
-                        <CheckCircle weight="bold" size={20} />
-                      ) : (
-                          <WarningCircle weight="bold" size={20} />
-                        )}
-                    </span>
+                    <Tooltip tip={<MyLinkify>{user.notes}</MyLinkify>}>
+                    {user.notes
+                      ? user.notes.length > 10
+                        ? `${user.notes.slice(0, 10)}...`
+                        : user.notes
+                      : "无"}
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
                     <div className="relative z-20 inline-flex items-center">
@@ -166,11 +176,13 @@ function Users() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {user.notes
-                      ? user.notes.length >= 5
-                        ? `${user.notes.slice(0, 5)}...`
-                        : user.notes
-                      : "无"}
+                    <span className="text-sm">
+                      {user.is_active ? (
+                        <CheckCircle weight="bold" size={20} />
+                      ) : (
+                          <XCircle weight="bold" size={20} />
+                        )}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-row space-x-1">
@@ -204,7 +216,16 @@ function Users() {
             )}
           </TableBody>
         </Table>
-      </TableContainer>
+          <TableFooter>
+            <Pagination
+              totalResults={parseInt(users.total)}
+              resultsPerPage={parseInt(users.size)}
+              currentPage={page}
+              onChange={(p) => { p !== page && history.push(`/app/users?page=${p}&size=${size}`) }}
+              label="Users"
+            />
+          </TableFooter>
+      </TableContainer>}
     </>
   );
 }
