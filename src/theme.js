@@ -38,7 +38,7 @@ export default {
   },
   // TableContainer
   tableContainer: {
-    base: "w-full overflow-auto rounded-lg shadow-xs",
+    base: "w-full rounded-lg shadow-xs",
   },
   // TableCell
   tableCell: {

@@ -17,7 +17,8 @@ function Login() {
   const validPassword = () => { return password === '' || password.length >= 8}
   const validPassword2 = () => { return (password === '' && password2 === '') || password2 === password }
 
-  const submitForm = () => {
+  const submitForm = (e) => {
+    e.preventDefault();
     if (!(email.length > 0) || !(password.length > 0)) {
       // TODO: se modal or error message.
       throw new Error('Email or password was not provided');
@@ -47,7 +48,7 @@ function Login() {
             />
           </div>
           <main className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-            <div className="w-full">
+            <form className="w-full" onSubmit={submitForm}>
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">
                 Create account
               </h1>
@@ -71,7 +72,7 @@ function Login() {
                 </span>
               </Label> */}
 
-              <Button block className="mt-4" disabled={!validEmail() || !validPassword() || !validPassword2()} onClick={submitForm}>
+              <Button block className="mt-4" type="submit" disabled={!validEmail() || !validPassword() || !validPassword2()}>
                 Create account
               </Button>
 
@@ -85,7 +86,7 @@ function Login() {
                   Already have an account? Login
                 </Link>
               </p>
-            </div>
+            </form>
           </main>
         </div>
       </div>

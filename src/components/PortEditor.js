@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch  } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import {
   Button,
@@ -16,6 +16,7 @@ import {
 import AuthSelector from "../components/AuthSelector"
 import {
   createServerPort,
+  bulkCreateServerPort,
   editServerPort,
   deleteServerPort,
   editServerPortUsage,
@@ -40,7 +41,17 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const [quotaAction, setQuotaAction] = useState(0);
   const [isDelete, setIsDelete] = useState(false);
 
-  const validNum = () => num && num > 0 && num < 65536;
+  const validNum = () => {
+    if (num) {
+      const numStr = num.toString();
+      const idx = numStr.indexOf('-')
+      if (idx !== -1) {
+        return parseInt(numStr.slice(0, idx)) < parseInt(numStr.slice(idx + 1))
+      }
+      return parseInt(num) > 0 && parseInt(num) < 65536
+    }
+    return false
+  }
   const validExternalNum = () =>
     !externalNum || (externalNum > 0 && externalNum < 65536);
   const validEgress = () => !egressLimit || egressLimit > 0;
@@ -96,7 +107,27 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       if (port) {
         dispatch(editServerPort(serverId, port.id, data));
       } else {
-        dispatch(createServerPort(serverId, data));
+        const numStr = num.toString();
+        const idx = numStr.indexOf('-')
+        if (idx !== -1) {
+          const start = parseInt(numStr.slice(0, idx))
+          const end = parseInt(numStr.slice(idx + 1))
+          dispatch(bulkCreateServerPort(serverId, [...Array(end - start + 1).keys()].map(i => (
+            {
+              num: i + start,
+              external_num: null,
+              config: {
+                egress_limit: null,
+                ingress_limit: null,
+                valid_until: null,
+                due_action: 0,
+                quota: null,
+                quota_action: 0,
+              }
+            }))));
+        } else {
+          dispatch(createServerPort(serverId, data));
+        }
       }
     }
     setIsModalOpen(false);
@@ -151,202 +182,217 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   return (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
       <ModalHeader>{port ? "修改" : "添加"}端口</ModalHeader>
-      <ModalBody>
-        <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-          <AuthSelector permissions={['admin']}>
-          <Label className="mt-2">
-            <span>端口</span>
-            {port ? (
-              <Input className="mt-1" value={num} disabled={true} />
-            ) : (
+      {port ?
+        <ModalBody>
+          <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+            <AuthSelector permissions={['admin', 'ops']}>
+              <Label className="mt-2">
+                <span>端口</span>
+                <Input className="mt-1" value={num} disabled={true} />
+              </Label>
+              <Label className="mt-1">
+                <span>公网端口</span>
+                <Input
+                  className="mt-1"
+                  placeholder={"可为空，如服务器为NAT则填写"}
+                  value={externalNum}
+                  valid={validExternalNum()}
+                  onChange={(e) => setExternalNum(e.target.value)}
+                />
+              </Label>
+              <Label className="mt-1">
+                <div className="flex flex-row">
+                  <span className="w-1/2">限制出站流量</span>
+                  <span className="w-1/2">限制入站流量</span>
+                </div>
+                <div className="mt-1 flex flex-row items-center">
+                  <div className="flex w-1/4">
+                    <Input
+                      placeholder={"空则不限制"}
+                      value={egressLimit}
+                      valid={validEgress()}
+                      onChange={(e) => setEgressLimit(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex w-1/4">
+                    <Select
+                      value={egressLimitScalar}
+                      onChange={(e) => setEgressLimitScalar(e.target.value)}
+                    >
+                      {SpeedLimitOptions.map((option) => (
+                        <option
+                          value={option.value}
+                          key={`egress_limit_options_${option.value}`}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex w-1/4">
+                    <Input
+                      placeholder={"空则不限制"}
+                      value={ingressLimit}
+                      valid={validIngress()}
+                      onChange={(e) => setIngressLimit(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex w-1/4">
+                    <Select
+                      value={ingressLimitScalar}
+                      onChange={(e) => setIngressLimitScalar(e.target.value)}
+                    >
+                      {SpeedLimitOptions.map((option) => (
+                        <option
+                          value={option.value}
+                          key={`ingress_limit_options_${option.value}`}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </Label>
+              <Label className="mt-1">
+                <div className="flex flex-row">
+                  <span className="w-1/2">转发到期时间</span>
+                  <span className="w-1/2">到期时动作</span>
+                </div>
+                <div className="mt-1 flex flex-row items-center">
+                  <div className="flex w-1/2">
+                    <Input
+                      placeholder={"空则不限制"}
+                      value={validUntilDate}
+                      valid={validValidUntilDate()}
+                      onChange={(e) => {
+                        setValidUntilDate(e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div className="flex w-1/2">
+                    <Select
+                      value={dueAction}
+                      onChange={(e) => setDueAction(e.target.value)}
+                    >
+                      {DueActionOptions.map((option) => (
+                        <option
+                          value={option.value}
+                          key={`due_action_options_${option.value}`}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                {isNaN(Date.parse(validUntilDate)) ? null : (
+                  <div className="flex flex-row items-center">
+                    <HelperText>{`转发将在${new Date(validUntilDate).toLocaleString(
+                      "zh-CN",
+                      DateOptions
+                    )}到期`}</HelperText>
+                  </div>
+                )}
+              </Label>
+              <Label className="mt-1">
+                <div className="flex flex-row">
+                  <span className="w-1/2">限制流量</span>
+                  <span className="w-1/2">流量超限时动作</span>
+                </div>
+                <div className="mt-1 flex flex-row items-center">
+                  <div className="flex w-1/4">
+                    <Input
+                      placeholder={"空则不限制"}
+                      value={quota}
+                      valid={validValidUntilDate()}
+                      onChange={(e) => {
+                        setQuota(e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div className="flex w-1/4">
+                    <Select
+                      value={quotaScalar}
+                      onChange={(e) => setQuotaScalar(e.target.value)}
+                    >
+                      {QuotaOptions.map((option) => (
+                        <option
+                          value={option.value}
+                          key={`quota_options_${option.value}`}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex w-1/2">
+                    <Select
+                      value={quotaAction}
+                      onChange={(e) => setQuotaAction(e.target.value)}
+                    >
+                      {DueActionOptions.map((option) => (
+                        <option
+                          value={option.value}
+                          key={`quota_action_options_${option.value}`}
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </Label>
+            </AuthSelector>
+            <Label className="mt-1">
+              <span>备注</span>
               <Input
                 className="mt-1"
-                placeholder={"8000"}
-                value={num}
-                disabled={port}
-                valid={!port && validNum()}
-                onChange={(e) => setNum(e.target.value)}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
               />
-            )}
-          </Label>
-          <Label className="mt-1">
-            <span>公网端口</span>
-            <Input
-              className="mt-1"
-              placeholder={"可为空，如服务器为NAT则填写"}
-              value={externalNum}
-              valid={validExternalNum()}
-              onChange={(e) => setExternalNum(e.target.value)}
-            />
-          </Label>
-          <Label className="mt-1">
-            <div className="flex flex-row">
-              <span className="w-1/2">限制出站流量</span>
-              <span className="w-1/2">限制入站流量</span>
-            </div>
-            <div className="mt-1 flex flex-row items-center">
-              <div className="flex w-1/4">
-                <Input
-                  placeholder={"空则不限制"}
-                  value={egressLimit}
-                  valid={validEgress()}
-                  onChange={(e) => setEgressLimit(e.target.value)}
-                />
-              </div>
-              <div className="flex w-1/4">
-                <Select
-                  value={egressLimitScalar}
-                  onChange={(e) => setEgressLimitScalar(e.target.value)}
-                >
-                  {SpeedLimitOptions.map((option) => (
-                    <option
-                      value={option.value}
-                      key={`egress_limit_options_${option.value}`}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div className="flex w-1/4">
-                <Input
-                  placeholder={"空则不限制"}
-                  value={ingressLimit}
-                  valid={validIngress()}
-                  onChange={(e) => setIngressLimit(e.target.value)}
-                />
-              </div>
-              <div className="flex w-1/4">
-                <Select
-                  value={ingressLimitScalar}
-                  onChange={(e) => setIngressLimitScalar(e.target.value)}
-                >
-                  {SpeedLimitOptions.map((option) => (
-                    <option
-                      value={option.value}
-                      key={`ingress_limit_options_${option.value}`}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-            </div>
-          </Label>
-          <Label className="mt-1">
-            <div className="flex flex-row">
-              <span className="w-1/2">转发到期时间</span>
-              <span className="w-1/2">到期时动作</span>
-            </div>
-            <div className="mt-1 flex flex-row items-center">
-              <div className="flex w-1/2">
-                <Input
-                  placeholder={"空则不限制"}
-                  value={validUntilDate}
-                  valid={validValidUntilDate()}
-                  onChange={(e) => {
-                    setValidUntilDate(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="flex w-1/2">
-                <Select
-                  value={dueAction}
-                  onChange={(e) => setDueAction(e.target.value)}
-                >
-                  {DueActionOptions.map((option) => (
-                    <option
-                      value={option.value}
-                      key={`due_action_options_${option.value}`}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-            </div>
-            {isNaN(Date.parse(validUntilDate)) ? null : (
-              <div className="flex flex-row items-center">
-                <HelperText>{`转发将在${new Date(validUntilDate).toLocaleString(
-                  "zh-CN",
-                  DateOptions
-                )}到期`}</HelperText>
-              </div>
-            )}
-          </Label>
-          <Label className="mt-1">
-            <div className="flex flex-row">
-              <span className="w-1/2">限制流量</span>
-              <span className="w-1/2">流量超限时动作</span>
-            </div>
-            <div className="mt-1 flex flex-row items-center">
-              <div className="flex w-1/4">
-                <Input
-                  placeholder={"空则不限制"}
-                  value={quota}
-                  valid={validValidUntilDate()}
-                  onChange={(e) => {
-                    setQuota(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="flex w-1/4">
-                <Select
-                  value={quotaScalar}
-                  onChange={(e) => setQuotaScalar(e.target.value)}
-                >
-                  {QuotaOptions.map((option) => (
-                    <option
-                      value={option.value}
-                      key={`quota_options_${option.value}`}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              <div className="flex w-1/2">
-                <Select
-                  value={quotaAction}
-                  onChange={(e) => setQuotaAction(e.target.value)}
-                >
-                  {DueActionOptions.map((option) => (
-                    <option
-                      value={option.value}
-                      key={`quota_action_options_${option.value}`}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-            </div>
-          </Label>
-          </AuthSelector>
-          <Label className="mt-1">
-            <span>备注</span>
-            <Input
-            className="mt-1"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </Label>
-
-        <AuthSelector permissions={['admin']}>
-          {port ? (
-            <Label className="mt-4">
-              <Input
-                type="checkbox"
-                checked={isDelete}
-                onChange={() => setIsDelete(!isDelete)}
-              />
-              <span className="ml-2">我要删除这个端口</span>
             </Label>
-          ) : null}
-
-        </AuthSelector>
-        </div>
-      </ModalBody>
+            <AuthSelector permissions={['admin', 'ops']}>
+              {port ? (
+                <Label className="mt-4">
+                  <Input
+                    type="checkbox"
+                    checked={isDelete}
+                    onChange={() => setIsDelete(!isDelete)}
+                  />
+                  <span className="ml-2">我要删除这个端口</span>
+                </Label>
+              ) : null}
+            </AuthSelector>
+          </div>
+        </ModalBody>
+        :
+        <ModalBody>
+          <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+            <AuthSelector permissions={['admin', 'ops']}>
+              <Label className="mt-2">
+                <span>端口</span>
+                <Input
+                  className="mt-1"
+                  placeholder={"单个端口：8000；端口段：8000-8010"}
+                  value={num}
+                  valid={validNum()}
+                  onChange={(e) => setNum(e.target.value)}
+                />
+              </Label>
+              <Label className="mt-1">
+                <span>公网端口</span>
+                <Input
+                  className="mt-1"
+                  placeholder={"可为空，如服务器为NAT则填写，批量添加时无作用"}
+                  value={externalNum}
+                  valid={validExternalNum()}
+                  onChange={(e) => setExternalNum(e.target.value)}
+                />
+              </Label>
+            </AuthSelector>
+          </div>
+        </ModalBody>}
       <ModalFooter>
         <div className="w-full flex flex-row justify-end space-x-2">
           {port ? (

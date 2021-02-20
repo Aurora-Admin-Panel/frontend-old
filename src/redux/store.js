@@ -7,7 +7,7 @@ import storage from 'redux-persist/lib/storage'
 import rootReducer from "./reducers";
 
 const persistConfig = {
-    key: 'root',
+    key: 'aurora-dev-3',
     storage,
   }
 const persistedReducer = persistReducer(persistConfig, rootReducer)

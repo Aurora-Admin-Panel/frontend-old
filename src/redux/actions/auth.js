@@ -7,10 +7,7 @@ import { LOG_IN, LOG_OUT, DELETE_ME } from "../actionTypes";
 
 export const isAuthenticated = () => {
   const permissions = localStorage.getItem("permissions");
-  if (!permissions) {
-    return false;
-  }
-  return permissions === "user" || permissions === "admin";
+  return !!permissions;
 };
 
 export const login = (email, password) => {
@@ -21,6 +18,7 @@ export const login = (email, password) => {
     }
     logIn({ username: email, password: password }).then((response) => {
       const data = response.data;
+      console.log(data)
       if ("access_token" in data) {
         const decodedToken = decodeJwt(data["access_token"]);
         localStorage.setItem("token", data["access_token"]);

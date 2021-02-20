@@ -1,47 +1,74 @@
 import {
   ADD_USERS,
-  ADD_USER,
+  LOAD_USERS,
+  ADD_CURRENT_USER,
+  LOAD_CURRENT_USER,
   DELETE_USER,
   ADD_ME,
   DELETE_ME,
+  LOAD_USER_SERVERS,
   ADD_USER_SERVERS,
   DELETE_USER_SERVERS,
 } from "../actionTypes";
 
 const initialState = {
-  users: {},
+  users: {
+    users: {},
+    loading: true
+  },
+  current: {
+    user: {},
+    loading: true
+  },
+  userServers: {
+    userServers: [],
+    loading: true
+  },
   me: null,
-  currentUserServers: [],
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_USERS: {
-      const users = {};
-      for (const user of action.payload) {
-        users[user.id] = user;
-      }
       return {
         ...state,
-        users: users,
+        users: {
+          users: action.payload,
+          loading: false
+        }
       };
     }
-    case ADD_USER: {
+    case LOAD_USERS: {
       return {
         ...state,
         users: {
           ...state.users,
-          [action.payload.id]: action.payload,
-        },
+          loading: true
+        }
+      }
+    }
+    case ADD_CURRENT_USER: {
+      return {
+        ...state,
+        current: {
+          user: action.payload,
+          loading: false
+        }
       };
+    }
+    case LOAD_CURRENT_USER: {
+      return {
+        ...state,
+        current: {
+          ...state.current,
+          loading: true
+        }
+      }
     }
     case DELETE_USER: {
-      delete state.users[action.payload.id];
       return {
         ...state,
-        users: {
-          ...state.users,
-        },
+        users: state.users.filter(u => u.id !== action.payload.id)
       };
     }
     case ADD_ME: {
@@ -56,11 +83,23 @@ export default function (state = initialState, action) {
         me: null,
       };
     }
+    case LOAD_USER_SERVERS: {
+      return {
+        ...state,
+        userServers: {
+          ...state.userServers,
+          loading: true
+        }
+      }
+    }
     case ADD_USER_SERVERS: {
       return {
         ...state,
-        currentUserServers: action.payload,
-      };
+        userServers: {
+          userServers: action.payload,
+          loading: false
+        }
+      }
     }
     case DELETE_USER_SERVERS: {
       return {

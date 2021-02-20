@@ -4,7 +4,7 @@ import { lazy } from 'react'
 const Dashboard = lazy(() => import('../pages/Dashboard'))
 const Users = lazy(() => import('../pages/Users'))
 const Servers = lazy(() => import('../pages/Servers'))
-const Server = lazy(() => import('../pages/Server'))
+const ServerPorts = lazy(() => import('../pages/ServerPorts'))
 const Forms = lazy(() => import('../pages/Forms'))
 const Cards = lazy(() => import('../pages/Cards'))
 const Charts = lazy(() => import('../pages/Charts'))
@@ -46,9 +46,9 @@ const routes = [
     permissions: ['admin', 'user']
   },
   {
-    path: '/servers/:server_id',
-    component: Server,
-    permissions: ['admin', 'user']
+    path: '/servers/:server_id/ports',
+    component: ServerPorts,
+    permissions: ['admin', 'ops', 'user']
   },
   {
     path: '/servers/:server_id/users',
@@ -58,7 +58,7 @@ const routes = [
   {
     path: '/servers/:server_id/:port_id/artifacts',
     component: Artifacts,
-    permissions: ['admin', 'user']
+    permissions: ['admin', 'ops', 'user']
   },
   {
     path: '/users/:user_id',

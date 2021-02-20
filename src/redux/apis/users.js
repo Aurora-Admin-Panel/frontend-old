@@ -1,4 +1,4 @@
-import { v1AuthRequest } from "../../utils/api";
+import { v1AuthRequest, v2AuthRequest } from "../../utils/api";
 
 export const meGet = () => v1AuthRequest({
     method: "get",
@@ -10,9 +10,10 @@ export const meEdit = (data) => v1AuthRequest({
     data: data
 })
 
-export const usersGet = (user_id) => v1AuthRequest({
+export const usersGet = (page, size, query = null) => v2AuthRequest({
     method: "get",
     url: `/users`,
+    params: { page: page-1, size, query }
 })
 
 export const userCreate = (data) => v1AuthRequest({
@@ -32,9 +33,10 @@ export const userEdit = (user_id, data) => v1AuthRequest({
     data: data
 })
 
-export const userDelete = (user_id) => v1AuthRequest({
+export const userDelete = (user_id, data) => v1AuthRequest({
     method: "delete",
     url: `/users/${user_id}`,
+    data: data
 })
 
 export const userServersGet = (user_id) => v1AuthRequest({

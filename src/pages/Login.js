@@ -16,9 +16,9 @@ function Login() {
   const auth = useSelector(state => state.auth)
   const me = useSelector(state => state.users.me);
 
-  const submitForm = () => {
+  const submitForm = (e) => {
+    e.preventDefault()
     if (!(email.length > 0) || !(password.length > 0)) {
-      // TODO: se modal or error message.
       throw new Error('Email or password was not provided');
     }
     return dispatch(login(email, password))
@@ -50,7 +50,7 @@ function Login() {
             />
           </div>
           <main className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-            <div className="w-full">
+            <form className="w-full" onSubmit={submitForm}>
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">Login</h1>
               <Label>
                 <span>Email</span>
@@ -62,21 +62,21 @@ function Login() {
                 <Input className="mt-1" type="password" placeholder="***************" onChange={e => setPassword(e.target.value)}/>
               </Label>
 
-              <Button className="mt-4" block onClick={submitForm}>
+              <Button className="mt-4" block type="submit" >
                 Log in
               </Button>
 
               <hr className="my-8" />
 
               <p className="mt-4">
-                <Link
+                {/* <Link
                   className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
                   to="/forgot-password"
                 >
                   Forgot your password?
                 </Link>
               </p>
-              <p className="mt-1">
+              <p className="mt-1"> */}
                 <Link
                   className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
                   to="/create-account"
@@ -84,7 +84,7 @@ function Login() {
                   Create account
                 </Link>
               </p>
-            </div>
+            </form>
           </main>
         </div>
       </div>

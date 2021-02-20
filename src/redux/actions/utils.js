@@ -10,9 +10,10 @@ export const handleError = (dispatch, error) => {
         type: SHOW_BANNER,
         payload: { title: "Error", body: "Internal Server Error!" },
       });
-    } else if (response.status === 401) {
-      dispatch(logout())
     } else if (response.status >= 400 && response.status < 500) {
+      if (response.status === 401) {
+        dispatch(logout())
+      }
       const data = response.data;
       if (typeof data.detail === "string" || data.detail instanceof String) {
         dispatch({
