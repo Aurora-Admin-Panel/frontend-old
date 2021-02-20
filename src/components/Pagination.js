@@ -147,9 +147,10 @@ const Pagination = React.forwardRef(function Pagination(props, ref) {
         <div className='ml-1 w-1.5'>
           <Select value={resultsPerPage} onChange={e => updateSize(e.target.value)}>
             <option>10</option>
+            <option>15</option>
             <option>20</option>
             <option>50</option>
-            <option>200</option>
+            <option>100</option>
           </Select>
 
         </div>

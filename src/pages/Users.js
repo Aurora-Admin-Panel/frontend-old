@@ -57,14 +57,15 @@ const privilegeToBadge = (user, servers, ports) => {
 }
 
 function Users() {
-  const location = useLocation();
-  const query = new URLSearchParams(location.search)
-  const page = parseInt(query.get("page") || 1);
-  const size = parseInt(query.get('size') || 20);
-
   const { users, loading } = useSelector((state) => state.users.users);
   const servers = useSelector((state) => state.servers.servers);
   const ports = useSelector((state) => state.ports.ports);
+
+  const location = useLocation();
+  const query = new URLSearchParams(location.search)
+  const page = parseInt(query.get("page") || 1);
+  const size = parseInt(query.get('size') || users.size || 20);
+
   const [currentUser, setCurrentUser] = useState("");
   const [removeRule, setRemoveRule] = useState(true);
   const [isUserEditorOpen, setIsUserEditorOpen] = useState(false);

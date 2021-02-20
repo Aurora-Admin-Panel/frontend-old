@@ -157,17 +157,18 @@ const formatSpeed = (speed) => {
 
 function ServerPorts() {
   const server_id = parseInt(useParams().server_id);
-  const location = useLocation();
-  const query = new URLSearchParams(location.search)
-  const page = parseInt(query.get("page") || 1);
-  const size = parseInt(query.get('size') || 10)
-
-  const dispatch = useDispatch();
-  const history = useHistory();
 
   const { server, loading: serverLoading } = useSelector((state) => state.servers.current);
   const { ports, loading: portsLoading } = useSelector((state) => state.ports.ports);
   const permission = useSelector((state) => state.auth.permission);
+
+  const location = useLocation();
+  const query = new URLSearchParams(location.search)
+  const page = parseInt(query.get("page") || 1);
+  const size = parseInt(query.get('size') || ports.size || 10)
+
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const [ruleEditorOpen, setRuleEditorOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState("");

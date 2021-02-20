@@ -57,11 +57,11 @@ const serverFactsToBadge = (system, permission) => {
 
 function Servers() {
   const location = useLocation();
+  const { servers, loading } = useSelector((state) => state.servers.servers);
   const query = new URLSearchParams(location.search)
   const page = parseInt(query.get("page") || 1);
-  const size = parseInt(query.get('size') || 20);
+  const size = parseInt(query.get('size') || servers.size || 20);
 
-  const { servers, loading } = useSelector((state) => state.servers.servers);
   const permission = useSelector((state) => state.auth.permission);
 
   const [editorOpen, setEditorOpen] = useState(false);
