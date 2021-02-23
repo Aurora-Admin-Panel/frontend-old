@@ -194,7 +194,7 @@ function ServerPorts() {
     // eslint-disable-next-line
   }, [dispatch, server_id, portsLoading])
 
-  if (serverLoading) return <FullScreenLoading />;
+  if (serverLoading || server === null) return <FullScreenLoading />;
   return (
     <>
       <PageTitle>

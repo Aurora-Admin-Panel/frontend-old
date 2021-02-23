@@ -42,7 +42,7 @@ const ServerEditor = ({ isModalOpen, setIsModalOpen }) => {
 
   const validName = () => name.length > 0;
   const validAddress = () => address.length > 0;
-  const validAnsibleName = () => ansibleName.length > 0;
+  const validAnsibleName = () => ansibleName && ansibleName.length > 0;
   const validAnsibleHost = () => !ansibleHost || ansibleHost.length > 0;
   const validAnsiblePort = () =>
     !ansiblePort ||
