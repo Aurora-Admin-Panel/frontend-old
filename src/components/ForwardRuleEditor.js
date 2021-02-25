@@ -47,7 +47,7 @@ const ForwardRuleEditor = ({
   setIsModalOpen,
 }) => {
   const dispatch = useDispatch();
-  const server = useSelector((state) => state.servers.servers[serverId]);
+  const server = useSelector((state) => state.servers.current.server);
   const [method, setMethod] = useState("iptables");
   const [validRuleForm, setValidRuleForm] = useState(() => () => false);
   const [submitRuleForm, setSubmitRuleForm] = useState(() => () => {});
