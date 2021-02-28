@@ -18,7 +18,7 @@ import {
   TableRow,
   TableFooter,
 } from "@windmill/react-ui";
-import { CheckCircle, XCircle, NumberZero, NumberOne, Plus } from "phosphor-react";
+import { CheckCircle, XCircle, NumberZero, NumberOne, Plus, Star } from "phosphor-react";
 
 import { PlusIcon } from "../icons";
 import MyLinkify from '../components/MyLinkify';
@@ -29,6 +29,7 @@ import FullScreenLoading from "../components/FullScreenLoading";
 
 import { getUsers, deleteUser } from "../redux/actions/users";
 import UserEditor from "../components/UserEditor";
+import Tooptip from "../components/Tooltip";
 
 const privilegeToIcon = (user) => {
   if (!user || !user.allowed_ports || user.allowed_ports.length === 0) return <NumberZero weight="bold" size={20} />
@@ -148,8 +149,16 @@ function Users() {
               (user) =>
 
                 <TableRow key={`users_user_${user.id}`}>
-                  <TableCell>
-                    <span className="text-sm">{user.email}</span>
+                  <TableCell className="flex flex-row">
+                    
+                    {user.is_ops ? 
+                      <>
+                      <span className="text-sm text-purple-700">{user.email}</span>
+                      <span className="ml-1">
+                      <Tooptip tip="服务器管理员">
+                        <Star size={12} weight="bold" /> 
+                      </Tooptip>
+                    </span> </>: <span className="text-sm">{user.email}</span>}
                   </TableCell>
                   <TableCell>
                     <Tooltip tip={<MyLinkify>{user.notes}</MyLinkify>}>

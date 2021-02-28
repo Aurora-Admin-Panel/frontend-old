@@ -236,7 +236,7 @@ function ServerPorts() {
       </AuthSelector>
       <div className="flex justify-between items-center">
         <PageTitle>端口</PageTitle>
-        <AuthSelector permissions={["admin"]}>
+        <AuthSelector permissions={["admin", "ops"]}>
           <Button
             size="regular"
             iconLeft={PlusIcon}
@@ -350,7 +350,7 @@ function ServerPorts() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col flex-wrap lg:flex-row lg:items-end lg:space-x-1 space-y-1">
-                        <AuthSelector permissions={["admin"]}>
+                        <AuthSelector permissions={["admin", "ops"]}>
                           <Button
                             size="small"
                             onClick={() => {

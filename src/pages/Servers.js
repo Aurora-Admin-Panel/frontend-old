@@ -88,7 +88,7 @@ function Servers() {
     <>
       <div className="flex justify-between items-center">
         <PageTitle>Servers</PageTitle>
-        <AuthSelector permissions={["admin", "ops"]} >
+        <AuthSelector permissions={["admin"]} >
           <Button
             size="regular"
             iconLeft={Plus}

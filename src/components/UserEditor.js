@@ -20,6 +20,7 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
   const [password, setPassword] = useState("");
   const [notes, setNotes] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [isOps, setIsOps] = useState(false);
   const [clearRules, setClearRules] = useState(false);
 
   const validEmail = () => !email || email.includes("@");
@@ -33,6 +34,7 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
       email,
       notes,
       is_active: isActive,
+      is_ops: isOps,
     };
     if (!isActive && clearRules) data.clear_rules = true;
     if (password) data.password = password;
@@ -90,9 +92,17 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
             />
           </Label>
 
+            <Label className="mt-6">
+              <Input
+                type="checkbox"
+                checked={isOps}
+                onChange={() => setIsOps(!isOps)}
+              />
+              <span className="ml-2 text-purple-700">提升为服务器管理员</span>
+            </Label>
 
           {user ? (
-            <Label className="mt-6">
+            <Label className="">
               <Input
                 type="checkbox"
                 checked={!isActive}

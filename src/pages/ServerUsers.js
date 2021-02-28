@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@windmill/react-ui";
-import { DotsNine } from "phosphor-react";
+import { DotsNine, Star } from "phosphor-react";
 
 import { getReadableSize } from "../utils/formatter";
 import {
@@ -25,6 +25,7 @@ import FullScreenLoading from "../components/FullScreenLoading";
 import ServerPortUserAdd from "../components/Buttons/ServerPortUserAdd";
 import ServerUserEditor from "../components/ServerUserEditor";
 import { DateOptions } from "../utils/constants";
+import AuthSeletor from "../components/AuthSelector";
 
 const ServerUsers = () => {
   const server_id = parseInt(useParams().server_id);
@@ -110,13 +111,16 @@ const ServerUsers = () => {
                     (user) =>
                       user.user && (
                         <TableRow key={`server_user_table_${user.user_id}`}>
-                          <TableCell>
+                          <TableCell className="flex flex-row">
                             <button
                               onClick={() => history.push(`/app/users/${user.user_id}`)}
                               className="text-blue-600"
                             >
                               {user.user.email}
                             </button>
+                            <AuthSeletor permissions={["admin"]}>
+                              <span>{user.user.is_ops ? <Star size={12} weight="bold" /> : null}</span>
+                            </AuthSeletor>
                           </TableCell>
                           <TableCell>
                             <span>

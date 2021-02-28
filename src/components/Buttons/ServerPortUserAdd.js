@@ -74,6 +74,7 @@ const ServerPortUserAdd = ({
             user => !allowedUsers.find((u) => parseInt(u.user_id) === parseInt(user.id)))
           .map((user) => (
             <DropdownItem
+              className={user.is_ops ? "text-purple-700" : ""}
               key={`server_port_user_add_${user.id}`}
               onClick={() => addUser(user.id)}
             >

@@ -43,7 +43,7 @@ const routes = [
   {
     path: '/servers',
     component: Servers,
-    permissions: ['admin', 'user']
+    permissions: ['admin', 'ops', 'user']
   },
   {
     path: '/servers/:server_id/ports',
@@ -53,7 +53,7 @@ const routes = [
   {
     path: '/servers/:server_id/users',
     component: ServerUsers,
-    permissions: ['admin']
+    permissions: ['admin', 'ops']
   },
   {
     path: '/servers/:server_id/:port_id/artifacts',
@@ -68,52 +68,12 @@ const routes = [
   {
     path: '/about',
     component: About,
-    permissions: ['admin', 'user']
+    permissions: ['admin', 'ops', 'user']
   },
   {
     path: '/me',
     component: Me,
-    permissions: ['admin', 'user']
-  },
-  {
-    path: '/forms',
-    component: Forms,
-    permissions: ['admin'],
-  },
-  {
-    path: '/cards',
-    component: Cards,
-    permissions: ['admin'],
-  },
-  {
-    path: '/charts',
-    component: Charts,
-    permissions: ['admin'],
-  },
-  {
-    path: '/buttons',
-    component: Buttons,
-    permissions: ['admin'],
-  },
-  {
-    path: '/modals',
-    component: Modals,
-    permissions: ['admin'],
-  },
-  {
-    path: '/tables',
-    component: Tables,
-    permissions: ['admin'],
-  },
-  {
-    path: '/404',
-    component: Page404,
-    permissions: ['admin'],
-  },
-  {
-    path: '/blank',
-    component: Blank,
-    permissions: ['admin'],
+    permissions: ['admin', 'ops', 'user']
   },
 ]
 
