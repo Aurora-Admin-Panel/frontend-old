@@ -10,6 +10,7 @@ import {
   DELETE_SERVER_PORT_USER,
   ADD_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORT_FORWARD_RULE,
+  GET_TLS_PROVIDER_PORT,
 } from "../actionTypes";
 
 const initialState = {
@@ -18,6 +19,10 @@ const initialState = {
     loading: true
   },
   current: {
+    port: {},
+    loading: true
+  },
+  tlsProvider: {
     port: {},
     loading: true
   }
@@ -211,6 +216,15 @@ export default function (state = initialState, action) {
           [action.payload.id]: null,
         },
       };
+    }
+    case GET_TLS_PROVIDER_PORT: {
+      return {
+        ...state,
+        tlsProvider: {
+          port: action.payload,
+          loading: false
+        }
+      }
     }
     default:
       return state;

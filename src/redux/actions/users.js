@@ -76,9 +76,13 @@ export const createUser = (data) => {
 export const editUser = (user_id, data) => {
   return (dispatch) => {
     dispatch({ type: LOAD_USERS })
+    dispatch({ type: LOAD_CURRENT_USER })
     userEdit(user_id, data)
       .catch((error) => handleError(dispatch, error))
-      .then(() => dispatch(getUsers()))
+      .then(() => {
+        dispatch(getUsers())
+        dispatch(getCurrentUser(user_id))
+      })
   };
 };
 

@@ -70,10 +70,11 @@ const V2rayRuleEditor = ({
   const [tlsSettings, setTlsSettings] = useState({});
 
   const ports = useSelector((state) => state.ports.ports);
+  console.log(ports)
   const tlsOptions = useMemo(() => [
     { label: "无", value: "none" },
     { label: "自定义证书(请勿使用,暂不支持)", value: "certificate" },
-  ].concat(Object.entries(ports)
+  ].concat(Object.entries(ports.ports.items)
     .filter(([_, port]) =>
       port.forward_rule && ReverseProxies.find(m => m === port.forward_rule.method))
     .map(arr => ({
@@ -471,11 +472,11 @@ const V2rayRuleEditor = ({
           </div>
         </Label>
         {tlsProvider !== "none" &&
-          ports[parseInt(tlsProvider)] &&
-          ports[parseInt(tlsProvider)].forward_rule &&
-          ports[parseInt(tlsProvider)].forward_rule.method === "caddy" ?
+          ports.items[parseInt(tlsProvider)] &&
+          ports.items[parseInt(tlsProvider)].forward_rule &&
+          ports.items[parseInt(tlsProvider)].forward_rule.method === "caddy" ?
           <CaddyEditor
-            port={ports[tlsProvider]}
+            port={ports.items[tlsProvider]}
             forwardRule={forwardRule}
             settings={tlsSettings}
             setSettings={setTlsSettings}

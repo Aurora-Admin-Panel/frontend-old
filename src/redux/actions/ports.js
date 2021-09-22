@@ -29,6 +29,7 @@ import {
   DELETE_SERVER_PORT_USER,
   ADD_SERVER_PORT_FORWARD_RULE,
   DELETE_SERVER_PORT_FORWARD_RULE,
+  GET_TLS_PROVIDER_PORT,
 } from "../actionTypes";
 import { store } from "../store";
 
@@ -111,6 +112,22 @@ export const getServerPort = (server_id, port_id) => {
       .catch((error) => handleError(dispatch, error));
   };
 };
+
+export const getTlsProviderPort = (server_id, port_id) => {
+  return (dispatch) => {
+    serverPortGet(server_id, port_id)
+    .then((response) => {
+      const data = response.data;
+      if (data) {
+        dispatch({
+          type: GET_TLS_PROVIDER_PORT,
+          payload: data,
+        });
+      }
+    })
+    .catch((error) => handleError(dispatch, error));
+  }
+}
 
 export const getServerPortUsers = (server_id, port_id) => {
   return (dispatch) => {

@@ -3,6 +3,7 @@ import { SHOW_BANNER, CLEAR_BANNER } from "../actionTypes";
 
 
 export const handleError = (dispatch, error) => {
+  console.log(error)
   if (error.response) {
     const response = error.response;
     if (response.status === 500) {
@@ -27,6 +28,11 @@ export const handleError = (dispatch, error) => {
             title: data.detail[0].type,
             body: data.detail[0].msg,
           },
+        });
+      } else {
+        dispatch({
+          type: SHOW_BANNER,
+          payload: { title: "Error", body: JSON.stringify(response) },
         });
       }
     } else {

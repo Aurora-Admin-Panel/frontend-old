@@ -22,6 +22,7 @@ const CaddyEditor = ({
     settings.path[0] === '/',
     [settings]);
 
+  console.log(port, forwardRule)  
   useEffect(() => {
     if (
       port &&

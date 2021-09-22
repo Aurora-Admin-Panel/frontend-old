@@ -20,7 +20,7 @@ function Login() {
   const submitForm = (e) => {
     e.preventDefault();
     if (!(email.length > 0) || !(password.length > 0)) {
-      // TODO: se modal or error message.
+      // TODO: set modal or error message.
       throw new Error('Email or password was not provided');
     }
     dispatch(signUp(email, password))

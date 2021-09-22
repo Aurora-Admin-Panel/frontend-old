@@ -12,6 +12,9 @@ import { getMe } from "../redux/actions/users"
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const validEmail = () => { return email.length > 0 && email.includes('@')}
+  const validPassword = () => { return password.length >= 8}
+  const validForm = () => validEmail() && validPassword();
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth)
   const me = useSelector(state => state.users.me);
@@ -54,15 +57,15 @@ function Login() {
               <h1 className="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">Login</h1>
               <Label>
                 <span>Email</span>
-                <Input className="mt-1" type="email" placeholder="john@doe.com" onChange={e => setEmail(e.target.value)}/>
+                <Input className="mt-1" type="email" placeholder="john@doe.com" onChange={e => setEmail(e.target.value)} valid={validEmail()}/>
               </Label>
 
               <Label className="mt-4">
                 <span>Password</span>
-                <Input className="mt-1" type="password" placeholder="***************" onChange={e => setPassword(e.target.value)}/>
+                <Input className="mt-1" type="password" placeholder="***************" onChange={e => setPassword(e.target.value)} valid={validPassword()}/>
               </Label>
 
-              <Button className="mt-4" block type="submit" >
+              <Button className="mt-4" block type="submit" disabled={!validForm()}>
                 Log in
               </Button>
 
