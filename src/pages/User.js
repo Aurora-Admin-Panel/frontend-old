@@ -23,7 +23,6 @@ import {
   getUserServers,
   deleteUserServers,
 } from "../redux/actions/users";
-import { PlusIcon } from "../icons";
 import Tooltip from "../components/Tooltip";
 import MyLinkify from "../components/MyLinkify";
 import UserEditor from "../components/UserEditor";

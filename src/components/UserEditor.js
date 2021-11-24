@@ -12,7 +12,7 @@ import {
   Textarea,
 } from "@windmill/react-ui";
 
-import Tooptip, { Tooltip } from "../components/Tooltip";
+import Tooptip from "../components/Tooltip";
 import { createUser, editUser } from "../redux/actions/users";
 
 const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
