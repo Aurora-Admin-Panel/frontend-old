@@ -12,9 +12,9 @@ import { getMe } from "../redux/actions/users"
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const validEmail = () => { return email.length > 0 && email.includes('@')}
-  const validPassword = () => { return password.length >= 8}
-  const validForm = () => validEmail() && validPassword();
+  const validEmail = () => { return email.length === 0 || (email.length > 0 && email.includes('@'))}
+  const validPassword = () => { return password.length === 0 || password.length >= 8}
+  const validForm = () => email.length > 0 && password.length > 0 && validEmail() && validPassword();
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth)
   const me = useSelector(state => state.users.me);

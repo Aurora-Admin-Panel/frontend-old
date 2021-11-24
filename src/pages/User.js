@@ -57,7 +57,7 @@ const User = () => {
     <>
       <div className="flex flex-col justify-start">
         <div className="flex justify-between items-center">
-          <PageTitle>用户详情 [{user.email}]</PageTitle>
+          <PageTitle>用户详情 [<span className={user.is_ops ? "text-purple-700" : ""}>{user.email}</span>]</PageTitle>
           <Button
             size="regular"
             onClick={() => {

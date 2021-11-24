@@ -12,6 +12,7 @@ import {
   Textarea,
 } from "@windmill/react-ui";
 
+import Tooptip, { Tooltip } from "../components/Tooltip";
 import { createUser, editUser } from "../redux/actions/users";
 
 const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
@@ -53,10 +54,12 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
       setEmail(user.email);
       setIsActive(user.is_active);
       setNotes(user.notes);
+      setIsOps(user.is_ops);
     } else {
       setEmail("");
       setIsActive(true);
       setNotes("");
+      setIsOps(false);
     }
   }, [isModalOpen, user]);
 
@@ -98,7 +101,9 @@ const UserEditor = ({ user, isModalOpen, setIsModalOpen }) => {
                 checked={isOps}
                 onChange={() => setIsOps(!isOps)}
               />
-              <span className="ml-2 text-purple-700">提升为服务器管理员</span>
+              <Tooptip tip="服务器管理员会拥有被分配服务器的所有权限">
+              <span className="ml-2 text-purple-700">服务器管理员</span>
+              </Tooptip>
             </Label>
 
           {user ? (

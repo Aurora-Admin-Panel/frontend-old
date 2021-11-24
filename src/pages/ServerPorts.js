@@ -35,7 +35,6 @@ import PortUserEditor from "../components/PortUserEditor";
 import PageTitle from "../components/Typography/PageTitle";
 import ForwardRuleEditor from "../components/ForwardRuleEditor";
 import UsageCell from "../components/TableCells/UsageCell";
-import Tooptip from "../components/Tooltip";
 
 const statusToIcon = (rule) => {
   if (rule) {
@@ -272,7 +271,7 @@ function ServerPorts() {
                         {port.external_num ? port.external_num : port.num}
                         <AuthSelector permissions={["admin", "ops"]}>
                           {port.external_num ? (
-                            <Tooptip
+                            <Tooltip
                               tip={
                                 <span>
                                   <Badge>内部端口</Badge>
@@ -281,7 +280,7 @@ function ServerPorts() {
                               }
                             >
                               <WarningCircle weight="bold" size={20} />
-                            </Tooptip>
+                            </Tooltip>
                           ) : null}
                         </AuthSelector>
                       </div>
@@ -289,18 +288,18 @@ function ServerPorts() {
                     <TableCell>
                       {port.notes ? (
                         port.notes.length > 10 ? (
-                          <Tooptip tip={port.notes}>
+                          <Tooltip tip={port.notes}>
                             {`${port.notes.slice(0, 10)}...`}
-                          </Tooptip>
+                          </Tooltip>
                         ) : (port.notes)
                       ) : null}
                     </TableCell>
                     <TableCell>
-                      <Tooptip
+                      <Tooltip
                         tip={statusToBadge(port.forward_rule, server, port)}
                       >
                         {statusToIcon(port.forward_rule)}
-                      </Tooptip>
+                      </Tooltip>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col justify-center">
