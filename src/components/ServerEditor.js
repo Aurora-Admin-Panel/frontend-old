@@ -188,7 +188,7 @@ const ServerEditor = ({ isModalOpen, setIsModalOpen }) => {
                   />
                 </Label>
                 <Label className="mt-1">
-                  <span>Ansible别名</span>
+                  <span>Ansible别名（可以中文，但不要加特殊字符/空格）</span>
                   <Input
                     className="mt-1"
                     placeholder={"cn2"}

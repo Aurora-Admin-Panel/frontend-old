@@ -20,7 +20,7 @@ const Templates = [
   { label: "wss隧道入口端", value: 4 },
   { label: "wss隧道出口端", value: 5 },
   { label: "mwss隧道入口端", value: 6 },
-  { label: "mwws隧道出口端", value: 7 },
+  { label: "mwss隧道出口端", value: 7 },
 ];
 
 const EhcoRuleEditor = ({
@@ -116,7 +116,7 @@ const EhcoRuleEditor = ({
         setRemotePort("ws隧道出口端端口，如8888");
         break;
       case "7":
-        setListenType("mwws");
+        setListenType("mwss");
         setTransportType("raw");
         setRemoteAddress("127.0.0.1");
         setRemotePort("本地代理端口");
