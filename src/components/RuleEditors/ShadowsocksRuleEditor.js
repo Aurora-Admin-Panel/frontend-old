@@ -7,7 +7,7 @@ import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
 
 const EncryptionOptions = [
   { label: "AEAD_AES_128_GCM", value: "AEAD_AES_128_GCM" },
-  { label: "AEAD_AES_256_GCM", value: "AEAD_AES_256_GCMjff" },
+  { label: "AEAD_AES_256_GCM", value: "AEAD_AES_256_GCM" },
   { label: "AEAD_CHACHA20_POLY1305", value: "AEAD_CHACHA20_POLY1305" },
   { label: "aes-128-cfb", value: "aes-128-cfb" },
   { label: "aes-192-cfb", value: "aes-192-cfb" },
