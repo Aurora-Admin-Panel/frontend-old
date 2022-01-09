@@ -19,6 +19,7 @@ import V2rayRuleEditor from "../components/RuleEditors/V2rayRuleEditor";
 import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
 import IperfRuleEditor from "../components/RuleEditors/IperfRuleEditor";
+import RealmRuleEditor from "../components/RuleEditors/RealmRuleEditor";
 import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
 import ShadowsocksRuleEditor from "../components/RuleEditors/ShadowsocksRuleEditor";
 import NodeExporterRuleEditor from "../components/RuleEditors/NodeExporterRuleEditor";
@@ -31,6 +32,7 @@ const MethodOptions = [
   { label: "ehco", value: "ehco" },
   { label: "gost", value: "gost" },
   { label: "socat", value: "socat" },
+  { label: "realm", value: "realm" },
   { label: "v2ray", value: "v2ray" },
   { label: "iperf3", value: "iperf" },
   { label: "wstunnel", value: "wstunnel" },
@@ -203,6 +205,18 @@ const ForwardRuleEditor = ({
 
             {method === "socat" ? (
               <SocatRuleEditor
+                serverId={serverId}
+                portId={port.id}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+            {method === "realm" ? (
+              <RealmRuleEditor
                 serverId={serverId}
                 portId={port.id}
                 isModalOpen={isModalOpen}

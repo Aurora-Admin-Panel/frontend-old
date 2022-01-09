@@ -289,7 +289,7 @@ const ServerEditor = ({ isModalOpen, setIsModalOpen }) => {
             ) : null}
             {server && tab.app ? (
               <div className="flex flex-col justify-start px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
-                {['brook', 'caddy', 'ehco', 'gost', 'node_exporter', 'shadowsocks', 'socat', 'tiny_port_mapper', 'v2ray', 'wstunnel'].map(app =>
+                {['brook', 'caddy', 'ehco', 'gost', 'node_exporter', 'shadowsocks', 'socat', 'tiny_port_mapper', 'v2ray', 'wstunnel', 'realm', 'iperf'].map(app =>
                   <Label className="mt-1 flex flex-row items-center" key={`server_${server.id}_${app}_toggle`}>
                     <span className="w-1/3">{app}</span>
                     <div className="w-2/3 space-x-2">
