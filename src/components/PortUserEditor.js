@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   Label,
-  Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
+import Modal from '../components/Modals/Modal'
 
 import {
   getServerPortUsers,

@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Input,
   Label,
-  Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
@@ -12,6 +11,7 @@ import {
 } from "@windmill/react-ui";
 import { At } from "phosphor-react";
 
+import Modal from "../components/Modals/Modal"
 import { TwoDotIcon } from "../icons";
 import {
   createServer,

@@ -4,11 +4,11 @@ import {
   Input,
   Label,
   Select,
-  Modal,
   ModalBody,
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
+import Modal from '../components/Modals/Modal'
 
 import { deleteForwardRule } from "../redux/actions/ports";
 import GostRuleEditor from "../components/RuleEditors/GostRuleEditor";

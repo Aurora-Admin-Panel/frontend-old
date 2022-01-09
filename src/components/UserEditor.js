@@ -5,12 +5,12 @@ import {
   Button,
   Input,
   Label,
-  Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
   Textarea,
 } from "@windmill/react-ui";
+import Modal from '../components/Modals/Modal'
 
 import Tooptip from "../components/Tooltip";
 import { createUser, editUser } from "../redux/actions/users";

@@ -2,11 +2,11 @@ import React, {useCallback} from "react";
 
 import {
   Button,
-  Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
 } from "@windmill/react-ui";
+import Modal from './Modal'
 
 const ConfirmationModal = ({
   title = undefined,

@@ -5,13 +5,13 @@ import {
   Button,
   Input,
   Label,
-  Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
   Select,
   HelperText,
 } from "@windmill/react-ui";
+import Modal from '../components/Modals/Modal'
 
 import { editServerUser, deleteServerUser } from "../redux/actions/servers";
 import { formatQuota } from "../utils/formatter";
