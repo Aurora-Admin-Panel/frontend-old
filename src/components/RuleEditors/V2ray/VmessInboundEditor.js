@@ -199,7 +199,7 @@ const VmessInboundEditor = ({
         clients: [
           {
             id: uuidv4(),
-            alterId: 64,
+            alterId: 0,
           },
         ],
       });
@@ -272,6 +272,7 @@ const VmessInboundEditor = ({
               <div className="flex flex-row items-center space-x-2">
                 <div className="w-1/3">
                   <Input
+                    disabled
                     type="number"
                     value={client.alterId}
                     onChange={(e) => handleAlterIdChange(e, idx)}
