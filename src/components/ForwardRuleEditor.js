@@ -20,6 +20,7 @@ import BrookRuleEditor from "../components/RuleEditors/BrookRuleEditor";
 import SocatRuleEditor from "../components/RuleEditors/SocatRuleEditor";
 import IperfRuleEditor from "../components/RuleEditors/IperfRuleEditor";
 import RealmRuleEditor from "../components/RuleEditors/RealmRuleEditor";
+import HaproxyRuleEditor from "../components/RuleEditors/HaproxyRuleEditor";
 import WstunnelRuleEditor from "../components/RuleEditors/WstunnelRuleEditor";
 import ShadowsocksRuleEditor from "../components/RuleEditors/ShadowsocksRuleEditor";
 import NodeExporterRuleEditor from "../components/RuleEditors/NodeExporterRuleEditor";
@@ -35,6 +36,7 @@ const MethodOptions = [
   { label: "realm", value: "realm" },
   { label: "v2ray", value: "v2ray" },
   { label: "iperf3", value: "iperf" },
+  { label: "haproxy", value: "haproxy" },
   { label: "wstunnel", value: "wstunnel" },
   { label: "shadowsocks", value: "shadowsocks" },
   { label: "tinyPortMapper", value: "tiny_port_mapper" },
@@ -121,6 +123,18 @@ const ForwardRuleEditor = ({
 
             {method === "gost" ? (
               <GostRuleEditor
+                serverId={serverId}
+                port={port}
+                isModalOpen={isModalOpen}
+                method={method}
+                forwardRule={forwardRule}
+                setValidRuleForm={setValidRuleForm}
+                setSubmitRuleForm={setSubmitRuleForm}
+              />
+            ) : null}
+
+            {method === "haproxy" ? (
+              <HaproxyRuleEditor
                 serverId={serverId}
                 port={port}
                 isModalOpen={isModalOpen}
