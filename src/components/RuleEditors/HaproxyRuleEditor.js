@@ -9,12 +9,14 @@ import { createForwardRule, editForwardRule } from "../../redux/actions/ports";
 const ModeOptions = [{ label: "TCP", value: "tcp" }];
 const SendProxyOptions = [
   { label: "无", value: "" },
-  { label: "send-proxy", value: "send-proxy" },
-  { label: "send-proxy-v2", value: "send-proxy-v2" },
+  { label: "V1", value: "send-proxy" },
+  { label: "V2", value: "send-proxy-v2" },
 ];
 const BalanceModeOptions = [
-  { label: "roundrobin", value: "roundrobin" },
-  { label: "leastconn", value: "leastconn" },
+  { label: "轮询", value: "roundrobin" },
+  { label: "最小连接数优先", value: "leastconn" },
+  { label: "源IP地址匹配", value: "source" },
+  { label: "顺序优先", value: "first" },
 ];
 
 const HaproxyRuleEditor = ({
@@ -156,7 +158,7 @@ const HaproxyRuleEditor = ({
       </Label>
       <Label className="mt-4">
         <div className="flex flex-row justify-between items-center mt-1">
-          <span className="w-1/2">Send Proxy</span>
+          <span className="w-1/2">Proxy Protocol 版本</span>
           <Select
             className="w-1/2"
             value={sendProxy}
@@ -175,7 +177,7 @@ const HaproxyRuleEditor = ({
       </Label>
 
       <Label className="mt-4 flex flex-row justify-between items-center">
-        <span>转发后端</span>
+        <span>目标地址端口</span>
         <button
           className="w-5 h-5 px-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-green-400 border border-transparent rounded active:bg-green-600 hover:bg-green-600 focus:outline-none focus:shadow-outline-green"
           onClick={() => setBackendNodes(backendNodes.concat([""]))}
