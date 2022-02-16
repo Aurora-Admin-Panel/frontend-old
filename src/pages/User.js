@@ -135,15 +135,15 @@ const User = () => {
                         <TableCell>{userPort.port.num}</TableCell>
                         <TableCell>
                           <div className="flex flex-col justify-center">
-                            {userPort.port.usage ? (
+                            {userPort.usage ? (
                               <>
                                 <span className="flex flex-auto items-center">
                                   <ArrowUp size={16} />
-                                  {userPort.port.usage.readable_upload}
+                                  {userPort.usage.readable_upload}
                                 </span>
                                 <span className="flex flex-auto items-center">
                                   <ArrowDown size={16} />
-                                  {userPort.port.usage.readable_download}
+                                  {userPort.usage.readable_download}
                                 </span>
                               </>
                             ) : (
