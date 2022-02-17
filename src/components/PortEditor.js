@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import promiseLimit from 'promise-limit'
 
 import {
   Button,
@@ -15,8 +16,8 @@ import Modal from '../components/Modals/Modal'
 
 import AuthSelector from "../components/AuthSelector"
 import {
+	getServerPorts,
   createServerPort,
-  bulkCreateServerPort,
   editServerPort,
   deleteServerPort,
   editServerPortUsage,
@@ -24,6 +25,7 @@ import {
 import { formatSpeed, formatQuota } from "../utils/formatter";
 import { SpeedLimitOptions, QuotaOptions, DueActionOptions, DateOptions } from "../utils/constants"
 
+const CREATE_PORT_LIMIT = 5
 
 const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -77,7 +79,7 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
     dispatch(editServerPortUsage(serverId, port.id, data));
     setIsModalOpen(false);
   };
-  const submitForm = () => {
+  const submitForm = async () => {
     if (isDelete) {
       dispatch(deleteServerPort(serverId, port.id));
     } else {
@@ -109,25 +111,26 @@ const PortEditor = ({ port, serverId, isModalOpen, setIsModalOpen }) => {
       } else {
         const numStr = num.toString();
         const idx = numStr.indexOf('-')
-        if (idx !== -1) {
-          const start = parseInt(numStr.slice(0, idx))
-          const end = parseInt(numStr.slice(idx + 1))
-          dispatch(bulkCreateServerPort(serverId, [...Array(end - start + 1).keys()].map(i => (
-            {
-              num: i + start,
-              external_num: null,
-              config: {
-                egress_limit: null,
-                ingress_limit: null,
-                valid_until: null,
-                due_action: 0,
-                quota: null,
-                quota_action: 0,
-              }
-            }))));
-        } else {
-          dispatch(createServerPort(serverId, data));
-        }
+				const isBatch = idx !== -1
+				const start = parseInt(numStr.slice(0, idx))
+				const end = parseInt(numStr.slice(idx + 1))
+				const portsData = !isBatch ? data : [...Array(end - start + 1).keys()].map(i => ({
+					num: i + start,
+					external_num: null,
+					config: {
+						egress_limit: null,
+						ingress_limit: null,
+						valid_until: null,
+						due_action: 0,
+						quota: null,
+						quota_action: 0,
+					}
+				}))
+				const limit = promiseLimit(CREATE_PORT_LIMIT)
+				await Promise.all(portsData.map(c => limit(() => new Promise(r => {
+					dispatch(createServerPort(serverId, c)).then(r)
+				}))))
+				await getServerPorts(serverId)
       }
     }
     setIsModalOpen(false);
