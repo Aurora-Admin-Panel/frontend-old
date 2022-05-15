@@ -64,22 +64,12 @@ export const getServerPorts = (server_id, page = null, size = null) => {
 };
 
 export const createServerPort = (server_id, data) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch({ type: LOAD_SERVER_PORTS })
-    serverPortCreate(server_id, data)
+    return serverPortCreate(server_id, data)
       .catch((error) => handleError(dispatch, error))
-      .then(() => dispatch(getServerPorts(server_id)))
   };
 };
-
-export const bulkCreateServerPort = (server_id, data_array) => {
-  return (dispatch) => {
-    dispatch({ type: LOAD_SERVER_PORTS })
-    Promise.all(data_array.map(data => serverPortCreate(server_id, data)))
-      .catch((error) => handleError(dispatch, error))
-      .then(() => dispatch(getServerPorts(server_id)))
-  }
-}
 
 export const deleteServerPort = (server_id, port_id) => {
   return (dispatch) => {
